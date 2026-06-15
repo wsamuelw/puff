@@ -56,10 +56,8 @@
   const provider = new firebase.auth.GoogleAuthProvider();
   let currentUser = null;
 
-  // Detect mobile and standalone mode
+  // Detect mobile (unused but kept for future reference)
   const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-  const isStandalone = window.navigator.standalone === true
-    || window.matchMedia('(display-mode: standalone)').matches;
 
   // Reset sign-in button to default state
   function resetSigninButton() {
@@ -84,25 +82,21 @@
     errorDiv.textContent = message;
   }
 
-  // Google sign-in
+  // Google sign-in — always use popup
   async function signInWithGoogle() {
     try {
-      if (isMobile && !isStandalone) {
-        // Regular mobile browser — use redirect with timeout
-        const redirectPromise = auth.signInWithRedirect(provider);
-        const timeout = new Promise((_, reject) =>
-          setTimeout(() => reject(new Error('Redirect timeout')), 5000)
-        );
-        await Promise.race([redirectPromise, timeout]);
-      } else {
-        // Desktop or standalone PWA — use popup
-        const result = await auth.signInWithPopup(provider);
-        currentUser = result.user;
-        return result.user;
-      }
+      const result = await auth.signInWithPopup(provider);
+      currentUser = result.user;
+      return result.user;
     } catch (e) {
       console.warn('Auth failed:', e.message);
-      showSigninError('Sign-in failed. Tap to try again.');
+      if (e.code === 'auth/popup-blocked') {
+        showSigninError('Popup blocked. Please allow popups and try again.');
+      } else if (e.code === 'auth/popup-closed-by-user') {
+        showSigninError('Sign-in cancelled. Tap to try again.');
+      } else {
+        showSigninError('Sign-in failed. Tap to try again.');
+      }
       throw e;
     }
   }
@@ -126,16 +120,6 @@
       signinScreen.classList.remove('hidden');
       resetSigninButton();
     }
-  });
-
-  // Handle redirect result on mobile
-  auth.getRedirectResult().then((result) => {
-    if (result.user) {
-      currentUser = result.user;
-    }
-  }).catch((e) => {
-    console.warn('Redirect auth failed:', e.message);
-    showSigninError('Sign-in failed. Please try again.');
   });
 
   // Save to Firestore (also saves to localStorage as offline cache)

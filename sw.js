@@ -1,4 +1,4 @@
-const CACHE_NAME = 'puff-v29';
+const CACHE_NAME = 'puff-v30';
 const FONT_CACHE = 'puff-fonts-v1';
 const ASSETS = [
   '/',
@@ -46,9 +46,9 @@ self.addEventListener('fetch', (e) => {
     return;
   }
 
-  // Navigation requests — network first (needed for auth redirects)
-  if (e.request.mode === 'navigate') {
-    e.respondWith(fetch(e.request));
+  // Navigation and Firebase auth requests — always network first
+  if (e.request.mode === 'navigate' || e.request.url.includes('firebase')) {
+    e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
     return;
   }
 
