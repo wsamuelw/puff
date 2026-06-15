@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>05 — Editorial Header</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#111;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:'DM Sans',sans-serif}
+.lab{color:#666;font-size:12px;text-align:center;margin-bottom:10px;letter-spacing:2px;text-transform:uppercase}
+.phone{width:375px;height:812px;background:#1a1a1a;border-radius:40px;position:relative;overflow:hidden;border:2px solid #2a2a2a;box-shadow:0 30px 80px rgba(0,0,0,.6)}
+
+.overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:5}
+.overlay-hint{color:rgba(255,255,255,.18);font-size:11px;letter-spacing:2px;text-transform:uppercase;margin-top:40px}
+
+.cig{position:absolute;bottom:200px;left:50%;transform:translateX(-50%);width:7px;height:240px;background:linear-gradient(to bottom,#f5f0e8 0%,#f5f0e8 84%,#c4a35a 84%);border-radius:1px}
+.ember{position:absolute;top:-3px;left:50%;transform:translateX(-50%);width:10px;height:10px;background:radial-gradient(circle,#ff6b35,#ff4500,transparent);border-radius:50%;box-shadow:0 0 10px #ff6b35,0 0 20px rgba(255,107,53,.3)}
+
+/* Editorial header */
+.header{position:absolute;top:0;left:0;right:0;z-index:10;padding:52px 20px 0}
+.header-top{display:flex;justify-content:space-between;align-items:flex-start}
+.header-brand{font-family:'Playfair Display',serif;font-size:14px;font-style:italic;color:#faf9f7;letter-spacing:-.5px}
+.header-brand span{display:block;font-size:9px;font-style:normal;color:rgba(255,255,255,.3);letter-spacing:2px;text-transform:uppercase;margin-top:2px}
+.header-menu{font-size:10px;color:rgba(255,255,255,.4);letter-spacing:3px;text-transform:uppercase;cursor:pointer;padding:6px 0;transition:color .2s}
+.header-menu:hover{color:#faf9f7}
+
+/* Stats as editorial headline */
+.header-stats{margin-top:20px;padding-top:16px;border-top:1px solid rgba(255,255,255,.06)}
+.hs-row{display:flex;align-items:baseline;gap:6px}
+.hs-money{font-family:'Playfair Display',serif;font-size:32px;font-weight:400;color:#faf9f7;letter-spacing:-1px;line-height:1}
+.hs-label{font-size:10px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:1px}
+.hs-sub{display:flex;gap:16px;margin-top:8px}
+.hs-sub-item{font-size:11px;color:rgba(255,255,255,.5)}
+.hs-sub-item strong{color:#faf9f7;font-weight:500}
+
+/* Bottom bar */
+.bottom-bar{position:absolute;bottom:0;left:0;right:0;z-index:10;display:flex;justify-content:space-between;align-items:center;padding:16px 20px 40px;background:linear-gradient(to top,rgba(26,26,26,.95),transparent)}
+.bb-left{font-size:9px;color:rgba(255,255,255,.25);letter-spacing:2px;text-transform:uppercase}
+.bb-actions{display:flex;gap:16px}
+.bb-btn{font-size:10px;color:rgba(255,255,255,.4);letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:color .2s}
+.bb-btn:hover{color:#faf9f7}
+
+.note{position:absolute;top:50px;right:-170px;background:#22c55e;color:#fff;font-size:10px;font-weight:600;padding:3px 10px;border-radius:10px;white-space:nowrap;z-index:20}
+.note::before{content:'';position:absolute;left:-6px;top:50%;transform:translateY(-50%);border:3px solid transparent;border-right-color:#22c55e}
+</style>
+</head>
+<body>
+<div style="display:flex;flex-direction:column;align-items:center;gap:8px">
+<div class="lab">05 — Editorial Header</div>
+<div class="phone">
+  <div class="overlay"><div class="overlay-hint">tap to light</div></div>
+  <div class="cig"><div class="ember"></div></div>
+
+  <div class="header">
+    <div class="header-top">
+      <div class="header-brand">puff<span>quit companion</span></div>
+      <div class="header-menu">Menu</div>
+    </div>
+    <div class="header-stats">
+      <div class="hs-row">
+        <div class="hs-money">$24.50</div>
+        <div class="hs-label">saved</div>
+      </div>
+      <div class="hs-sub">
+        <div class="hs-sub-item"><strong>7</strong> days smoke-free</div>
+        <div class="hs-sub-item"><strong>49</strong> avoided</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom-bar">
+    <div class="bb-left">v1.0</div>
+    <div class="bb-actions">
+      <div class="bb-btn">Breathing</div>
+      <div class="bb-btn">Log</div>
+      <div class="bb-btn">Health</div>
+    </div>
+  </div>
+  <div class="note">editorial layout</div>
+</div>
+</div>
+</body>
+</html>

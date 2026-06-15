@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>08 — Cigarette Pack Metaphor</title>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#111;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:'DM Sans',sans-serif}
+.lab{color:#666;font-size:12px;text-align:center;margin-bottom:10px;letter-spacing:2px;text-transform:uppercase}
+.phone{width:375px;height:812px;background:#1a1a1a;border-radius:40px;position:relative;overflow:hidden;border:2px solid #2a2a2a;box-shadow:0 30px 80px rgba(0,0,0,.6)}
+
+.overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:5}
+.overlay-hint{margin-top:20px;color:rgba(255,255,255,.18);font-size:11px;letter-spacing:2px;text-transform:uppercase}
+
+.cig{position:absolute;bottom:200px;left:50%;transform:translateX(-50%);width:7px;height:240px;background:linear-gradient(to bottom,#f5f0e8 0%,#f5f0e8 84%,#c4a35a 84%);border-radius:1px}
+.ember{position:absolute;top:-3px;left:50%;transform:translateX(-50%);width:10px;height:10px;background:radial-gradient(circle,#ff6b35,#ff4500,transparent);border-radius:50%;box-shadow:0 0 10px #ff6b35,0 0 20px rgba(255,107,53,.3)}
+
+/* Pack card at top */
+.pack{position:absolute;top:52px;left:16px;right:16px;z-index:10;background:linear-gradient(135deg,#2a2a2a 0%,#222 100%);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:20px;overflow:hidden}
+.pack::before{content:'';position:absolute;top:0;right:0;width:120px;height:100%;background:linear-gradient(135deg,transparent 50%,rgba(255,255,255,.02));pointer-events:none}
+.pack-top{display:flex;justify-content:space-between;align-items:flex-start}
+.pack-brand{font-family:'Bodoni Moda',serif;font-size:24px;font-style:italic;color:#faf9f7;letter-spacing:-1px}
+.pack-brand small{display:block;font-size:9px;font-style:normal;color:rgba(255,255,255,.3);letter-spacing:2px;text-transform:uppercase;margin-top:2px}
+.pack-menu{cursor:pointer;padding:4px}
+.pack-menu svg{width:20px;height:20px;stroke:rgba(255,255,255,.4);fill:none;stroke-width:1.5}
+
+.pack-stats{display:flex;gap:0;margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.06)}
+.pack-stat{flex:1;text-align:center}
+.pack-stat:not(:last-child){border-right:1px solid rgba(255,255,255,.06)}
+.pack-stat-val{font-family:'Bodoni Moda',serif;font-size:22px;font-weight:400;color:#faf9f7}
+.pack-stat-lbl{font-size:8px;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:1px;margin-top:2px}
+
+.pack-footer{display:flex;justify-content:space-between;align-items:center;margin-top:14px;padding-top:10px;border-top:1px solid rgba(255,255,255,.04)}
+.pack-link{font-size:10px;color:rgba(255,255,255,.35);letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:color .2s}
+.pack-link:hover{color:#faf9f7}
+
+.note{position:absolute;top:50px;right:-175px;background:#22c55e;color:#fff;font-size:10px;font-weight:600;padding:3px 10px;border-radius:10px;white-space:nowrap;z-index:20}
+.note::before{content:'';position:absolute;left:-6px;top:50%;transform:translateY(-50%);border:3px solid transparent;border-right-color:#22c55e}
+</style>
+</head>
+<body>
+<div style="display:flex;flex-direction:column;align-items:center;gap:8px">
+<div class="lab">08 — Cigarette Pack Card</div>
+<div class="phone">
+  <div class="overlay">
+    <div class="overlay-hint">tap to light</div>
+  </div>
+  <div class="cig"><div class="ember"></div></div>
+
+  <div class="pack">
+    <div class="pack-top">
+      <div class="pack-brand">puff<small>your quit companion</small></div>
+      <div class="pack-menu">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="19" r="1.5" fill="currentColor" stroke="none"/></svg>
+      </div>
+    </div>
+    <div class="pack-stats">
+      <div class="pack-stat"><div class="pack-stat-val">$24.50</div><div class="pack-stat-lbl">saved</div></div>
+      <div class="pack-stat"><div class="pack-stat-val">7</div><div class="pack-stat-lbl">days</div></div>
+      <div class="pack-stat"><div class="pack-stat-val">49</div><div class="pack-stat-lbl">avoided</div></div>
+    </div>
+    <div class="pack-footer">
+      <div class="pack-link">Breathing</div>
+      <div class="pack-link">Log</div>
+      <div class="pack-link">Health</div>
+      <div class="pack-link">Journal</div>
+    </div>
+  </div>
+  <div class="note">pack metaphor</div>
+</div>
+</div>
+</body>
+</html>

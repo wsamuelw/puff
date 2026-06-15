@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>02 — Floating Action Button</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#111;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:'Instrument Sans',sans-serif}
+.lab{color:#666;font-size:12px;text-align:center;margin-bottom:10px;letter-spacing:2px;text-transform:uppercase}
+.phone{width:375px;height:812px;background:#0f0f0f;border-radius:40px;position:relative;overflow:hidden;border:2px solid #222;box-shadow:0 30px 80px rgba(0,0,0,.6)}
+
+.overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:5}
+.overlay-title{font-family:'Cormorant Garamond',serif;font-size:52px;font-weight:300;font-style:italic;color:#faf9f7;letter-spacing:-2px}
+.overlay-sub{color:rgba(255,255,255,.25);font-size:11px;letter-spacing:4px;text-transform:uppercase;margin-top:4px}
+.overlay-hint{margin-top:50px;color:rgba(255,255,255,.15);font-size:11px;letter-spacing:2px;text-transform:uppercase}
+
+.cig{position:absolute;bottom:200px;left:50%;transform:translateX(-50%);width:7px;height:240px;background:linear-gradient(to bottom,#f5f0e8 0%,#f5f0e8 84%,#c4a35a 84%);border-radius:1px}
+.ember{position:absolute;top:-3px;left:50%;transform:translateX(-50%);width:10px;height:10px;background:radial-gradient(circle,#ff6b35,#ff4500,transparent);border-radius:50%;box-shadow:0 0 10px #ff6b35,0 0 20px rgba(255,107,53,.3)}
+
+/* FAB */
+.fab{position:absolute;bottom:40px;right:24px;z-index:20}
+.fab-btn{width:56px;height:56px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .3s}
+.fab-btn:hover{background:rgba(255,255,255,.14)}
+.fab-btn svg{width:22px;height:22px;stroke:#faf9f7;fill:none;stroke-width:1.5;transition:transform .3s}
+.fab.open .fab-btn svg{transform:rotate(45deg)}
+
+/* FAB menu items */
+.fab-items{position:absolute;bottom:68px;right:0;display:flex;flex-direction:column;gap:10px;opacity:0;transform:translateY(10px);pointer-events:none;transition:all .3s}
+.fab.open .fab-items{opacity:1;transform:translateY(0);pointer-events:auto}
+.fab-item{display:flex;align-items:center;gap:10px;flex-direction:row-reverse}
+.fab-item-circle{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center}
+.fab-item-circle svg{width:18px;height:18px;stroke:#faf9f7;fill:none;stroke-width:1.5}
+.fab-item-label{font-size:11px;color:rgba(255,255,255,.6);letter-spacing:1px;text-transform:uppercase;background:rgba(255,255,255,.06);padding:4px 10px;border-radius:6px;white-space:nowrap}
+
+/* Stats - top left corner */
+.stats-corner{position:absolute;top:60px;left:20px;z-index:10}
+.stats-corner .sc-label{font-size:9px;color:rgba(255,255,255,.3);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px}
+.stats-corner .sc-row{display:flex;gap:16px;align-items:baseline}
+.stats-corner .sc-money{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:300;color:#faf9f7;letter-spacing:-1px}
+.stats-corner .sc-dot{width:3px;height:3px;background:rgba(255,255,255,.2);border-radius:50%;align-self:center}
+.stats-corner .sc-val{font-size:13px;font-weight:500;color:rgba(255,255,255,.7)}
+.stats-corner .sc-lbl{font-size:8px;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:1px}
+
+.note{position:absolute;top:50px;right:-170px;background:#22c55e;color:#fff;font-size:10px;font-weight:600;padding:3px 10px;border-radius:10px;white-space:nowrap;z-index:20}
+.note::before{content:'';position:absolute;left:-6px;top:50%;transform:translateY(-50%);border:3px solid transparent;border-right-color:#22c55e}
+</style>
+</head>
+<body>
+<div style="display:flex;flex-direction:column;align-items:center;gap:8px">
+<div class="lab">02 — Floating Action Button</div>
+<div class="phone">
+  <div class="overlay">
+    <div class="overlay-title">puff</div>
+    <div class="overlay-sub">your quit companion</div>
+    <div class="overlay-hint">tap to light</div>
+  </div>
+  <div class="cig"><div class="ember"></div></div>
+
+  <div class="stats-corner">
+    <div class="sc-label">saved this session</div>
+    <div class="sc-row">
+      <div class="sc-money">$24.50</div>
+      <div class="sc-dot"></div>
+      <div><div class="sc-val">7</div><div class="sc-lbl">days</div></div>
+      <div class="sc-dot"></div>
+      <div><div class="sc-val">49</div><div class="sc-lbl">avoided</div></div>
+    </div>
+  </div>
+
+  <div class="fab open">
+    <div class="fab-items">
+      <div class="fab-item"><div class="fab-item-label">Settings</div><div class="fab-item-circle"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div></div>
+      <div class="fab-item"><div class="fab-item-label">Journal</div><div class="fab-item-circle"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div></div>
+      <div class="fab-item"><div class="fab-item-label">Health</div><div class="fab-item-circle"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div></div>
+      <div class="fab-item"><div class="fab-item-label">Breathing</div><div class="fab-item-circle"><svg viewBox="0 0 24 24"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M12 6v6l4 2"/></svg></div></div>
+    </div>
+    <div class="fab-btn">
+      <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    </div>
+  </div>
+  <div class="note">FAB with radial menu</div>
+</div>
+</div>
+</body>
+</html>

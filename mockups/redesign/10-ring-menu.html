@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>10 — Ring Menu</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#111;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:'Inter',sans-serif}
+.lab{color:#666;font-size:12px;text-align:center;margin-bottom:10px;letter-spacing:2px;text-transform:uppercase}
+.phone{width:375px;height:812px;background:#1a1a1a;border-radius:40px;position:relative;overflow:hidden;border:2px solid #2a2a2a;box-shadow:0 30px 80px rgba(0,0,0,.6)}
+
+.overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:5}
+.overlay-title{font-family:'Playfair Display',serif;font-size:44px;font-style:italic;color:#faf9f7;letter-spacing:-1px}
+.overlay-hint{margin-top:20px;color:rgba(255,255,255,.18);font-size:11px;letter-spacing:2px;text-transform:uppercase}
+
+.cig{position:absolute;bottom:200px;left:50%;transform:translateX(-50%);width:7px;height:240px;background:linear-gradient(to bottom,#f5f0e8 0%,#f5f0e8 84%,#c4a35a 84%);border-radius:1px}
+.ember{position:absolute;top:-3px;left:50%;transform:translateX(-50%);width:10px;height:10px;background:radial-gradient(circle,#ff6b35,#ff4500,transparent);border-radius:50%;box-shadow:0 0 10px #ff6b35,0 0 20px rgba(255,107,53,.3)}
+
+/* Center ring */
+.ring-wrap{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:8;pointer-events:none}
+.ring{width:280px;height:280px;border-radius:50%;border:1px solid rgba(255,255,255,.04);position:relative}
+
+/* Ring nodes */
+.rnode{position:absolute;display:flex;flex-direction:column;align-items:center;gap:4px;pointer-events:auto;cursor:pointer;transition:opacity .2s}
+.rnode:hover{opacity:.7}
+.rnode-icon{width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center}
+.rnode-icon svg{width:18px;height:18px;stroke:#faf9f7;fill:none;stroke-width:1.5}
+.rnode-label{font-size:8px;color:rgba(255,255,255,.4);letter-spacing:1px;text-transform:uppercase;white-space:nowrap}
+
+/* Positioning ring nodes in a circle */
+.rnode:nth-child(1){top:-24px;left:50%;transform:translateX(-50%)}
+.rnode:nth-child(2){top:20px;right:-10px}
+.rnode:nth-child(3){bottom:20px;right:-10px}
+.rnode:nth-child(4){bottom:-24px;left:50%;transform:translateX(-50%)}
+.rnode:nth-child(5){bottom:20px;left:-10px}
+.rnode:nth-child(6){top:20px;left:-10px}
+
+/* Center stats */
+.ring-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none}
+.rc-money{font-family:'Playfair Display',serif;font-size:28px;font-weight:400;color:#faf9f7;letter-spacing:-1px}
+.rc-sub{font-size:10px;color:rgba(255,255,255,.4);margin-top:4px}
+.rc-sub strong{color:rgba(255,255,255,.7)}
+
+/* Gear icon */
+.gear-corner{position:absolute;top:56px;right:20px;z-index:10;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.gear-corner svg{width:16px;height:16px;stroke:#faf9f7;fill:none;stroke-width:1.5}
+
+.note{position:absolute;top:50px;right:-130px;background:#22c55e;color:#fff;font-size:10px;font-weight:600;padding:3px 10px;border-radius:10px;white-space:nowrap;z-index:20}
+.note::before{content:'';position:absolute;left:-6px;top:50%;transform:translateY(-50%);border:3px solid transparent;border-right-color:#22c55e}
+</style>
+</head>
+<body>
+<div style="display:flex;flex-direction:column;align-items:center;gap:8px">
+<div class="lab">10 — Ring Menu</div>
+<div class="phone">
+  <div class="overlay">
+    <div class="overlay-title">puff</div>
+    <div class="overlay-hint">tap to light</div>
+  </div>
+  <div class="cig"><div class="ember"></div></div>
+
+  <div class="ring-wrap">
+    <div class="ring">
+      <div class="rnode">
+        <div class="rnode-icon"><svg viewBox="0 0 24 24"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M12 6v6l4 2"/></svg></div>
+        <div class="rnode-label">Breathe</div>
+      </div>
+      <div class="rnode">
+        <div class="rnode-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+        <div class="rnode-label">Log</div>
+      </div>
+      <div class="rnode">
+        <div class="rnode-icon"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
+        <div class="rnode-label">Health</div>
+      </div>
+      <div class="rnode">
+        <div class="rnode-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M16 13H8M16 17H8M10 9H8"/></svg></div>
+        <div class="rnode-label">Journal</div>
+      </div>
+      <div class="rnode">
+        <div class="rnode-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06"/></svg></div>
+        <div class="rnode-label">Settings</div>
+      </div>
+      <div class="rnode">
+        <div class="rnode-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg></div>
+        <div class="rnode-label">Mood</div>
+      </div>
+    </div>
+    <div class="ring-center">
+      <div class="rc-money">$24.50</div>
+      <div class="rc-sub"><strong>7</strong> days &middot; <strong>49</strong> avoided</div>
+    </div>
+  </div>
+
+  <div class="gear-corner">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+  </div>
+  <div class="note">circular hub</div>
+</div>
+</div>
+</body>
+</html>
