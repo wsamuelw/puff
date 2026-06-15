@@ -56,35 +56,54 @@
   const provider = new firebase.auth.GoogleAuthProvider();
   let currentUser = null;
 
-  // Detect mobile browser
+  // Detect mobile and standalone mode
   const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  const isStandalone = window.navigator.standalone === true
+    || window.matchMedia('(display-mode: standalone)').matches;
 
-  // Google sign-in (use redirect on mobile, popup on desktop)
+  // Reset sign-in button to default state
+  function resetSigninButton() {
+    const signinBtn = document.getElementById('signin-google');
+    if (signinBtn) {
+      signinBtn.textContent = 'Sign in with Google';
+      signinBtn.disabled = false;
+    }
+  }
+
+  // Show error on sign-in screen
+  function showSigninError(message) {
+    const signinScreen = document.getElementById('signin-screen');
+    const signinBtn = document.getElementById('signin-google');
+    resetSigninButton();
+    let errorDiv = signinScreen.querySelector('.signin-error');
+    if (!errorDiv) {
+      errorDiv = document.createElement('div');
+      errorDiv.className = 'signin-error';
+      signinBtn.parentNode.insertBefore(errorDiv, signinBtn.nextSibling);
+    }
+    errorDiv.textContent = message;
+  }
+
+  // Google sign-in
   async function signInWithGoogle() {
     try {
-      if (isMobile) {
-        await auth.signInWithRedirect(provider);
-        // Result handled by onAuthStateChanged after redirect
+      if (isMobile && !isStandalone) {
+        // Regular mobile browser — use redirect with timeout
+        const redirectPromise = auth.signInWithRedirect(provider);
+        const timeout = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('Redirect timeout')), 5000)
+        );
+        await Promise.race([redirectPromise, timeout]);
       } else {
+        // Desktop or standalone PWA — use popup
         const result = await auth.signInWithPopup(provider);
         currentUser = result.user;
         return result.user;
       }
     } catch (e) {
       console.warn('Auth failed:', e.message);
-      const signinScreen = document.getElementById('signin-screen');
-      const signinBtn = document.getElementById('signin-google');
-      signinBtn.textContent = 'Sign in with Google';
-      signinBtn.disabled = false;
-      // Show error message
-      let errorDiv = signinScreen.querySelector('.signin-error');
-      if (!errorDiv) {
-        errorDiv = document.createElement('div');
-        errorDiv.className = 'signin-error';
-        signinBtn.parentNode.insertBefore(errorDiv, signinBtn.nextSibling);
-      }
-      errorDiv.textContent = 'Sign-in failed. Tap to try again.';
-      return null;
+      showSigninError('Sign-in failed. Tap to try again.');
+      throw e;
     }
   }
 
@@ -100,9 +119,12 @@
     const signinScreen = document.getElementById('signin-screen');
     if (user) {
       signinScreen.classList.add('hidden');
+      resetSigninButton();
       loadFromCloud();
+      checkSlipUp();
     } else {
       signinScreen.classList.remove('hidden');
+      resetSigninButton();
     }
   });
 
@@ -113,6 +135,7 @@
     }
   }).catch((e) => {
     console.warn('Redirect auth failed:', e.message);
+    showSigninError('Sign-in failed. Please try again.');
   });
 
   // Save to Firestore (also saves to localStorage as offline cache)
@@ -2038,20 +2061,11 @@
     // Clear any previous error
     const errorDiv = document.querySelector('.signin-error');
     if (errorDiv) errorDiv.remove();
-    signInWithGoogle().then(() => {
-      checkSlipUp();
-    }).catch(() => {
-      signinBtn.textContent = 'Sign in with Google';
-      signinBtn.disabled = false;
+    signInWithGoogle().catch(() => {
+      resetSigninButton();
     });
   });
   signinBtn.addEventListener('touchstart', (e) => e.stopPropagation(), { passive: true });
-
-  // Auth state listener handles showing/hiding sign-in screen
-  // Check slip-up on load (if already signed in, onAuthStateChanged will handle it)
-  if (currentUser) {
-    checkSlipUp();
-  }
 
   // --- Craving Journal ---
   const logScreen = document.getElementById('log-screen');
