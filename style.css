@@ -108,7 +108,7 @@ body.light .menu-pill:focus {
 /* ─── Filter Stats ─── */
 .filter-stats {
   position: fixed;
-  bottom: 160px;
+  bottom: 215px;
   left: 0;
   right: 0;
   text-align: center;
@@ -124,7 +124,7 @@ body.light .menu-pill:focus {
 
 @supports (padding-bottom: env(safe-area-inset-bottom)) {
   .filter-stats {
-    bottom: calc(160px + env(safe-area-inset-bottom));
+    bottom: calc(215px + env(safe-area-inset-bottom));
   }
 }
 
