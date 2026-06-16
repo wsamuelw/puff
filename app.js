@@ -480,25 +480,20 @@
       document.getElementById('filter-stats').classList.add('visible');
       document.getElementById('menu-pill').classList.add('visible');
 
-      // Ember crackle sound — filtered noise loop
+      // Ember hum — warm low-frequency tone
       try {
-        const bufLen = audioCtx.sampleRate * 2;
-        const noiseBuf = audioCtx.createBuffer(1, bufLen, audioCtx.sampleRate);
-        const data = noiseBuf.getChannelData(0);
-        for (let i = 0; i < bufLen; i++) data[i] = Math.random() * 2 - 1;
-        const noiseSrc = audioCtx.createBufferSource();
-        noiseSrc.buffer = noiseBuf;
-        noiseSrc.loop = true;
-        const bandpass = audioCtx.createBiquadFilter();
-        bandpass.type = 'bandpass';
-        bandpass.frequency.value = 3000;
-        bandpass.Q.value = 0.5;
+        const humOsc = audioCtx.createOscillator();
+        humOsc.type = 'sine';
+        humOsc.frequency.value = 120;
+        const humFilter = audioCtx.createBiquadFilter();
+        humFilter.type = 'lowpass';
+        humFilter.frequency.value = 300;
         crackleGain = audioCtx.createGain();
         crackleGain.gain.value = 0;
-        noiseSrc.connect(bandpass);
-        bandpass.connect(crackleGain);
+        humOsc.connect(humFilter);
+        humFilter.connect(crackleGain);
         crackleGain.connect(audioCtx.destination);
-        noiseSrc.start();
+        humOsc.start();
 
         // Drag/whoosh sound — low rumble when blowing
         const dragOsc = audioCtx.createOscillator();
@@ -804,7 +799,7 @@
 
     // Update sound volumes based on ember intensity
     if (crackleGain) {
-      crackleGain.gain.value = emberPulse * 0.08;
+      crackleGain.gain.value = emberPulse * 0.04;
     }
     if (dragGain) {
       dragGain.gain.value = blowIntensity * 0.12;
