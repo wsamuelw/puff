@@ -81,13 +81,12 @@ canvas {
   cursor: pointer;
   color: #faf9f7;
   z-index: 50;
-  opacity: 0;
+  opacity: 1;
   transition: opacity 0.5s ease, background 0.2s;
   -webkit-tap-highlight-color: transparent;
-  pointer-events: none;
 }
 
-.menu-pill.visible {
+.menu-pill {
   opacity: 1;
   pointer-events: auto;
 }

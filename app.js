@@ -519,7 +519,6 @@
       promptEl.classList.add('hidden');
       document.getElementById('overlay').style.pointerEvents = 'none';
       document.getElementById('filter-stats').classList.add('visible');
-      document.getElementById('menu-pill').classList.add('visible');
 
       // Ember hum — warm low-frequency tone
       try {
