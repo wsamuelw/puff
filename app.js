@@ -1292,8 +1292,18 @@
   const barStats = document.getElementById('filter-stats');
   const statsMoney = document.getElementById('stats-money');
   const statsStreak = document.getElementById('stats-streak');
-  const statsCigs = document.getElementById('stats-cigs');
-  let _lastMoney = '', _lastStreak = '', _lastCigs = '', _lastVisible = false;
+  const statsLastseen = document.getElementById('stats-lastseen');
+  let _lastMoney = '', _lastStreak = '', _lastSeen = '', _lastVisible = false;
+
+  function formatLastSeen(ms) {
+    const mins = Math.floor(ms / 60000);
+    if (mins < 1) return 'just now';
+    if (mins < 60) return mins + 'm ago';
+    const hours = Math.floor(mins / 60);
+    if (hours < 24) return hours + 'h ago';
+    const days = Math.floor(hours / 24);
+    return days + 'd ago';
+  }
 
   function updateStatsDisplay() {
     if (started && !gameOver && burnProgress > 0) {
@@ -1304,13 +1314,15 @@
       const m = session + ' | ' + total + ' total saved';
       if (m !== _lastMoney) { statsMoney.textContent = m; _lastMoney = m; }
       if (streakCount !== _lastStreak) { statsStreak.textContent = streakCount; _lastStreak = streakCount; }
-      if (totalCigarettesAvoided !== _lastCigs) { statsCigs.textContent = totalCigarettesAvoided; _lastCigs = totalCigarettesAvoided; }
+      const seen = formatLastSeen(Date.now() - lastSessionDate);
+      if (seen !== _lastSeen) { statsLastseen.textContent = seen; _lastSeen = seen; }
     } else if (!started) {
       if (!_lastVisible) { barStats.classList.add('visible'); _lastVisible = true; }
       const m = '$' + totalMoneySaved.toFixed(2) + ' saved';
       if (m !== _lastMoney) { statsMoney.textContent = m; _lastMoney = m; }
       if (streakCount !== _lastStreak) { statsStreak.textContent = streakCount; _lastStreak = streakCount; }
-      if (totalCigarettesAvoided !== _lastCigs) { statsCigs.textContent = totalCigarettesAvoided; _lastCigs = totalCigarettesAvoided; }
+      const seen = formatLastSeen(Date.now() - lastSessionDate);
+      if (seen !== _lastSeen) { statsLastseen.textContent = seen; _lastSeen = seen; }
     } else {
       if (_lastVisible) { barStats.classList.remove('visible'); _lastVisible = false; }
     }
