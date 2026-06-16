@@ -494,7 +494,7 @@
     }
 
     // Realistic proportions: total ~85mm, filter ~30mm (35%), paper ~55mm (65%)
-    CIG.bodyLength = H * 0.30;                    // paper section
+    CIG.bodyLength = H * 0.38;                    // paper section
     CIG.filterHeight = CIG.bodyLength * 0.38;     // filter = 38% of paper (realistic)
     CIG.fullWidth = Math.min(W * 0.075, 28);      // slender diameter
     CIG.tipRadius = CIG.fullWidth / 2;
