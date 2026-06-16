@@ -1300,7 +1300,7 @@
       if (!_lastVisible) { barStats.classList.add('visible'); _lastVisible = true; }
       const sessionCost = burnProgress * CIG_PRICE();
       const session = '$' + sessionCost.toFixed(2);
-      const total = '$' + (totalMoneySaved + sessionCost).toFixed(0);
+      const total = '$' + (totalMoneySaved + sessionCost).toFixed(2);
       const m = session + ' | ' + total + ' total saved';
       if (m !== _lastMoney) { statsMoney.textContent = m; _lastMoney = m; }
       if (streakCount !== _lastStreak) { statsStreak.textContent = streakCount; _lastStreak = streakCount; }
