@@ -129,6 +129,7 @@
     Object.entries(data).forEach(([key, value]) => {
       safeSetItem(key, typeof value === 'object' ? JSON.stringify(value) : String(value));
     });
+    safeSetItem('lastLocalSave', String(Date.now()));
 
     if (!currentUser) return;
     try {
@@ -141,21 +142,47 @@
     }
   }
 
-  // Load from Firestore (falls back to localStorage)
+  // Load from Firestore — merge with local, don't blindly overwrite
   async function loadFromCloud() {
     if (!currentUser) return;
     try {
       const doc = await db.collection('user_data').doc(currentUser.uid).get();
       if (doc.exists) {
         const cloudData = doc.data().data;
-        // Apply cloud data to state
+        const cloudTime = doc.data().updated_at?.toMillis?.() || 0;
+        const localTime = parseInt(safeGetItem('lastLocalSave', '0'));
+
+        // If local data is newer, keep it — next saveToCloud will sync it up
+        if (localTime > cloudTime) {
+          console.log('Local data is newer than cloud, keeping local');
+          return;
+        }
+
+        // Cloud is newer — apply to state
         if (cloudData.quitStreak !== undefined) streakCount = parseInt(cloudData.quitStreak) || 0;
         if (cloudData.moneySaved !== undefined) totalMoneySaved = parseFloat(cloudData.moneySaved) || 0;
         if (cloudData.cigarettesAvoided !== undefined) totalCigarettesAvoided = parseInt(cloudData.cigarettesAvoided) || 0;
         if (cloudData.quitStartDate !== undefined) quitStartDate = parseInt(cloudData.quitStartDate) || 0;
         if (cloudData.cigPrice !== undefined) cigPrice = parseFloat(cloudData.cigPrice) || 1;
         if (cloudData.dailyHabit !== undefined) dailyHabit = parseInt(cloudData.dailyHabit) || 15;
-        if (cloudData.cravingLogs) cravingLogs = cloudData.cravingLogs;
+        if (cloudData.cravingLogs) {
+          // Merge craving logs — keep entries from both sources
+          const localLogs = safeGetItem('cravingLogs', '[]');
+          try {
+            const localArr = JSON.parse(localLogs);
+            const cloudArr = cloudData.cravingLogs || [];
+            const merged = [...localArr, ...cloudArr];
+            const seen = new Set();
+            cravingLogs = merged.filter(log => {
+              const key = log.time + log.trigger;
+              if (seen.has(key)) return false;
+              seen.add(key);
+              return true;
+            });
+          } catch {
+            cravingLogs = cloudData.cravingLogs;
+          }
+        }
         if (cloudData.lastSessionDate !== undefined) lastSessionDate = parseInt(cloudData.lastSessionDate) || 0;
         if (cloudData.darkMode !== undefined) {
           isDark = cloudData.darkMode !== 'false';
@@ -165,6 +192,7 @@
         Object.entries(cloudData).forEach(([key, value]) => {
           safeSetItem(key, typeof value === 'object' ? JSON.stringify(value) : String(value));
         });
+        safeSetItem('lastLocalSave', String(Date.now()));
         updateStatsDisplay();
       }
     } catch (e) {
