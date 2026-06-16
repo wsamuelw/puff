@@ -549,8 +549,14 @@ body.dark .health-back:focus {
 
 .health-header {
   text-align: center;
-  padding: 32px 20px 24px;
+  padding: 60px 20px 24px;
   border-bottom: 1px solid rgba(0,0,0,0.08);
+}
+
+@supports (padding-top: env(safe-area-inset-top)) {
+  .health-header {
+    padding-top: calc(60px + env(safe-area-inset-top));
+  }
 }
 
 body.dark .health-header {
@@ -1073,7 +1079,13 @@ body.dark .log-back:focus {
 
 .log-header {
   text-align: center;
-  padding: 32px 20px 24px;
+  padding: 60px 20px 24px;
+}
+
+@supports (padding-top: env(safe-area-inset-top)) {
+  .log-header {
+    padding-top: calc(60px + env(safe-area-inset-top));
+  }
 }
 
 .log-title {
@@ -1329,7 +1341,13 @@ body.dark .journal-back:focus {
 
 .journal-header {
   text-align: center;
-  padding: 32px 20px 24px;
+  padding: 60px 20px 24px;
+}
+
+@supports (padding-top: env(safe-area-inset-top)) {
+  .journal-header {
+    padding-top: calc(60px + env(safe-area-inset-top));
+  }
 }
 
 .journal-title {
