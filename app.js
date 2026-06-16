@@ -165,7 +165,6 @@
         if (cloudData.cigarettesAvoided !== undefined) totalCigarettesAvoided = parseInt(cloudData.cigarettesAvoided) || 0;
         if (cloudData.quitStartDate !== undefined) quitStartDate = parseInt(cloudData.quitStartDate) || 0;
         if (cloudData.cigPrice !== undefined) cigPrice = parseFloat(cloudData.cigPrice) || 1;
-        if (cloudData.dailyHabit !== undefined) dailyHabit = parseInt(cloudData.dailyHabit) || 15;
         if (cloudData.cravingLogs) {
           // Merge craving logs — keep entries from both sources
           const localLogs = safeGetItem('cravingLogs', '[]');
@@ -1894,10 +1893,9 @@
   const settingsBack = document.getElementById('settings-back');
   const settingsName = document.getElementById('settings-name');
   const settingsPrice = document.getElementById('settings-price');
-  const settingsPackSize = document.getElementById('settings-pack-size');
-  const settingsDaily = document.getElementById('settings-daily');
   const settingsShowStats = document.getElementById('settings-show-stats');
   const settingsReset = document.getElementById('settings-reset');
+  const settingsSignout = document.getElementById('settings-signout');
   const settingsTotalSaved = document.getElementById('settings-total-saved');
   const menuSettings = document.getElementById('menu-settings');
 
@@ -1905,8 +1903,6 @@
   function loadSettings() {
     settingsName.value = safeGetItem('userName', '');
     settingsPrice.value = cigPrice;
-    settingsPackSize.value = safeGetItem('packSize', '20');
-    settingsDaily.value = safeGetItem('dailyHabit', '15');
     settingsShowStats.classList.toggle('active', safeGetItem('showStats', 'true') === 'true');
     settingsDarkMode.classList.toggle('active', isDark);
     settingsTotalSaved.textContent = '$' + totalMoneySaved.toFixed(2);
@@ -1919,8 +1915,6 @@
     saveToCloud({
       userName: settingsName.value.trim(),
       cigPrice: cigPrice,
-      packSize: settingsPackSize.value || '20',
-      dailyHabit: settingsDaily.value || '15',
       showStats: showStats,
       darkMode: isDark
     });
@@ -1942,11 +1936,11 @@
   });
 
   // Sign-out button
-  const menuSignout = document.getElementById('menu-signout');
   const menuUserInfo = document.getElementById('menu-user-info');
-  menuSignout.addEventListener('click', (e) => {
+
+  // Sign out from settings
+  settingsSignout.addEventListener('click', (e) => {
     e.stopPropagation();
-    closeMenu();
     signOut();
   });
 
@@ -1955,10 +1949,8 @@
     if (currentUser) {
       const name = currentUser.displayName;
       menuUserInfo.textContent = name ? name.split(' ')[0] : currentUser.email;
-      menuSignout.style.display = 'block';
     } else {
       menuUserInfo.textContent = '';
-      menuSignout.style.display = 'none';
     }
   }
 
@@ -1994,7 +1986,7 @@
   });
 
   // Auto-save on input change
-  [settingsName, settingsPrice, settingsPackSize, settingsDaily].forEach(el => {
+  [settingsName, settingsPrice].forEach(el => {
     el.addEventListener('change', saveSettings);
   });
 

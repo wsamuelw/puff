@@ -422,23 +422,6 @@ body.dark .menu-user {
   border-top-color: rgba(255,255,255,0.06);
 }
 
-.menu-signout {
-  width: 100%;
-  padding: 12px;
-  background: none;
-  border: none;
-  color: rgba(200,80,80,0.7);
-  font-family: 'Outfit', sans-serif;
-  font-size: 13px;
-  cursor: pointer;
-  transition: color 0.2s;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.menu-signout:hover {
-  color: rgba(200,80,80,1);
-}
-
 .menu-close {
   display: block;
   width: 100%;
@@ -996,6 +979,31 @@ body.dark .settings-toggle::after {
 .settings-reset:hover {
   border-color: rgba(200, 80, 80, 0.5);
   background: rgba(200, 80, 80, 0.1);
+}
+
+.settings-signout {
+  width: 100%;
+  padding: 14px;
+  background: none;
+  border: none;
+  color: rgba(26, 26, 26, 0.4);
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  cursor: pointer;
+  transition: color 0.2s;
+  margin-top: 12px;
+}
+
+body.dark .settings-signout {
+  color: rgba(250, 249, 247, 0.4);
+}
+
+.settings-signout:hover {
+  color: rgba(26, 26, 26, 0.7);
+}
+
+body.dark .settings-signout:hover {
+  color: rgba(250, 249, 247, 0.7);
 }
 
 .settings-version {
