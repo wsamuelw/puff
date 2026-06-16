@@ -85,6 +85,7 @@
   // Google sign-in — always use popup
   async function signInWithGoogle() {
     try {
+      await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
       const result = await auth.signInWithPopup(provider);
       currentUser = result.user;
       return result.user;
