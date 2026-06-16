@@ -2008,9 +2008,23 @@
   // Update tap handler to bail on menu button
   // (Already handled in the existing bail check)
 
+  // Save partial progress when app goes to background or unloads
+  function savePartialProgress() {
+    if (started && !gameOver && burnProgress > 0 && burnProgress < 1) {
+      const partial = burnProgress * CIG_PRICE();
+      totalMoneySaved += partial;
+      burnProgress = 0;
+      gameOver = true;
+      saveToCloud({ moneySaved: totalMoneySaved });
+    }
+  }
+
+  window.addEventListener('beforeunload', savePartialProgress);
+
   // Pause loop when app is in background
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) {
+      savePartialProgress();
       loopRunning = false;
       if (loopFrameId) cancelAnimationFrame(loopFrameId);
     } else if (!gameOver && started) {
