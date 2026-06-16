@@ -117,6 +117,11 @@
       signinScreen.classList.add('hidden');
       resetSigninButton();
       loadFromCloud();
+      // Auto-populate name from Google if not set
+      if (!safeGetItem('userName', '') && user.displayName) {
+        const firstName = user.displayName.split(' ')[0];
+        safeSetItem('userName', firstName);
+      }
       checkSlipUp();
     } else {
       signinScreen.classList.remove('hidden');
@@ -1893,7 +1898,6 @@
   const settingsBack = document.getElementById('settings-back');
   const settingsName = document.getElementById('settings-name');
   const settingsPrice = document.getElementById('settings-price');
-  const settingsShowStats = document.getElementById('settings-show-stats');
   const settingsReset = document.getElementById('settings-reset');
   const settingsSignout = document.getElementById('settings-signout');
   const settingsTotalSaved = document.getElementById('settings-total-saved');
@@ -1903,7 +1907,6 @@
   function loadSettings() {
     settingsName.value = safeGetItem('userName', '');
     settingsPrice.value = cigPrice;
-    settingsShowStats.classList.toggle('active', safeGetItem('showStats', 'true') === 'true');
     settingsDarkMode.classList.toggle('active', isDark);
     settingsTotalSaved.textContent = '$' + totalMoneySaved.toFixed(2);
   }
@@ -1911,19 +1914,11 @@
   // Save settings to cloud + localStorage
   function saveSettings() {
     cigPrice = parseFloat(settingsPrice.value) || 1;
-    const showStats = settingsShowStats.classList.contains('active');
     saveToCloud({
       userName: settingsName.value.trim(),
       cigPrice: cigPrice,
-      showStats: showStats,
       darkMode: isDark
     });
-    // Show/hide stats display
-    if (showStats && started && !gameOver) {
-      barStats.classList.add('visible');
-    } else {
-      barStats.classList.remove('visible');
-    }
   }
 
   // Open settings from menu
@@ -1959,12 +1954,6 @@
     e.stopPropagation();
     saveSettings();
     settingsScreen.classList.remove('visible');
-  });
-
-  // Toggle show stats
-  settingsShowStats.addEventListener('click', (e) => {
-    e.stopPropagation();
-    settingsShowStats.classList.toggle('active');
   });
 
   // Toggle dark mode (in settings)
