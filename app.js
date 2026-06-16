@@ -1298,9 +1298,10 @@
   function updateStatsDisplay() {
     if (started && !gameOver && burnProgress > 0) {
       if (!_lastVisible) { barStats.classList.add('visible'); _lastVisible = true; }
-      const session = '$' + (burnProgress * CIG_PRICE()).toFixed(2);
-      const total = '$' + totalMoneySaved.toFixed(0);
-      const m = session + ' | ' + total + ' total';
+      const sessionCost = burnProgress * CIG_PRICE();
+      const session = '$' + sessionCost.toFixed(2);
+      const total = '$' + (totalMoneySaved + sessionCost).toFixed(0);
+      const m = session + ' | ' + total + ' total saved';
       if (m !== _lastMoney) { statsMoney.textContent = m; _lastMoney = m; }
       if (streakCount !== _lastStreak) { statsStreak.textContent = streakCount; _lastStreak = streakCount; }
       if (totalCigarettesAvoided !== _lastCigs) { statsCigs.textContent = totalCigarettesAvoided; _lastCigs = totalCigarettesAvoided; }
