@@ -1298,13 +1298,15 @@
   function updateStatsDisplay() {
     if (started && !gameOver && burnProgress > 0) {
       if (!_lastVisible) { barStats.classList.add('visible'); _lastVisible = true; }
-      const m = '$' + (burnProgress * CIG_PRICE()).toFixed(2);
+      const session = '$' + (burnProgress * CIG_PRICE()).toFixed(2);
+      const total = '$' + totalMoneySaved.toFixed(0);
+      const m = session + ' | ' + total + ' total';
       if (m !== _lastMoney) { statsMoney.textContent = m; _lastMoney = m; }
       if (streakCount !== _lastStreak) { statsStreak.textContent = streakCount; _lastStreak = streakCount; }
       if (totalCigarettesAvoided !== _lastCigs) { statsCigs.textContent = totalCigarettesAvoided; _lastCigs = totalCigarettesAvoided; }
     } else if (!started) {
       if (!_lastVisible) { barStats.classList.add('visible'); _lastVisible = true; }
-      const m = '$' + totalMoneySaved.toFixed(2);
+      const m = '$' + totalMoneySaved.toFixed(2) + ' saved';
       if (m !== _lastMoney) { statsMoney.textContent = m; _lastMoney = m; }
       if (streakCount !== _lastStreak) { statsStreak.textContent = streakCount; _lastStreak = streakCount; }
       if (totalCigarettesAvoided !== _lastCigs) { statsCigs.textContent = totalCigarettesAvoided; _lastCigs = totalCigarettesAvoided; }
