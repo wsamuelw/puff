@@ -292,7 +292,8 @@
   // Track last app open for "last seen" display
   let lastAppOpen = parseInt(safeGetItem('lastAppOpen', '0'));
   if (!lastAppOpen) lastAppOpen = Date.now();
-  safeSetItem('lastAppOpen', String(Date.now()));
+  // Update AFTER reading — so "last seen" shows the previous visit, not this one
+  setTimeout(() => safeSetItem('lastAppOpen', String(Date.now())), 1000);
 
   // Craving logs (kept for backwards compatibility with existing users)
   let cravingLogs = [];
