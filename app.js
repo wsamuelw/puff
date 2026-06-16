@@ -481,6 +481,18 @@
     canvas.style.height = H + 'px';
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
+    // Position stats just above menu pill
+    const menuPill = document.getElementById('menu-pill');
+    if (menuPill) {
+      const pillRect = menuPill.getBoundingClientRect();
+      const statsEl = document.getElementById('filter-stats');
+      if (statsEl) {
+        const gap = 10;
+        const statsBottom = H - pillRect.top + gap;
+        statsEl.style.bottom = statsBottom + 'px';
+      }
+    }
+
     // Realistic proportions: total ~85mm, filter ~30mm (35%), paper ~55mm (65%)
     CIG.bodyLength = H * 0.30;                    // paper section
     CIG.filterHeight = CIG.bodyLength * 0.38;     // filter = 38% of paper (realistic)
