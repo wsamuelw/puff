@@ -1951,8 +1951,9 @@
 
   // Update user info when menu opens
   function updateMenuUserInfo() {
-    if (currentUser && currentUser.email) {
-      menuUserInfo.textContent = currentUser.email;
+    if (currentUser) {
+      const name = currentUser.displayName;
+      menuUserInfo.textContent = name ? name.split(' ')[0] : currentUser.email;
       menuSignout.style.display = 'block';
     } else {
       menuUserInfo.textContent = '';
