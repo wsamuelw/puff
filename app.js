@@ -1588,7 +1588,6 @@
       e.target.closest('.signin-screen') ||
       e.target.closest('#overlay') ||
       e.target.closest('.menu-overlay') ||
-      e.target.closest('.breath-screen') ||
       e.target.closest('.health-screen') ||
       e.target.closest('.log-screen') ||
       e.target.closest('.journal-screen') ||
@@ -1645,7 +1644,6 @@
       e.target.closest('.menu-pill') ||
       e.target.closest('.signin-screen') ||
       e.target.closest('.menu-overlay') ||
-      e.target.closest('.breath-screen') ||
       e.target.closest('.health-screen') ||
       e.target.closest('.log-screen') ||
       e.target.closest('.journal-screen') ||
@@ -1701,166 +1699,6 @@
   // Cleanup on page unload
   window.addEventListener('beforeunload', cleanupMic);
 
-  // --- Breathing Exercise ---
-  const BREATH_PHASES = [
-    { name: 'inhale', label: 'Breathe in', duration: 4, colour: '#4caf50' },
-    { name: 'hold',   label: 'Hold',        duration: 7, colour: '#fdcb6e' },
-    { name: 'exhale', label: 'Breathe out', duration: 8, colour: '#6c5ce7' },
-  ];
-  const BREATH_CYCLES = 3;
-  const BREATH_MIN_SZ = 70;
-  const BREATH_MAX_SZ = 170;
-
-  let breathRunning = false;
-  let breathCycle = 0;
-  let breathPhaseIdx = 0;
-  let breathPhaseTime = 0;
-  let breathTickInt = null;
-  let breathAnimF = null;
-
-  const breathScreen = document.getElementById('breath-screen');
-  const breathCircle = document.getElementById('breath-circle');
-  const phaseTimerEl = document.getElementById('phase-timer');
-  const breathInstruction = document.getElementById('breath-instruction');
-  const breathSub = document.getElementById('breath-sub');
-  const breathCycles = document.getElementById('breath-cycles');
-  const breathLabel = document.getElementById('breath-label');
-  const breathBack = document.getElementById('breath-back');
-  const breathDone = document.getElementById('breath-done');
-  const breathDoneBack = document.getElementById('breath-done-back');
-
-  function breathSetCircle(sz) {
-    breathCircle.style.width = sz + 'px';
-    breathCircle.style.height = sz + 'px';
-  }
-
-  function breathEase(t) {
-    return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
-  }
-
-  let breathLastTime = 0;
-  function breathAnimCircle(phase, elapsed) {
-    if (!breathRunning) return;
-    const now = performance.now();
-    const dt = breathLastTime ? (now - breathLastTime) / 1000 : 0.016;
-    breathLastTime = now;
-    const newElapsed = elapsed + dt * 1000;
-    const pct = Math.min(newElapsed / (phase.duration * 1000), 1);
-    let sz;
-    if (phase.name === 'inhale') {
-      sz = BREATH_MIN_SZ + (BREATH_MAX_SZ - BREATH_MIN_SZ) * breathEase(pct);
-    } else if (phase.name === 'hold') {
-      sz = BREATH_MAX_SZ + Math.sin(pct * Math.PI * 4) * 4;
-    } else {
-      sz = BREATH_MAX_SZ - (BREATH_MAX_SZ - BREATH_MIN_SZ) * breathEase(pct);
-    }
-    breathSetCircle(sz);
-    breathAnimF = requestAnimationFrame(() => breathAnimCircle(phase, newElapsed));
-  }
-
-  function breathUpdateUI(phase, t) {
-    breathCircle.className = 'breath-circle ' + phase.name;
-    phaseTimerEl.className = 'phase-timer ' + phase.name;
-    phaseTimerEl.textContent = t;
-    breathInstruction.className = 'breath-instruction ' + phase.name;
-    breathInstruction.innerHTML = '<strong>' + phase.label + '</strong>';
-    if (phase.name === 'inhale') {
-      breathSub.textContent = 'Fill your lungs slowly';
-    } else if (phase.name === 'hold') {
-      breathSub.textContent = 'Let the air settle';
-    } else {
-      breathSub.textContent = 'Release everything';
-    }
-    breathCycles.innerHTML = 'Cycle <span>' + (breathCycle + 1) + '</span> of ' + BREATH_CYCLES;
-  }
-
-  function breathNextPhase() {
-    breathPhaseIdx++;
-    if (breathPhaseIdx >= BREATH_PHASES.length) {
-      breathPhaseIdx = 0;
-      breathCycle++;
-      if (breathCycle >= BREATH_CYCLES) {
-        breathFinish();
-        return;
-      }
-    }
-    breathPhaseTime = BREATH_PHASES[breathPhaseIdx].duration;
-    breathUpdateUI(BREATH_PHASES[breathPhaseIdx], breathPhaseTime);
-    cancelAnimationFrame(breathAnimF);
-    breathLastTime = 0;
-    breathAnimCircle(BREATH_PHASES[breathPhaseIdx], 0);
-  }
-
-  function breathTick() {
-    if (!breathRunning) return;
-    breathPhaseTime--;
-    if (breathPhaseTime <= 0) {
-      breathNextPhase();
-    } else {
-      breathUpdateUI(BREATH_PHASES[breathPhaseIdx], breathPhaseTime);
-    }
-  }
-
-  function breathStart() {
-    breathRunning = true;
-    breathCycle = 0;
-    breathPhaseIdx = 0;
-    breathPhaseTime = BREATH_PHASES[0].duration;
-    breathUpdateUI(BREATH_PHASES[0], breathPhaseTime);
-    breathAnimCircle(BREATH_PHASES[0], 0);
-    breathTickInt = setInterval(breathTick, 1000);
-  }
-
-  function breathStop() {
-    breathRunning = false;
-    clearInterval(breathTickInt);
-    cancelAnimationFrame(breathAnimF);
-  }
-
-  function breathFinish() {
-    breathStop();
-    breathDone.classList.add('visible');
-  }
-
-  function breathReset() {
-    breathStop();
-    breathCircle.className = 'breath-circle';
-    phaseTimerEl.className = 'phase-timer';
-    phaseTimerEl.textContent = '4';
-    breathInstruction.className = 'breath-instruction';
-    breathInstruction.innerHTML = '<strong>Breathe in</strong>';
-    breathSub.textContent = 'Fill your lungs slowly';
-    breathCycles.innerHTML = 'Cycle <span>1</span> of ' + BREATH_CYCLES;
-    breathSetCircle(BREATH_MIN_SZ);
-  }
-
-  // Show breathing screen
-  function showBreathing() {
-    breathScreen.classList.add('active');
-    breathStart();
-  }
-
-  // Back button
-  breathBack.addEventListener('click', (e) => {
-    e.stopPropagation();
-    breathStop();
-    breathReset();
-    breathScreen.classList.remove('active');
-  });
-
-  // Done back button
-  breathDoneBack.addEventListener('click', (e) => {
-    e.stopPropagation();
-    breathDone.classList.remove('visible');
-    breathReset();
-    breathScreen.classList.remove('active');
-  });
-
-  // Prevent breathing screen taps from propagating to body
-  breathScreen.addEventListener('click', (e) => e.stopPropagation());
-  breathScreen.addEventListener('touchstart', (e) => e.stopPropagation(), { passive: true });
-  breathDone.addEventListener('click', (e) => e.stopPropagation());
-  breathDone.addEventListener('touchstart', (e) => e.stopPropagation(), { passive: true });
 
   // --- Health Timeline ---
   const healthScreen = document.getElementById('health-screen');
@@ -2329,7 +2167,6 @@
   // --- Menu ---
   const menuOverlay = document.getElementById('menu-overlay');
   const menuClose = document.getElementById('menu-close');
-  const menuBreathing = document.getElementById('menu-breathing');
   const menuLog = document.getElementById('menu-log');
   const menuJournal = document.getElementById('menu-journal');
   const menuHealth = document.getElementById('menu-health');
@@ -2381,12 +2218,6 @@
     }
     menuDragging = false;
   }, { passive: true });
-
-  menuBreathing.addEventListener('click', (e) => {
-    e.stopPropagation();
-    closeMenu();
-    showBreathing();
-  });
 
   menuLog.addEventListener('click', (e) => {
     e.stopPropagation();
@@ -2544,10 +2375,6 @@
       settingsScreen.classList.remove('visible');
       return true;
     }
-    if (breathScreen.classList.contains('active')) {
-      breathScreen.classList.remove('active');
-      return true;
-    }
     if (healthScreen.classList.contains('active')) {
       healthScreen.classList.remove('active');
       return true;
@@ -2572,8 +2399,6 @@
   });
 
   // Push state when opening screens (via menu items)
-  const origShowBreathing = showBreathing;
-  showBreathing = function() { history.pushState({screen:'breath'}, ''); origShowBreathing(); };
   const origShowLogScreen = showLogScreen;
   showLogScreen = function() { history.pushState({screen:'log'}, ''); origShowLogScreen(); };
   const origShowJournalScreen = showJournalScreen;
