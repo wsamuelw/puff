@@ -4,7 +4,7 @@ A virtual cigarette to help you quit smoking. Hold the screen and blow into your
 
 Built as a Progressive Web App (PWA) that runs entirely in the browser. Add it to your home screen for the full experience.
 
-**[Try it live →](https://wsamuelw.github.io/quit-smoking/)**
+**[Try it live →](https://wsamuelw.github.io/puff/)**
 
 ## Features
 
@@ -14,7 +14,8 @@ Built as a Progressive Web App (PWA) that runs entirely in the browser. Add it t
 - **Health timeline** — track your body's recovery milestones
 - **Craving & slip-up logging** — journal your triggers and track patterns
 - **Money saved counter** — see how much you've saved since quitting
-- **Dark & light mode** — toggle with the switch in the top-right
+- **Cross-device sync** — sign in with Google to sync data across devices
+- **Dark & light mode** — toggle in settings
 - **PWA support** — install to home screen, works offline
 
 ## How it works
@@ -53,8 +54,19 @@ Open `http://localhost:8000` in your browser.
 - Vanilla JavaScript (no frameworks)
 - Canvas 2D rendering
 - Web Audio API (mic blow detection)
+- Firebase Authentication (Google sign-in)
+- Firebase Firestore (cross-device data sync)
 - Service Worker (offline support)
 - PWA manifest (home screen install)
+
+## Browser support
+
+| Feature | Safari iOS | Chrome Android | Desktop |
+|---|---|---|---|
+| Core app | ✅ | ✅ | ✅ |
+| Mic blow detection | ✅ | ✅ | ✅ |
+| PWA install | ✅ | ✅ | ✅ |
+| Google sign-in | ✅ | ✅ | ✅ |
 
 ## License
 
