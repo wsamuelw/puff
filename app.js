@@ -2307,6 +2307,7 @@
   menuPill.addEventListener('click', (e) => {
     e.stopPropagation();
     updateMenuUserInfo();
+    history.pushState({screen:'menu'}, '');
     menuOverlay.classList.add('active');
   });
 
@@ -2367,6 +2368,7 @@
     e.stopPropagation();
     closeMenu();
     renderHealthTimeline();
+    history.pushState({screen:'health'}, '');
     healthScreen.classList.add('active');
   });
 
@@ -2418,6 +2420,7 @@
     e.stopPropagation();
     closeMenu();
     loadSettings();
+    history.pushState({screen:'settings'}, '');
     settingsScreen.classList.add('visible');
   });
 
@@ -2497,6 +2500,54 @@
       lastFrameTime = 0;
       loopFrameId = requestAnimationFrame(loop);
     }
+  });
+
+  // --- History management for iOS swipe-back ---
+  function closeActiveScreen() {
+    if (settingsScreen.classList.contains('visible')) {
+      settingsScreen.classList.remove('visible');
+      return true;
+    }
+    if (breathScreen.classList.contains('active')) {
+      breathScreen.classList.remove('active');
+      return true;
+    }
+    if (healthScreen.classList.contains('active')) {
+      healthScreen.classList.remove('active');
+      return true;
+    }
+    if (logScreen.classList.contains('active')) {
+      logScreen.classList.remove('active');
+      return true;
+    }
+    if (journalScreen.classList.contains('active')) {
+      journalScreen.classList.remove('active');
+      return true;
+    }
+    if (menuOverlay.classList.contains('active')) {
+      menuOverlay.classList.remove('active');
+      return true;
+    }
+    return false;
+  }
+
+  window.addEventListener('popstate', () => {
+    closeActiveScreen();
+  });
+
+  // Push state when opening screens (via menu items)
+  const origShowBreathing = showBreathing;
+  showBreathing = function() { history.pushState({screen:'breath'}, ''); origShowBreathing(); };
+  const origShowLogScreen = showLogScreen;
+  showLogScreen = function() { history.pushState({screen:'log'}, ''); origShowLogScreen(); };
+  const origShowJournalScreen = showJournalScreen;
+  showJournalScreen = function() { history.pushState({screen:'journal'}, ''); origShowJournalScreen(); };
+
+  // --- Keyboard avoidance for settings inputs ---
+  document.querySelectorAll('.settings-input').forEach(input => {
+    input.addEventListener('focus', () => {
+      setTimeout(() => input.scrollIntoView({ behavior: 'smooth', block: 'center' }), 300);
+    });
   });
 
   loop();

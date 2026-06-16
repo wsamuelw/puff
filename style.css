@@ -38,6 +38,14 @@ canvas {
   touch-action: none;
 }
 
+/* Theme transition for child elements */
+.menu-content, .settings-card, .slipup-screen, .menu-item, .settings-item,
+.log-trigger, .breath-screen, .health-screen, .log-screen, .journal-screen,
+.menu-close, .settings-reset, .slipup-btn, .breath-done-btn, .log-recent-item,
+.slipup-stat, .slipup-quote-card, .slipup-progress-item, .journal-insight-card {
+  transition: background-color 0.4s, color 0.4s, border-color 0.4s;
+}
+
 /* ─── Overlay ─── */
 #overlay {
   position: fixed;
@@ -62,8 +70,8 @@ canvas {
   bottom: 40px;
   left: 50%;
   transform: translateX(-50%);
-  width: 44px;
-  height: 44px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   background: rgba(255,255,255,0.08);
   border: 1px solid rgba(255,255,255,0.15);
@@ -155,8 +163,8 @@ body.light .fs-money {
 }
 
 .fs-item {
-  font-size: 12px;
-  color: rgba(255,255,255,0.5);
+  font-size: 13px;
+  color: rgba(255,255,255,0.6);
 }
 
 .fs-item span {
@@ -485,7 +493,7 @@ body.dark .menu-close:focus {
   background: #faf9f7;
   z-index: 200;
   opacity: 0;
-  transform: translateY(10px);
+  transform: translateY(20px);
   pointer-events: none;
   transition: opacity 0.4s ease, transform 0.4s ease;
 }
@@ -506,6 +514,9 @@ body.dark .breath-screen {
   left: 0;
   width: 100%;
   padding: 16px 20px;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
   background: rgba(250,249,247,0.92);
   border: none;
   border-bottom: 1px solid rgba(0,0,0,0.08);
@@ -545,7 +556,7 @@ body.dark .breath-back:focus {
 }
 
 .breath-phase-label {
-  font-size: 10px;
+  font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 4px;
   color: rgba(26,26,26,0.3);
@@ -647,7 +658,7 @@ body.dark .breath-sub {
 }
 
 .breath-cycles {
-  font-size: 10px;
+  font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 2px;
   color: rgba(26,26,26,0.25);
@@ -746,7 +757,7 @@ body.dark .breath-done-btn {
   background: #faf9f7;
   z-index: 200;
   opacity: 0;
-  transform: translateY(10px);
+  transform: translateY(20px);
   pointer-events: none;
   transition: opacity 0.4s ease, transform 0.4s ease;
   overflow-y: auto;
@@ -769,6 +780,9 @@ body.dark .health-screen {
   left: 0;
   width: 100%;
   padding: 16px 20px;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
   background: rgba(250,249,247,0.92);
   border: none;
   border-bottom: 1px solid rgba(0,0,0,0.08);
@@ -829,7 +843,7 @@ body.dark .health-timer {
 }
 
 .health-timer-label {
-  font-size: 10px;
+  font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 3px;
   color: rgba(26,26,26,0.45);
@@ -937,7 +951,7 @@ body.dark .health-milestone.current::before {
 }
 
 .health-milestone-time {
-  font-size: 10px;
+  font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 2px;
   color: rgba(26,26,26,0.3);
@@ -1147,7 +1161,7 @@ body.dark .slipup-quote {
 }
 
 .slipup-author {
-  font-size: 10px;
+  font-size: 11px;
   color: rgba(26,26,26,0.45);
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -1186,7 +1200,7 @@ body.dark .slipup-progress-num {
 }
 
 .slipup-progress-lbl {
-  font-size: 10px;
+  font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 1px;
   color: rgba(26,26,26,0.45);
@@ -1237,7 +1251,8 @@ body.dark .slipup-btn {
   font-size: 12px;
   font-family: inherit;
   cursor: pointer;
-  padding: 8px;
+  padding: 14px 24px;
+  min-height: 48px;
   text-transform: uppercase;
   letter-spacing: 1px;
   -webkit-tap-highlight-color: transparent;
@@ -1267,7 +1282,7 @@ body.dark .slipup-secondary:focus {
   background: #faf9f7;
   z-index: 200;
   opacity: 0;
-  transform: translateY(10px);
+  transform: translateY(20px);
   pointer-events: none;
   transition: opacity 0.4s ease, transform 0.4s ease;
   overflow-y: auto;
@@ -1290,6 +1305,9 @@ body.dark .log-screen {
   width: 100%;
   left: 0;
   padding: 16px 20px;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
   background: rgba(250,249,247,0.92);
   border: none;
   border-bottom: 1px solid rgba(0,0,0,0.08);
@@ -1413,7 +1431,7 @@ body.dark .log-trigger-label {
 }
 
 .log-recent-title {
-  font-size: 10px;
+  font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 2px;
   color: rgba(26,26,26,0.3);
@@ -1463,7 +1481,7 @@ body.dark .log-recent-label {
 }
 
 .log-recent-time {
-  font-size: 10px;
+  font-size: 11px;
   color: rgba(26,26,26,0.3);
 }
 
@@ -1520,7 +1538,7 @@ body.dark .log-toast {
   background: #faf9f7;
   z-index: 200;
   opacity: 0;
-  transform: translateY(10px);
+  transform: translateY(20px);
   pointer-events: none;
   transition: opacity 0.4s ease, transform 0.4s ease;
   overflow-y: auto;
@@ -1543,6 +1561,9 @@ body.dark .journal-screen {
   top: 0;
   left: 0;
   padding: 16px 20px;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
   background: rgba(250,249,247,0.92);
   border: none;
   border-bottom: 1px solid rgba(0,0,0,0.08);
@@ -1610,7 +1631,7 @@ body.dark .journal-subtitle {
 }
 
 .journal-chart-title {
-  font-size: 10px;
+  font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 2px;
   color: rgba(26,26,26,0.3);
@@ -1650,7 +1671,7 @@ body.dark .journal-bar {
 }
 
 .journal-bar-count {
-  font-size: 10px;
+  font-size: 11px;
   color: rgba(26,26,26,0.5);
 }
 
@@ -1659,7 +1680,7 @@ body.dark .journal-bar-count {
 }
 
 .journal-bar-day {
-  font-size: 10px;
+  font-size: 11px;
   color: rgba(26,26,26,0.3);
   text-transform: uppercase;
 }
@@ -1673,7 +1694,7 @@ body.dark .journal-bar-day {
 }
 
 .journal-insights-title {
-  font-size: 10px;
+  font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 2px;
   color: rgba(26,26,26,0.3);
@@ -1738,11 +1759,12 @@ body.dark .journal-empty-text {
   inset: 0;
   background: #faf9f7;
   padding: 60px 24px 40px;
+  padding-top: env(safe-area-inset-top, 60px);
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   z-index: 200;
   opacity: 0;
-  transform: translateY(10px);
+  transform: translateY(20px);
   transition: opacity 0.4s ease, transform 0.4s ease;
   pointer-events: none;
 }
@@ -1767,14 +1789,17 @@ body.dark .settings-screen {
   font-family: 'Outfit', sans-serif;
   font-size: 14px;
   cursor: pointer;
-  padding: 8px 0;
+  padding: 12px 0;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
 }
 
 body.dark .settings-back {
   color: #faf9f7;
 }
 
-@supports (padding-top: env(safe-area-inset-top)) {
+@supports (top: env(safe-area-inset-top)) {
   .settings-back {
     top: calc(20px + env(safe-area-inset-top));
   }
@@ -1844,7 +1869,7 @@ body.dark .settings-stats-label {
 }
 
 .settings-section-title {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 1.5px;
@@ -1905,7 +1930,7 @@ body.dark .settings-item-label {
 }
 
 .settings-input {
-  width: 72px;
+  width: 80px;
   padding: 8px 10px;
   background: rgba(26, 26, 26, 0.06);
   border: 1px solid rgba(26, 26, 26, 0.12);
@@ -1956,6 +1981,8 @@ body.dark .settings-unit {
   border-radius: 16px;
   cursor: pointer;
   transition: background 0.3s ease;
+  margin: -6px 0;
+  padding: 6px 0;
 }
 
 body.dark .settings-toggle {
@@ -2010,7 +2037,7 @@ body.dark .settings-toggle::after {
 
 .settings-version {
   text-align: center;
-  font-size: 10px;
+  font-size: 11px;
   color: rgba(26, 26, 26, 0.3);
   margin-top: 24px;
 }
