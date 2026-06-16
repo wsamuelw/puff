@@ -59,30 +59,6 @@
         <div class="menu-drag-handle"></div>
         <h2 class="menu-title">Menu</h2>
         <div class="menu-list">
-          <button class="menu-item" id="menu-log">
-            <span class="menu-item-icon">📝</span>
-            <div class="menu-item-text">
-              <div class="menu-item-label">Log Craving</div>
-              <div class="menu-item-desc">Track triggers</div>
-            </div>
-            <span class="menu-item-arrow">→</span>
-          </button>
-          <button class="menu-item" id="menu-journal">
-            <span class="menu-item-icon">📊</span>
-            <div class="menu-item-text">
-              <div class="menu-item-label">Journal</div>
-              <div class="menu-item-desc">Weekly insights</div>
-            </div>
-            <span class="menu-item-arrow">→</span>
-          </button>
-          <button class="menu-item" id="menu-health">
-            <span class="menu-item-icon">💓</span>
-            <div class="menu-item-text">
-              <div class="menu-item-label">Health</div>
-              <div class="menu-item-desc">Milestones</div>
-            </div>
-            <span class="menu-item-arrow">→</span>
-          </button>
           <button class="menu-item" id="menu-settings">
             <span class="menu-item-icon">⚙️</span>
             <div class="menu-item-text">
@@ -95,63 +71,6 @@
         <div class="menu-user" id="menu-user-info"></div>
         <button class="menu-signout" id="menu-signout">Sign out</button>
         <button class="menu-close" id="menu-close">Close</button>
-      </div>
-    </div>
-
-    <!-- Health Timeline Screen -->
-    <div id="health-screen" class="health-screen" role="dialog" aria-label="Health milestones">
-      <button id="health-back" class="health-back" aria-label="Back to cigarette">← Back</button>
-
-      <div class="health-header">
-        <div class="health-timer" id="health-timer">0:00:00</div>
-        <div class="health-timer-label">smoke free</div>
-        <div class="health-next" id="health-next">Next: <strong>Heart rate normalised</strong> in 20m</div>
-        <div class="health-progress-track">
-          <div class="health-progress-fill" id="health-progress-fill" style="width: 0%"></div>
-        </div>
-      </div>
-
-      <div class="health-timeline" id="health-timeline">
-        <!-- Milestones will be rendered by JS -->
-      </div>
-    </div>
-
-    <!-- Craving Log Screen -->
-    <div id="log-screen" class="log-screen" role="dialog" aria-label="Log craving trigger">
-      <button id="log-back" class="log-back" aria-label="Back to cigarette">← Back</button>
-
-      <div class="log-header">
-        <h2 class="log-title">What triggered this craving?</h2>
-        <p class="log-subtitle">Tap to log. Understanding triggers helps you prepare.</p>
-      </div>
-
-      <div class="log-grid" id="log-grid">
-        <!-- Trigger buttons will be rendered by JS -->
-      </div>
-
-      <div class="log-recent" id="log-recent">
-        <h3 class="log-recent-title">Recent logs</h3>
-        <div class="log-recent-list" id="log-recent-list">
-          <!-- Recent logs will be rendered by JS -->
-        </div>
-      </div>
-    </div>
-
-    <!-- Journal Screen -->
-    <div id="journal-screen" class="journal-screen" role="dialog" aria-label="Craving journal">
-      <button id="journal-back" class="journal-back" aria-label="Back to cigarette">← Back</button>
-
-      <div class="journal-header">
-        <h2 class="journal-title">Craving Journal</h2>
-        <p class="journal-subtitle" id="journal-subtitle">This week's triggers</p>
-      </div>
-
-      <div class="journal-chart" id="journal-chart">
-        <!-- Weekly chart will be rendered by JS -->
-      </div>
-
-      <div class="journal-insights" id="journal-insights">
-        <!-- Insights will be rendered by JS -->
       </div>
     </div>
 

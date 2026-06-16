@@ -294,17 +294,7 @@
   if (!lastAppOpen) lastAppOpen = Date.now();
   safeSetItem('lastAppOpen', String(Date.now()));
 
-  // Craving journal
-  const TRIGGER_CATEGORIES = [
-    { id: 'stress', emoji: '😰', label: 'Stress' },
-    { id: 'boredom', emoji: '😑', label: 'Boredom' },
-    { id: 'meals', emoji: '🍽️', label: 'After meals' },
-    { id: 'social', emoji: '🍺', label: 'Social' },
-    { id: 'coffee', emoji: '☕', label: 'Coffee' },
-    { id: 'driving', emoji: '🚗', label: 'Driving' },
-    { id: 'morning', emoji: '😴', label: 'Waking up' },
-    { id: 'other', emoji: '💭', label: 'Other' },
-  ];
+  // Craving logs (kept for backwards compatibility with existing users)
   let cravingLogs = [];
   try {
     cravingLogs = JSON.parse(safeGetItem('cravingLogs', '[]'));
@@ -1604,9 +1594,6 @@
       e.target.closest('.signin-screen') ||
       e.target.closest('#overlay') ||
       e.target.closest('.menu-overlay') ||
-      e.target.closest('.health-screen') ||
-      e.target.closest('.log-screen') ||
-      e.target.closest('.journal-screen') ||
       e.target.closest('.slipup-screen') ||
       e.target.closest('.settings-screen')
     )) return;
@@ -1660,9 +1647,6 @@
       e.target.closest('.menu-pill') ||
       e.target.closest('.signin-screen') ||
       e.target.closest('.menu-overlay') ||
-      e.target.closest('.health-screen') ||
-      e.target.closest('.log-screen') ||
-      e.target.closest('.journal-screen') ||
       e.target.closest('.slipup-screen') ||
       e.target.closest('.settings-screen')
     );
@@ -1716,97 +1700,6 @@
   window.addEventListener('beforeunload', cleanupMic);
 
 
-  // --- Health Timeline ---
-  const healthScreen = document.getElementById('health-screen');
-  const healthBack = document.getElementById('health-back');
-  const healthTimerEl = document.getElementById('health-timer');
-  const healthNextEl = document.getElementById('health-next');
-  const healthProgressFill = document.getElementById('health-progress-fill');
-  const healthTimeline = document.getElementById('health-timeline');
-
-  // Format time remaining until next milestone
-  function formatTimeRemaining(seconds) {
-    if (seconds <= 0) return '';
-    const days = Math.floor(seconds / 86400);
-    const hours = Math.floor((seconds % 86400) / 3600);
-    const mins = Math.floor((seconds % 3600) / 60);
-    if (days > 0) return `${days}d ${hours}h`;
-    if (hours > 0) return `${hours}h ${mins}m`;
-    return `${mins}m`;
-  }
-
-  // Format milestone time label
-  function formatMilestoneTime(seconds) {
-    if (seconds < 3600) return `${Math.floor(seconds / 60)} minutes`;
-    if (seconds < 86400) return `${Math.floor(seconds / 3600)} hours`;
-    const days = Math.floor(seconds / 86400);
-    if (days < 30) return `${days} day${days > 1 ? 's' : ''}`;
-    if (days < 365) return `${Math.floor(days / 30)} month${Math.floor(days / 30) > 1 ? 's' : ''}`;
-    return `${Math.floor(days / 365)} year${Math.floor(days / 365) > 1 ? 's' : ''}`;
-  }
-
-  // Render the health timeline
-  function renderHealthTimeline() {
-    const elapsed = quitStartDate ? (Date.now() - quitStartDate) / 1000 : 0;
-
-    // Update timer
-    healthTimerEl.textContent = formatQuitDuration();
-
-    // Find next milestone and update progress
-    let nextMilestone = null;
-    let progress = 0;
-    for (let i = 0; i < HEALTH_MILESTONES.length; i++) {
-      const m = HEALTH_MILESTONES[i];
-      if (elapsed < m.time) {
-        nextMilestone = m;
-        const prevTime = i > 0 ? HEALTH_MILESTONES[i - 1].time : 0;
-        progress = ((elapsed - prevTime) / (m.time - prevTime)) * 100;
-        break;
-      }
-    }
-
-    if (nextMilestone) {
-      const remaining = nextMilestone.time - elapsed;
-      healthNextEl.innerHTML = `Next: <strong>${nextMilestone.title}</strong> in ${formatTimeRemaining(remaining)}`;
-      healthProgressFill.style.width = Math.min(100, Math.max(0, progress)) + '%';
-    } else {
-      healthNextEl.innerHTML = '<strong>All milestones reached!</strong>';
-      healthProgressFill.style.width = '100%';
-    }
-
-    // Render milestones
-    healthTimeline.innerHTML = '';
-    HEALTH_MILESTONES.forEach((m, i) => {
-      const div = document.createElement('div');
-      div.className = 'health-milestone';
-
-      if (elapsed >= m.time) {
-        div.classList.add('reached');
-      } else if (i === 0 || elapsed >= HEALTH_MILESTONES[i - 1].time) {
-        div.classList.add('current');
-      } else {
-        div.classList.add('future');
-      }
-
-      div.innerHTML = `
-        <div class="health-milestone-time">${formatMilestoneTime(m.time)}</div>
-        <div class="health-milestone-title">${m.title}</div>
-        <div class="health-milestone-desc">${m.desc}</div>
-        <div class="health-milestone-icon">${m.icon}</div>
-      `;
-      healthTimeline.appendChild(div);
-    });
-  }
-
-  // Back button
-  healthBack.addEventListener('click', (e) => {
-    e.stopPropagation();
-    healthScreen.classList.remove('active');
-  });
-
-  // Prevent health screen taps from propagating to body
-  healthScreen.addEventListener('click', (e) => e.stopPropagation());
-  healthScreen.addEventListener('touchstart', (e) => e.stopPropagation(), { passive: true });
 
   // --- Slip-up Handling ---
   const slipupWelcome = document.getElementById('slipup-welcome');
@@ -1942,250 +1835,10 @@
   });
   signinBtn.addEventListener('touchstart', (e) => e.stopPropagation(), { passive: true });
 
-  // --- Craving Journal ---
-  const logScreen = document.getElementById('log-screen');
-  const logBack = document.getElementById('log-back');
-  const logGrid = document.getElementById('log-grid');
-  const logRecentList = document.getElementById('log-recent-list');
-  const journalScreen = document.getElementById('journal-screen');
-  const journalBack = document.getElementById('journal-back');
-  const journalSubtitle = document.getElementById('journal-subtitle');
-  const journalChart = document.getElementById('journal-chart');
-  const journalInsights = document.getElementById('journal-insights');
-
-  // Create toast element for log confirmation
-  const logToast = document.createElement('div');
-  logToast.className = 'log-toast';
-  logToast.textContent = 'Logged!';
-  document.body.appendChild(logToast);
-
-  // Format time ago
-  function timeAgo(timestamp) {
-    const seconds = Math.floor((Date.now() - timestamp) / 1000);
-    if (seconds < 60) return 'just now';
-    const minutes = Math.floor(seconds / 60);
-    if (minutes < 60) return `${minutes}m ago`;
-    const hours = Math.floor(minutes / 60);
-    if (hours < 24) return `${hours}h ago`;
-    const days = Math.floor(hours / 24);
-    return `${days}d ago`;
-  }
-
-  // Get day name from timestamp
-  function getDayName(timestamp) {
-    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    return days[new Date(timestamp).getDay()];
-  }
-
-  // Render log grid
-  function renderLogGrid() {
-    logGrid.innerHTML = '';
-    TRIGGER_CATEGORIES.forEach(cat => {
-      const btn = document.createElement('button');
-      btn.className = 'log-trigger';
-      btn.innerHTML = `
-        <span class="log-trigger-emoji">${cat.emoji}</span>
-        <span class="log-trigger-label">${cat.label}</span>
-      `;
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        logCraving(cat.id);
-      });
-      logGrid.appendChild(btn);
-    });
-  }
-
-  // Render recent logs
-  function renderRecentLogs() {
-    const recent = cravingLogs.slice(-5).reverse();
-    if (recent.length === 0) {
-      logRecentList.innerHTML = '<div class="log-recent-empty">No cravings logged yet</div>';
-      return;
-    }
-    logRecentList.innerHTML = '';
-    recent.forEach(log => {
-      const cat = TRIGGER_CATEGORIES.find(c => c.id === log.trigger);
-      if (!cat) return;
-      const div = document.createElement('div');
-      div.className = 'log-recent-item';
-      div.innerHTML = `
-        <span class="log-recent-emoji">${cat.emoji}</span>
-        <div class="log-recent-info">
-          <div class="log-recent-label">${cat.label}</div>
-          <div class="log-recent-time">${timeAgo(log.time)}</div>
-        </div>
-      `;
-      logRecentList.appendChild(div);
-    });
-  }
-
-  // Log a craving
-  function logCraving(triggerId) {
-    cravingLogs.push({
-      trigger: triggerId,
-      time: Date.now(),
-    });
-    saveToCloud({ cravingLogs: cravingLogs });
-
-    // Show toast
-    logToast.classList.add('visible');
-    setTimeout(() => logToast.classList.remove('visible'), 1500);
-
-    // Refresh recent logs
-    renderRecentLogs();
-  }
-
-  // Render weekly chart
-  function renderJournalChart() {
-    const now = Date.now();
-    const weekAgo = now - 7 * 24 * 60 * 60 * 1000;
-    const weekLogs = cravingLogs.filter(l => l.time > weekAgo);
-
-    // Count by day
-    const dayCounts = {};
-    const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    for (let i = 6; i >= 0; i--) {
-      const d = new Date(now - i * 24 * 60 * 60 * 1000);
-      const key = d.toDateString();
-      dayCounts[key] = { count: 0, name: dayNames[d.getDay()] };
-    }
-    weekLogs.forEach(log => {
-      const key = new Date(log.time).toDateString();
-      if (dayCounts[key]) dayCounts[key].count++;
-    });
-
-    // Find max for scaling
-    const maxCount = Math.max(1, ...Object.values(dayCounts).map(d => d.count));
-
-    // Render
-    let html = '<div class="journal-chart-title">Cravings this week</div>';
-    html += '<div class="journal-bars">';
-    Object.values(dayCounts).forEach(day => {
-      const height = Math.max(4, (day.count / maxCount) * 100);
-      html += `
-        <div class="journal-bar-col">
-          <div class="journal-bar-count">${day.count}</div>
-          <div class="journal-bar" style="height: ${height}px"></div>
-          <div class="journal-bar-day">${day.name}</div>
-        </div>
-      `;
-    });
-    html += '</div>';
-    journalChart.innerHTML = html;
-  }
-
-  // Render insights
-  function renderJournalInsights() {
-    if (cravingLogs.length === 0) {
-      journalInsights.innerHTML = `
-        <div class="journal-empty">
-          <div class="journal-empty-icon">📝</div>
-          <div class="journal-empty-text">Log cravings to see patterns here</div>
-        </div>
-      `;
-      return;
-    }
-
-    // Count by trigger
-    const triggerCounts = {};
-    cravingLogs.forEach(log => {
-      triggerCounts[log.trigger] = (triggerCounts[log.trigger] || 0) + 1;
-    });
-
-    // Sort by count
-    const sorted = Object.entries(triggerCounts)
-      .sort((a, b) => b[1] - a[1]);
-
-    // Top trigger
-    const topTrigger = sorted[0];
-    const topCat = TRIGGER_CATEGORIES.find(c => c.id === topTrigger[0]);
-
-    // Recent trend (last 7 days vs previous 7 days)
-    const now = Date.now();
-    const last7 = cravingLogs.filter(l => l.time > now - 7 * 24 * 60 * 60 * 1000).length;
-    const prev7 = cravingLogs.filter(l => l.time > now - 14 * 24 * 60 * 60 * 1000 && l.time <= now - 7 * 24 * 60 * 60 * 1000).length;
-
-    let html = '<div class="journal-insights-title">Insights</div>';
-
-    // Top trigger insight (escape user data to prevent XSS)
-    const safeTriggerLabel = topCat ? topCat.label : 'Unknown';
-    html += `
-      <div class="journal-insight-card">
-        <div class="journal-insight-text">
-          Your #1 trigger is <strong>${safeTriggerLabel}</strong> (${topTrigger[1]} times). Try preparing a coping response next time.
-        </div>
-      </div>
-    `;
-
-    // Trend insight
-    if (last7 < prev7) {
-      html += `
-        <div class="journal-insight-card">
-          <div class="journal-insight-text">
-            Cravings are <strong>decreasing</strong>. ${last7} this week vs ${prev7} last week. Keep going.
-          </div>
-        </div>
-      `;
-    } else if (last7 > prev7) {
-      html += `
-        <div class="journal-insight-card">
-          <div class="journal-insight-text">
-            Cravings increased this week (${last7} vs ${prev7}). This is normal. Check your triggers.
-          </div>
-        </div>
-      `;
-    }
-
-    // Total logged
-    html += `
-      <div class="journal-insight-card">
-        <div class="journal-insight-text">
-          You've logged <strong>${cravingLogs.length}</strong> cravings total. Each log is a step toward understanding yourself.
-        </div>
-      </div>
-    `;
-
-    journalInsights.innerHTML = html;
-  }
-
-  // Show log screen
-  function showLogScreen() {
-    renderLogGrid();
-    renderRecentLogs();
-    logScreen.classList.add('active');
-  }
-
-  // Back button
-  logBack.addEventListener('click', (e) => {
-    e.stopPropagation();
-    logScreen.classList.remove('active');
-  });
-
-  // Show journal screen
-  function showJournalScreen() {
-    renderJournalChart();
-    renderJournalInsights();
-    journalScreen.classList.add('active');
-  }
-
-  // Back button
-  journalBack.addEventListener('click', (e) => {
-    e.stopPropagation();
-    journalScreen.classList.remove('active');
-  });
-
-  // Prevent screen taps from propagating
-  logScreen.addEventListener('click', (e) => e.stopPropagation());
-  logScreen.addEventListener('touchstart', (e) => e.stopPropagation(), { passive: true });
-  journalScreen.addEventListener('click', (e) => e.stopPropagation());
-  journalScreen.addEventListener('touchstart', (e) => e.stopPropagation(), { passive: true });
 
   // --- Menu ---
   const menuOverlay = document.getElementById('menu-overlay');
   const menuClose = document.getElementById('menu-close');
-  const menuLog = document.getElementById('menu-log');
-  const menuJournal = document.getElementById('menu-journal');
-  const menuHealth = document.getElementById('menu-health');
 
   function closeMenu() {
     menuOverlay.classList.remove('active');
@@ -2234,26 +1887,6 @@
     }
     menuDragging = false;
   }, { passive: true });
-
-  menuLog.addEventListener('click', (e) => {
-    e.stopPropagation();
-    closeMenu();
-    showLogScreen();
-  });
-
-  menuJournal.addEventListener('click', (e) => {
-    e.stopPropagation();
-    closeMenu();
-    showJournalScreen();
-  });
-
-  menuHealth.addEventListener('click', (e) => {
-    e.stopPropagation();
-    closeMenu();
-    renderHealthTimeline();
-    history.pushState({screen:'health'}, '');
-    healthScreen.classList.add('active');
-  });
 
   // --- Settings Screen ---
   const settingsScreen = document.getElementById('settings-screen');
@@ -2391,18 +2024,6 @@
       settingsScreen.classList.remove('visible');
       return true;
     }
-    if (healthScreen.classList.contains('active')) {
-      healthScreen.classList.remove('active');
-      return true;
-    }
-    if (logScreen.classList.contains('active')) {
-      logScreen.classList.remove('active');
-      return true;
-    }
-    if (journalScreen.classList.contains('active')) {
-      journalScreen.classList.remove('active');
-      return true;
-    }
     if (menuOverlay.classList.contains('active')) {
       menuOverlay.classList.remove('active');
       return true;
@@ -2415,10 +2036,6 @@
   });
 
   // Push state when opening screens (via menu items)
-  const origShowLogScreen = showLogScreen;
-  showLogScreen = function() { history.pushState({screen:'log'}, ''); origShowLogScreen(); };
-  const origShowJournalScreen = showJournalScreen;
-  showJournalScreen = function() { history.pushState({screen:'journal'}, ''); origShowJournalScreen(); };
 
   // --- Keyboard avoidance for settings inputs ---
   document.querySelectorAll('.settings-input').forEach(input => {
