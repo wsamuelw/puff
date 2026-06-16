@@ -2046,7 +2046,7 @@
   // Push state when opening screens (via menu items)
 
   // --- Keyboard avoidance for settings inputs ---
-  document.querySelectorAll('.settings-input').forEach(input => {
+  document.querySelectorAll('.settings-card-input').forEach(input => {
     input.addEventListener('focus', () => {
       setTimeout(() => input.scrollIntoView({ behavior: 'smooth', block: 'center' }), 300);
     });

@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Puff — Settings Design Options</title>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Outfit', sans-serif;
+    background: #0a0a0a;
+    color: #faf9f7;
+    padding: 40px 20px;
+  }
+  .intro {
+    text-align: center;
+    max-width: 700px;
+    margin: 0 auto 60px;
+  }
+  .intro h1 {
+    font-family: 'Libre Baskerville', serif;
+    font-size: 36px;
+    font-style: italic;
+    margin-bottom: 12px;
+  }
+  .intro p {
+    color: rgba(250,249,247,0.5);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .designs {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 80px;
+    max-width: 420px;
+    margin: 0 auto;
+  }
+  .design-label {
+    font-family: 'Libre Baskerville', serif;
+    font-size: 20px;
+    font-style: italic;
+    margin-bottom: 8px;
+  }
+  .design-desc {
+    font-size: 12px;
+    color: rgba(250,249,247,0.4);
+    margin-bottom: 24px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+  .phone {
+    width: 100%;
+    aspect-ratio: 390/844;
+    border-radius: 40px;
+    overflow: hidden;
+    border: 2px solid rgba(250,249,247,0.1);
+    position: relative;
+  }
+
+  /* ═══════════════════════════════════════
+     DESIGN 1 — WHISPER (Ultra-minimal)
+     ═══════════════════════════════════════ */
+  .d1 {
+    background: #faf9f7;
+    color: #1a1a1a;
+    padding: 60px 28px 40px;
+    font-family: 'Outfit', sans-serif;
+  }
+  .d1-back {
+    font-size: 12px;
+    color: rgba(26,26,26,0.35);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 48px;
+  }
+  .d1-title {
+    font-family: 'Libre Baskerville', serif;
+    font-size: 28px;
+    font-weight: 400;
+    margin-bottom: 40px;
+  }
+  .d1-group {
+    margin-bottom: 36px;
+  }
+  .d1-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: rgba(26,26,26,0.3);
+    margin-bottom: 16px;
+  }
+  .d1-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+  }
+  .d1-row:last-child { border-bottom: none; }
+  .d1-row-label {
+    font-size: 15px;
+    font-weight: 400;
+  }
+  .d1-row-value {
+    font-size: 15px;
+    color: rgba(26,26,26,0.4);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .d1-input {
+    width: 80px;
+    padding: 6px 0;
+    border: none;
+    background: transparent;
+    font-family: 'Outfit', sans-serif;
+    font-size: 15px;
+    text-align: right;
+    color: #1a1a1a;
+    outline: none;
+  }
+  .d1-toggle {
+    width: 44px;
+    height: 26px;
+    border-radius: 13px;
+    background: rgba(0,0,0,0.1);
+    position: relative;
+    cursor: pointer;
+  }
+  .d1-toggle::after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+  }
+  .d1-toggle.on { background: #1a1a1a; }
+  .d1-toggle.on::after { left: 21px; }
+  .d1-signout {
+    display: block;
+    width: 100%;
+    padding: 16px;
+    border: none;
+    background: none;
+    font-family: 'Outfit', sans-serif;
+    font-size: 13px;
+    color: rgba(26,26,26,0.3);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    cursor: pointer;
+    margin-top: 20px;
+  }
+  .d1-reset {
+    display: block;
+    width: 100%;
+    padding: 16px;
+    border: 1px solid rgba(200,80,80,0.2);
+    background: none;
+    font-family: 'Outfit', sans-serif;
+    font-size: 13px;
+    color: rgba(200,80,80,0.6);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    cursor: pointer;
+    margin-top: 12px;
+  }
+
+  /* ═══════════════════════════════════════
+     DESIGN 2 — AMBER (Warm accent)
+     ═══════════════════════════════════════ */
+  .d2 {
+    background: #1a1a1a;
+    padding: 60px 24px 40px;
+    font-family: 'Outfit', sans-serif;
+  }
+  .d2-back {
+    font-size: 12px;
+    color: rgba(250,249,247,0.3);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 48px;
+  }
+  .d2-title {
+    font-family: 'Libre Baskerville', serif;
+    font-size: 28px;
+    font-weight: 400;
+    color: #d4a574;
+    margin-bottom: 8px;
+  }
+  .d2-sub {
+    font-size: 12px;
+    color: rgba(250,249,247,0.3);
+    margin-bottom: 40px;
+  }
+  .d2-card {
+    background: rgba(250,249,247,0.04);
+    border: 1px solid rgba(212,165,116,0.15);
+    border-radius: 0;
+    padding: 4px 20px;
+    margin-bottom: 20px;
+  }
+  .d2-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 0;
+    border-bottom: 1px solid rgba(250,249,247,0.04);
+  }
+  .d2-row:last-child { border-bottom: none; }
+  .d2-row-label {
+    font-size: 14px;
+    color: rgba(250,249,247,0.8);
+  }
+  .d2-row-value {
+    font-size: 14px;
+    color: rgba(250,249,247,0.3);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .d2-input {
+    width: 80px;
+    padding: 6px 0;
+    border: none;
+    background: transparent;
+    font-family: 'Outfit', sans-serif;
+    font-size: 14px;
+    text-align: right;
+    color: #d4a574;
+    outline: none;
+  }
+  .d2-toggle {
+    width: 44px;
+    height: 26px;
+    border-radius: 13px;
+    background: rgba(250,249,247,0.1);
+    position: relative;
+    cursor: pointer;
+  }
+  .d2-toggle::after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: rgba(250,249,247,0.3);
+  }
+  .d2-toggle.on { background: #d4a574; }
+  .d2-toggle.on::after { left: 21px; background: #1a1a1a; }
+  .d2-signout {
+    display: block;
+    width: 100%;
+    padding: 16px;
+    border: none;
+    background: none;
+    font-family: 'Outfit', sans-serif;
+    font-size: 12px;
+    color: rgba(250,249,247,0.25);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    cursor: pointer;
+    margin-top: 16px;
+  }
+  .d2-reset {
+    display: block;
+    width: 100%;
+    padding: 16px;
+    border: 1px solid rgba(200,80,80,0.2);
+    background: none;
+    font-family: 'Outfit', sans-serif;
+    font-size: 12px;
+    color: rgba(200,80,80,0.5);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    cursor: pointer;
+    margin-top: 12px;
+  }
+
+  /* ═══════════════════════════════════════
+     DESIGN 3 — CARDS (Segmented)
+     ═══════════════════════════════════════ */
+  .d3 {
+    background: #faf9f7;
+    color: #1a1a1a;
+    padding: 60px 20px 40px;
+    font-family: 'Outfit', sans-serif;
+  }
+  .d3-back {
+    font-size: 12px;
+    color: rgba(26,26,26,0.35);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 48px;
+    padding-left: 4px;
+  }
+  .d3-title {
+    font-family: 'Libre Baskerville', serif;
+    font-size: 28px;
+    font-weight: 400;
+    margin-bottom: 32px;
+    padding-left: 4px;
+  }
+  .d3-card {
+    background: #fff;
+    border: 1px solid rgba(0,0,0,0.06);
+    padding: 20px;
+    margin-bottom: 12px;
+  }
+  .d3-card-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: rgba(26,26,26,0.3);
+    margin-bottom: 8px;
+  }
+  .d3-card-value {
+    font-family: 'Libre Baskerville', serif;
+    font-size: 24px;
+    font-weight: 400;
+  }
+  .d3-card-input {
+    font-family: 'Libre Baskerville', serif;
+    font-size: 24px;
+    font-weight: 400;
+    border: none;
+    background: transparent;
+    color: #1a1a1a;
+    outline: none;
+    width: 100%;
+  }
+  .d3-toggle-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    background: #fff;
+    border: 1px solid rgba(0,0,0,0.06);
+    margin-bottom: 12px;
+  }
+  .d3-toggle-label {
+    font-size: 14px;
+  }
+  .d3-toggle {
+    width: 44px;
+    height: 26px;
+    border-radius: 13px;
+    background: rgba(0,0,0,0.1);
+    position: relative;
+    cursor: pointer;
+  }
+  .d3-toggle::after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+  }
+  .d3-toggle.on { background: #1a1a1a; }
+  .d3-toggle.on::after { left: 21px; }
+  .d3-bottom {
+    margin-top: 24px;
+    padding-left: 4px;
+  }
+  .d3-signout {
+    display: block;
+    width: 100%;
+    padding: 14px 0;
+    border: none;
+    background: none;
+    font-family: 'Outfit', sans-serif;
+    font-size: 13px;
+    color: rgba(26,26,26,0.3);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    cursor: pointer;
+    text-align: left;
+  }
+  .d3-reset {
+    display: block;
+    width: 100%;
+    padding: 14px 0;
+    border: none;
+    background: none;
+    font-family: 'Outfit', sans-serif;
+    font-size: 13px;
+    color: rgba(200,80,80,0.5);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    cursor: pointer;
+    text-align: left;
+  }
+
+  /* ═══════════════════════════════════════
+     DESIGN 4 — EDITORIAL (Magazine feel)
+     ═══════════════════════════════════════ */
+  .d4 {
+    background: #1a1a1a;
+    padding: 60px 28px 40px;
+    font-family: 'Outfit', sans-serif;
+  }
+  .d4-back {
+    font-size: 12px;
+    color: rgba(250,249,247,0.3);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 48px;
+  }
+  .d4-title {
+    font-family: 'Libre Baskerville', serif;
+    font-size: 32px;
+    font-weight: 400;
+    font-style: italic;
+    margin-bottom: 40px;
+    line-height: 1.2;
+  }
+  .d4-section {
+    margin-bottom: 36px;
+  }
+  .d4-section-num {
+    font-family: 'Libre Baskerville', serif;
+    font-size: 48px;
+    font-weight: 400;
+    color: rgba(250,249,247,0.06);
+    line-height: 1;
+    margin-bottom: -12px;
+  }
+  .d4-section-title {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    color: rgba(250,249,247,0.3);
+    margin-bottom: 20px;
+  }
+  .d4-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(250,249,247,0.06);
+  }
+  .d4-row:last-child { border-bottom: none; }
+  .d4-row-label {
+    font-size: 14px;
+    color: rgba(250,249,247,0.7);
+  }
+  .d4-row-value {
+    font-size: 14px;
+    color: rgba(250,249,247,0.25);
+  }
+  .d4-input {
+    width: 80px;
+    padding: 6px 0;
+    border: none;
+    background: transparent;
+    font-family: 'Outfit', sans-serif;
+    font-size: 14px;
+    text-align: right;
+    color: rgba(250,249,247,0.7);
+    outline: none;
+  }
+  .d4-toggle {
+    width: 44px;
+    height: 26px;
+    border-radius: 13px;
+    background: rgba(250,249,247,0.08);
+    position: relative;
+    cursor: pointer;
+  }
+  .d4-toggle::after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: rgba(250,249,247,0.2);
+  }
+  .d4-toggle.on { background: rgba(250,249,247,0.2); }
+  .d4-toggle.on::after { left: 21px; background: #faf9f7; }
+  .d4-divider {
+    width: 40px;
+    height: 1px;
+    background: rgba(250,249,247,0.1);
+    margin: 32px 0;
+  }
+  .d4-signout {
+    font-size: 12px;
+    color: rgba(250,249,247,0.2);
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    cursor: pointer;
+  }
+  .d4-reset {
+    font-size: 12px;
+    color: rgba(200,80,80,0.4);
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    cursor: pointer;
+    margin-top: 16px;
+  }
+
+  /* ═══════════════════════════════════════
+     DESIGN 5 — FLOATING (Layered depth)
+     ═══════════════════════════════════════ */
+  .d5 {
+    background: #f5f3ef;
+    color: #1a1a1a;
+    padding: 60px 20px 40px;
+    font-family: 'Outfit', sans-serif;
+  }
+  .d5-back {
+    font-size: 12px;
+    color: rgba(26,26,26,0.3);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 48px;
+    padding-left: 8px;
+  }
+  .d5-title {
+    font-family: 'Libre Baskerville', serif;
+    font-size: 28px;
+    font-weight: 400;
+    margin-bottom: 32px;
+    padding-left: 8px;
+  }
+  .d5-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 4px 20px;
+    margin-bottom: 16px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+  }
+  .d5-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 0;
+    border-bottom: 1px solid rgba(0,0,0,0.04);
+  }
+  .d5-row:last-child { border-bottom: none; }
+  .d5-row-label {
+    font-size: 14px;
+    font-weight: 400;
+  }
+  .d5-row-value {
+    font-size: 14px;
+    color: rgba(26,26,26,0.3);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .d5-input {
+    width: 80px;
+    padding: 6px 0;
+    border: none;
+    background: transparent;
+    font-family: 'Outfit', sans-serif;
+    font-size: 14px;
+    text-align: right;
+    color: #1a1a1a;
+    outline: none;
+  }
+  .d5-toggle {
+    width: 44px;
+    height: 26px;
+    border-radius: 13px;
+    background: rgba(0,0,0,0.08);
+    position: relative;
+    cursor: pointer;
+  }
+  .d5-toggle::after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  }
+  .d5-toggle.on { background: #1a1a1a; }
+  .d5-toggle.on::after { left: 21px; }
+  .d5-bottom {
+    margin-top: 24px;
+    padding: 0 8px;
+  }
+  .d5-signout {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    border: none;
+    background: rgba(0,0,0,0.03);
+    border-radius: 12px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 13px;
+    color: rgba(26,26,26,0.35);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    cursor: pointer;
+    margin-bottom: 8px;
+  }
+  .d5-reset {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    border: none;
+    background: rgba(200,80,80,0.06);
+    border-radius: 12px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 13px;
+    color: rgba(200,80,80,0.6);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    cursor: pointer;
+  }
+  .d5-version {
+    text-align: center;
+    font-size: 10px;
+    color: rgba(26,26,26,0.2);
+    margin-top: 20px;
+  }
+</style>
+</head>
+<body>
+
+<div class="intro">
+  <h1>Settings — 5 Directions</h1>
+  <p>Each design aligns with Puff's editorial aesthetic. Tap a toggle to interact.</p>
+</div>
+
+<div class="designs">
+
+  <!-- ═══ DESIGN 1 — WHISPER ═══ -->
+  <div>
+    <div class="design-label">1. Whisper</div>
+    <div class="design-desc">Ultra-minimal · Light · No borders</div>
+    <div class="phone">
+      <div class="d1">
+        <div class="d1-back">← Back</div>
+        <div class="d1-title">Settings</div>
+
+        <div class="d1-group">
+          <div class="d1-label">Personal</div>
+          <div class="d1-row">
+            <span class="d1-row-label">Your name</span>
+            <input type="text" class="d1-input" value="Samuel" style="text-align:right; width:100px;">
+          </div>
+        </div>
+
+        <div class="d1-group">
+          <div class="d1-label">Smoking</div>
+          <div class="d1-row">
+            <span class="d1-row-label">Cigarette price</span>
+            <div class="d1-row-value">
+              <span>$</span>
+              <input type="text" class="d1-input" value="1.00">
+            </div>
+          </div>
+        </div>
+
+        <div class="d1-group">
+          <div class="d1-label">Display</div>
+          <div class="d1-row">
+            <span class="d1-row-label">Show stats</span>
+            <div class="d1-toggle on" onclick="this.classList.toggle('on')"></div>
+          </div>
+          <div class="d1-row">
+            <span class="d1-row-label">Dark mode</span>
+            <div class="d1-toggle" onclick="this.classList.toggle('on')"></div>
+          </div>
+        </div>
+
+        <button class="d1-signout">Sign out</button>
+        <button class="d1-reset">Reset all data</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ DESIGN 2 — AMBER ═══ -->
+  <div>
+    <div class="design-label">2. Amber</div>
+    <div class="design-desc">Dark · Warm accent · Bordered cards</div>
+    <div class="phone">
+      <div class="d2">
+        <div class="d2-back">← Back</div>
+        <div class="d2-title">Settings</div>
+        <div class="d2-sub">Customise your experience</div>
+
+        <div class="d2-card">
+          <div class="d2-row">
+            <span class="d2-row-label">Your name</span>
+            <input type="text" class="d2-input" value="Samuel" style="width:100px;">
+          </div>
+          <div class="d2-row">
+            <span class="d2-row-label">Cigarette price</span>
+            <div class="d2-row-value">
+              <span>$</span>
+              <input type="text" class="d2-input" value="1.00">
+            </div>
+          </div>
+        </div>
+
+        <div class="d2-card">
+          <div class="d2-row">
+            <span class="d2-row-label">Show stats</span>
+            <div class="d2-toggle on" onclick="this.classList.toggle('on')"></div>
+          </div>
+          <div class="d2-row">
+            <span class="d2-row-label">Dark mode</span>
+            <div class="d2-toggle" onclick="this.classList.toggle('on')"></div>
+          </div>
+        </div>
+
+        <button class="d2-signout">Sign out</button>
+        <button class="d2-reset">Reset all data</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ DESIGN 3 — CARDS ═══ -->
+  <div>
+    <div class="design-label">3. Cards</div>
+    <div class="design-desc">Light · Segmented · Each field is a card</div>
+    <div class="phone">
+      <div class="d3">
+        <div class="d3-back">← Back</div>
+        <div class="d3-title">Settings</div>
+
+        <div class="d3-card">
+          <div class="d3-card-label">Your name</div>
+          <input type="text" class="d3-card-input" value="Samuel">
+        </div>
+
+        <div class="d3-card">
+          <div class="d3-card-label">Cigarette price</div>
+          <div style="display:flex; align-items:baseline; gap:4px;">
+            <span style="font-family:'Libre Baskerville',serif; font-size:24px; color:rgba(26,26,26,0.3);">$</span>
+            <input type="text" class="d3-card-input" value="1.00">
+          </div>
+        </div>
+
+        <div class="d3-toggle-row">
+          <span class="d3-toggle-label">Show stats</span>
+          <div class="d3-toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+
+        <div class="d3-toggle-row">
+          <span class="d3-toggle-label">Dark mode</span>
+          <div class="d3-toggle" onclick="this.classList.toggle('on')"></div>
+        </div>
+
+        <div class="d3-bottom">
+          <button class="d3-signout">Sign out</button>
+          <button class="d3-reset">Reset all data</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ DESIGN 4 — EDITORIAL ═══ -->
+  <div>
+    <div class="design-label">4. Editorial</div>
+    <div class="design-desc">Dark · Magazine feel · Numbered sections</div>
+    <div class="phone">
+      <div class="d4">
+        <div class="d4-back">← Back</div>
+        <div class="d4-title">Settings</div>
+
+        <div class="d4-section">
+          <div class="d4-section-num">01</div>
+          <div class="d4-section-title">Personal</div>
+          <div class="d4-row">
+            <span class="d4-row-label">Your name</span>
+            <input type="text" class="d4-input" value="Samuel" style="width:100px;">
+          </div>
+        </div>
+
+        <div class="d4-section">
+          <div class="d4-section-num">02</div>
+          <div class="d4-section-title">Smoking</div>
+          <div class="d4-row">
+            <span class="d4-row-label">Cigarette price</span>
+            <div class="d4-row-value">
+              <span>$</span>
+              <input type="text" class="d4-input" value="1.00">
+            </div>
+          </div>
+        </div>
+
+        <div class="d4-section">
+          <div class="d4-section-num">03</div>
+          <div class="d4-section-title">Display</div>
+          <div class="d4-row">
+            <span class="d4-row-label">Show stats</span>
+            <div class="d4-toggle on" onclick="this.classList.toggle('on')"></div>
+          </div>
+          <div class="d4-row">
+            <span class="d4-row-label">Dark mode</span>
+            <div class="d4-toggle" onclick="this.classList.toggle('on')"></div>
+          </div>
+        </div>
+
+        <div class="d4-divider"></div>
+        <div class="d4-signout">Sign out</div>
+        <div class="d4-reset">Reset all data</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ DESIGN 5 — FLOATING ═══ -->
+  <div>
+    <div class="design-label">5. Floating</div>
+    <div class="design-desc">Light · Rounded cards · Layered depth</div>
+    <div class="phone">
+      <div class="d5">
+        <div class="d5-back">← Back</div>
+        <div class="d5-title">Settings</div>
+
+        <div class="d5-card">
+          <div class="d5-row">
+            <span class="d5-row-label">Your name</span>
+            <input type="text" class="d5-input" value="Samuel" style="width:100px;">
+          </div>
+          <div class="d5-row">
+            <span class="d5-row-label">Cigarette price</span>
+            <div class="d5-row-value">
+              <span>$</span>
+              <input type="text" class="d5-input" value="1.00">
+            </div>
+          </div>
+        </div>
+
+        <div class="d5-card">
+          <div class="d5-row">
+            <span class="d5-row-label">Show stats</span>
+            <div class="d5-toggle on" onclick="this.classList.toggle('on')"></div>
+          </div>
+          <div class="d5-row">
+            <span class="d5-row-label">Dark mode</span>
+            <div class="d5-toggle" onclick="this.classList.toggle('on')"></div>
+          </div>
+        </div>
+
+        <div class="d5-bottom">
+          <button class="d5-signout">Sign out</button>
+          <button class="d5-reset">Reset all data</button>
+        </div>
+        <div class="d5-version">puff v1.0</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

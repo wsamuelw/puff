@@ -142,50 +142,38 @@
         <div class="settings-stats-label">Total saved to date</div>
       </div>
 
-      <!-- Personal -->
-      <div class="settings-section">
-        <div class="settings-section-title">Personal</div>
-        <div class="settings-card">
-          <div class="settings-item">
-            <span class="settings-item-label">Your name</span>
-            <div class="settings-item-value">
-              <input type="text" id="settings-name" class="settings-input settings-input-name" placeholder="Optional" maxlength="20">
-            </div>
-          </div>
+      <!-- Name card -->
+      <div class="settings-card">
+        <div class="settings-card-label">Your name</div>
+        <input type="text" id="settings-name" class="settings-card-input" placeholder="Optional" maxlength="20">
+      </div>
+
+      <!-- Price card -->
+      <div class="settings-card">
+        <div class="settings-card-label">Cigarette price</div>
+        <div style="display:flex; align-items:baseline; gap:4px;">
+          <span class="settings-card-unit">$</span>
+          <input type="number" id="settings-price" class="settings-card-input" step="0.10" min="0" max="5">
         </div>
       </div>
 
-      <!-- Smoking habits -->
-      <div class="settings-section">
-        <div class="settings-section-title">Smoking habits</div>
-        <div class="settings-card">
-          <div class="settings-item">
-            <span class="settings-item-label">Cigarette price</span>
-            <div class="settings-item-value">
-              <span class="settings-unit">$</span>
-              <input type="number" id="settings-price" class="settings-input" step="0.10" min="0" max="5">
-            </div>
-          </div>
-        </div>
+      <!-- Show stats toggle -->
+      <div class="settings-toggle-row">
+        <span class="settings-toggle-label">Show stats</span>
+        <button class="settings-toggle active" id="settings-show-stats"></button>
       </div>
 
-      <!-- Display -->
-      <div class="settings-section">
-        <div class="settings-section-title">Display</div>
-        <div class="settings-card">
-          <div class="settings-item">
-            <span class="settings-item-label">Show stats</span>
-            <button class="settings-toggle active" id="settings-show-stats"></button>
-          </div>
-          <div class="settings-item">
-            <span class="settings-item-label">Dark mode</span>
-            <button class="settings-toggle active" id="settings-dark-mode"></button>
-          </div>
-        </div>
+      <!-- Dark mode toggle -->
+      <div class="settings-toggle-row">
+        <span class="settings-toggle-label">Dark mode</span>
+        <button class="settings-toggle active" id="settings-dark-mode"></button>
       </div>
 
-      <!-- Danger zone -->
-      <button class="settings-reset" id="settings-reset">Reset all data</button>
+      <!-- Bottom actions -->
+      <div class="settings-bottom">
+        <button class="settings-signout" id="settings-signout">Sign out</button>
+        <button class="settings-reset" id="settings-reset">Reset all data</button>
+      </div>
 
       <button class="settings-signout" id="settings-signout">Sign out</button>
 
