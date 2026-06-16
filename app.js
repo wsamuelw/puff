@@ -289,6 +289,11 @@
   let lastSessionDate = parseInt(safeGetItem('lastSessionDate', '0'));
   let slipUpShown = false;
 
+  // Track last app open for "last seen" display
+  let lastAppOpen = parseInt(safeGetItem('lastAppOpen', '0'));
+  if (!lastAppOpen) lastAppOpen = Date.now();
+  safeSetItem('lastAppOpen', String(Date.now()));
+
   // Craving journal
   const TRIGGER_CATEGORIES = [
     { id: 'stress', emoji: '😰', label: 'Stress' },
@@ -1309,16 +1314,16 @@
       if (!_lastVisible) { barStats.classList.add('visible'); _lastVisible = true; }
       const sessionCost = burnProgress * CIG_PRICE();
       const session = '$' + sessionCost.toFixed(2);
-      const total = '$' + (totalMoneySaved + sessionCost).toFixed(0);
+      const total = '$' + (totalMoneySaved + sessionCost).toFixed(2);
       const m = session + ' → ' + total;
       if (m !== _lastMoney) { statsMoney.textContent = m; _lastMoney = m; }
-      const seen = formatLastSeen(Date.now() - lastSessionDate);
+      const seen = formatLastSeen(Date.now() - lastAppOpen);
       if (seen !== _lastSeen) { statsLastseen.textContent = seen; _lastSeen = seen; }
     } else if (!started) {
       if (!_lastVisible) { barStats.classList.add('visible'); _lastVisible = true; }
       const m = '$' + totalMoneySaved.toFixed(2) + ' saved';
       if (m !== _lastMoney) { statsMoney.textContent = m; _lastMoney = m; }
-      const seen = formatLastSeen(Date.now() - lastSessionDate);
+      const seen = formatLastSeen(Date.now() - lastAppOpen);
       if (seen !== _lastSeen) { statsLastseen.textContent = seen; _lastSeen = seen; }
     } else {
       if (_lastVisible) { barStats.classList.remove('visible'); _lastVisible = false; }
