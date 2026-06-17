@@ -1293,6 +1293,7 @@
   const statsMoney = document.getElementById('stats-money');
   const statsLastseen = document.getElementById('stats-lastseen');
   let _lastMoney = '', _lastSeen = '', _lastVisible = false;
+  let _lastStatsUpdate = 0;
 
   function formatLastSeen(ms) {
     const mins = Math.floor(ms / 60000);
@@ -1305,6 +1306,9 @@
   }
 
   function updateStatsDisplay() {
+    const now = performance.now();
+    if (now - _lastStatsUpdate < 100) return; // throttle to ~10fps
+    _lastStatsUpdate = now;
     if (started && !gameOver && burnProgress > 0) {
       if (!_lastVisible) { barStats.classList.add('visible'); _lastVisible = true; }
       const sessionCost = burnProgress * CIG_PRICE();
