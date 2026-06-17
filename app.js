@@ -135,7 +135,6 @@
     Object.entries(data).forEach(([key, value]) => {
       safeSetItem(key, typeof value === 'object' ? JSON.stringify(value) : String(value));
     });
-    safeSetItem('lastLocalSave', String(Date.now()));
 
     if (!currentUser) return;
     try {
@@ -155,16 +154,8 @@
       const doc = await db.collection('user_data').doc(currentUser.uid).get();
       if (doc.exists) {
         const cloudData = doc.data().data;
-        const cloudTime = doc.data().updated_at?.toMillis?.() || 0;
-        const localTime = parseInt(safeGetItem('lastLocalSave', '0'));
 
-        // If local data is newer, keep it — next saveToCloud will sync it up
-        if (localTime > cloudTime) {
-          console.log('Local data is newer than cloud, keeping local');
-          return;
-        }
-
-        // Cloud is newer — apply to state
+        // Always apply cloud data on sign-in (keeps devices in sync)
         if (cloudData.quitStreak !== undefined) streakCount = parseInt(cloudData.quitStreak) || 0;
         if (cloudData.moneySaved !== undefined) totalMoneySaved = parseFloat(cloudData.moneySaved) || 0;
         if (cloudData.cigarettesAvoided !== undefined) totalCigarettesAvoided = parseInt(cloudData.cigarettesAvoided) || 0;
@@ -193,11 +184,10 @@
           isDark = cloudData.darkMode !== 'false';
           applyTheme();
         }
-        // Also save to localStorage for offline access
+        // Save to localStorage for offline access
         Object.entries(cloudData).forEach(([key, value]) => {
           safeSetItem(key, typeof value === 'object' ? JSON.stringify(value) : String(value));
         });
-        safeSetItem('lastLocalSave', String(Date.now()));
         updateStatsDisplay();
       }
     } catch (e) {
