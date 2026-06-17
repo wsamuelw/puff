@@ -1105,7 +1105,7 @@
   });
 
   function showTriggerScreen() {
-    triggerSession.textContent = '$' + CIG_PRICE().toFixed(2);
+    triggerSession.textContent = '$' + totalMoneySaved.toFixed(2);
     selectedTrigger = null;
     triggerSubmitted = false;
     triggerGrid.querySelectorAll('.trigger-btn').forEach(b => b.classList.remove('selected'));
@@ -1160,7 +1160,7 @@
 
   function updateStatsDisplay() {
     const now = performance.now();
-    if (now - _lastStatsUpdate < 100) return; // throttle to ~10fps
+    if (now - _lastStatsUpdate < 50) return; // throttle to ~20fps
     _lastStatsUpdate = now;
     if (started && !gameOver && burnProgress > 0) {
       if (!_lastVisible) { barStats.classList.add('visible'); _lastVisible = true; }
