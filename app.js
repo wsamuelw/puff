@@ -1049,13 +1049,17 @@
   // Trigger categories for end-of-session screen
   const TRIGGER_OPTIONS = [
     { id: 'stress', emoji: '😰', label: 'Stress' },
-    { id: 'boredom', emoji: '😑', label: 'Boredom' },
-    { id: 'meals', emoji: '🍽️', label: 'After meals' },
-    { id: 'social', emoji: '🍺', label: 'Social' },
+    { id: 'drinking', emoji: '🍺', label: 'Drinking' },
     { id: 'coffee', emoji: '☕', label: 'Coffee' },
+    { id: 'meals', emoji: '🍽️', label: 'After meals' },
+    { id: 'boredom', emoji: '😑', label: 'Boredom' },
     { id: 'driving', emoji: '🚗', label: 'Driving' },
-    { id: 'morning', emoji: '😴', label: 'Waking up' },
-    { id: 'other', emoji: '💭', label: 'Other' },
+    { id: 'aftersex', emoji: '❤️', label: 'After sex' },
+    { id: 'workbreak', emoji: '💼', label: 'Work break' },
+    { id: 'scrolling', emoji: '📱', label: 'Scrolling' },
+    { id: 'walking', emoji: '🚶', label: 'Walking' },
+    { id: 'social', emoji: '🍻', label: 'Social pressure' },
+    { id: 'morning', emoji: '🌅', label: 'Morning routine' },
   ];
   let selectedTrigger = null;
   let triggerSubmitted = false;
@@ -1927,11 +1931,17 @@
     // Trigger icons mapping
     const triggerIcons = {
       'Stress': '😰',
-      'Social drinking': '🍺',
+      'Drinking': '🍺',
       'Coffee': '☕',
-      'Driving': '🚗',
-      'Boredom': '📱',
       'After meals': '🍽️',
+      'Boredom': '😑',
+      'Driving': '🚗',
+      'After sex': '❤️',
+      'Work break': '💼',
+      'Scrolling': '📱',
+      'Walking': '🚶',
+      'Social pressure': '🍻',
+      'Morning routine': '🌅',
       'Unknown': '❓'
     };
 

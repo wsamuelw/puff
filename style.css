@@ -635,6 +635,8 @@ body.dark .triggers-empty {
   align-items: center;
   justify-content: center;
   background: rgba(26,26,26,0.95);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   z-index: 350;
   opacity: 0;
   pointer-events: none;
