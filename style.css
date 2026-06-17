@@ -457,6 +457,228 @@ body.dark .menu-close:focus {
   color: #faf9f7;
 }
 
+/* ─── Trigger Analytics Screen ─── */
+.triggers-screen {
+  position: fixed;
+  inset: 0;
+  background: #faf9f7;
+  z-index: 200;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  pointer-events: none;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: none;
+}
+
+body.dark .triggers-screen {
+  background: #1a1a1a;
+}
+
+.triggers-screen.visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.triggers-back {
+  position: sticky;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 16px 20px;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  background: rgba(250,249,247,0.92);
+  border: none;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  color: rgba(26,26,26,0.35);
+  font-family: 'Outfit', sans-serif;
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  z-index: 10;
+  text-align: left;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body.dark .triggers-back {
+  background: rgba(26,26,26,0.92);
+  border-color: rgba(250,249,247,0.06);
+  color: rgba(250,249,247,0.3);
+}
+
+.triggers-content {
+  padding: 32px 24px 40px;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.triggers-title {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 24px;
+  font-weight: 400;
+  color: #1a1a1a;
+  margin-bottom: 4px;
+}
+
+body.dark .triggers-title {
+  color: #faf9f7;
+}
+
+.triggers-sub {
+  font-size: 13px;
+  color: rgba(26,26,26,0.35);
+  margin-bottom: 24px;
+}
+
+body.dark .triggers-sub {
+  color: rgba(250,249,247,0.35);
+}
+
+/* Summary cards */
+.triggers-summary {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+.triggers-stat {
+  flex: 1;
+  padding: 16px 12px;
+  background: #fff;
+  border: 1px solid rgba(0,0,0,0.06);
+  border-radius: 12px;
+  text-align: center;
+}
+
+body.dark .triggers-stat {
+  background: rgba(250,249,247,0.04);
+  border-color: rgba(250,249,247,0.06);
+}
+
+.triggers-stat-num {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 28px;
+  font-weight: 400;
+  color: #1a1a1a;
+}
+
+body.dark .triggers-stat-num {
+  color: #faf9f7;
+}
+
+.triggers-stat-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: rgba(26,26,26,0.3);
+  margin-top: 4px;
+}
+
+body.dark .triggers-stat-label {
+  color: rgba(250,249,247,0.3);
+}
+
+/* Heatmap */
+.triggers-heatmap-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 8px;
+}
+
+.triggers-months {
+  display: flex;
+  margin-left: 32px;
+  margin-bottom: 4px;
+}
+
+.triggers-month {
+  font-size: 10px;
+  font-weight: 500;
+  color: rgba(26,26,26,0.3);
+  flex-shrink: 0;
+}
+
+body.dark .triggers-month {
+  color: rgba(250,249,247,0.3);
+}
+
+.triggers-body {
+  display: flex;
+}
+
+.triggers-days {
+  display: flex;
+  flex-direction: column;
+  margin-right: 4px;
+}
+
+.triggers-day {
+  font-size: 10px;
+  height: 13px;
+  line-height: 13px;
+  display: flex;
+  align-items: center;
+  color: rgba(26,26,26,0.3);
+}
+
+body.dark .triggers-day {
+  color: rgba(250,249,247,0.3);
+}
+
+.triggers-grid {
+  display: flex;
+  gap: 3px;
+}
+
+.triggers-week {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.triggers-cell {
+  width: 13px;
+  height: 13px;
+  border-radius: 2px;
+  background: rgba(0,0,0,0.04);
+}
+
+body.dark .triggers-cell {
+  background: rgba(250,249,247,0.04);
+}
+
+.triggers-cell.l1 { background: rgba(184,135,90,0.25); }
+.triggers-cell.l2 { background: rgba(184,135,90,0.45); }
+.triggers-cell.l3 { background: rgba(184,135,90,0.65); }
+.triggers-cell.l4 { background: rgba(184,135,90,0.85); }
+
+body.dark .triggers-cell.l1 { background: rgba(212,165,116,0.25); }
+body.dark .triggers-cell.l2 { background: rgba(212,165,116,0.45); }
+body.dark .triggers-cell.l3 { background: rgba(212,165,116,0.65); }
+body.dark .triggers-cell.l4 { background: rgba(212,165,116,0.85); }
+
+.triggers-legend {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 12px;
+  font-size: 10px;
+  color: rgba(26,26,26,0.3);
+}
+
+body.dark .triggers-legend {
+  color: rgba(250,249,247,0.3);
+}
+
+.triggers-legend-label {
+  margin: 0 4px;
+}
+
 /* ─── Trigger Selection Screen ─── */
 .trigger-screen {
   position: fixed;

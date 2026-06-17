@@ -62,12 +62,63 @@
       <button class="trigger-done" id="trigger-done">Done</button>
     </div>
 
+    <!-- Trigger Analytics Screen -->
+    <div id="triggers-screen" class="triggers-screen" role="dialog" aria-label="Trigger analytics">
+      <button id="triggers-back" class="triggers-back" aria-label="Back">← Back</button>
+      <div class="triggers-content">
+        <h2 class="triggers-title">Triggers</h2>
+        <p class="triggers-sub">Your patterns</p>
+
+        <div class="triggers-summary" id="triggers-summary">
+          <div class="triggers-stat">
+            <div class="triggers-stat-num" id="triggers-total">0</div>
+            <div class="triggers-stat-label">Sessions</div>
+          </div>
+          <div class="triggers-stat">
+            <div class="triggers-stat-num" id="triggers-count">0</div>
+            <div class="triggers-stat-label">Triggers</div>
+          </div>
+          <div class="triggers-stat">
+            <div class="triggers-stat-num" id="triggers-avg">0</div>
+            <div class="triggers-stat-label">Per week</div>
+          </div>
+        </div>
+
+        <div class="triggers-heatmap-wrap">
+          <div class="triggers-months" id="triggers-months"></div>
+          <div class="triggers-body">
+            <div class="triggers-days">
+              <div class="triggers-day">M</div><div class="triggers-day"></div><div class="triggers-day">W</div><div class="triggers-day"></div><div class="triggers-day">F</div><div class="triggers-day"></div><div class="triggers-day">S</div>
+            </div>
+            <div class="triggers-grid" id="triggers-grid"></div>
+          </div>
+          <div class="triggers-legend">
+            <span class="triggers-legend-label">Less</span>
+            <div class="triggers-cell"></div>
+            <div class="triggers-cell l1"></div>
+            <div class="triggers-cell l2"></div>
+            <div class="triggers-cell l3"></div>
+            <div class="triggers-cell l4"></div>
+            <span class="triggers-legend-label">More</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Menu Overlay -->
     <div id="menu-overlay" class="menu-overlay" role="dialog" aria-label="Menu">
       <div class="menu-content">
         <div class="menu-drag-handle"></div>
         <h2 class="menu-title">Menu</h2>
         <div class="menu-list">
+          <button class="menu-item" id="menu-triggers">
+            <span class="menu-item-icon">📊</span>
+            <div class="menu-item-text">
+              <div class="menu-item-label">Triggers</div>
+              <div class="menu-item-desc">Your patterns</div>
+            </div>
+            <span class="menu-item-arrow">→</span>
+          </button>
           <button class="menu-item" id="menu-settings">
             <span class="menu-item-icon">⚙️</span>
             <div class="menu-item-text">

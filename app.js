@@ -1471,7 +1471,8 @@
       e.target.closest('#overlay') ||
       e.target.closest('.menu-overlay') ||
       e.target.closest('.slipup-screen') ||
-      e.target.closest('.settings-screen')
+      e.target.closest('.settings-screen') ||
+      e.target.closest('.triggers-screen')
     )) return;
 
     // Only start hold when game is running
@@ -1809,6 +1810,114 @@
     settingsScreen.classList.add('visible');
   });
 
+  // --- Trigger Analytics Screen ---
+  const triggersScreen = document.getElementById('triggers-screen');
+  const triggersBack = document.getElementById('triggers-back');
+  const triggersGrid = document.getElementById('triggers-grid');
+  const triggersMonths = document.getElementById('triggers-months');
+  const triggersTotal = document.getElementById('triggers-total');
+  const triggersCount = document.getElementById('triggers-count');
+  const triggersAvg = document.getElementById('triggers-avg');
+
+  function buildTriggerHeatmap() {
+    // Parse craving logs
+    const logs = JSON.parse(safeGetItem('cravingLogs', '[]'));
+    if (!logs.length) {
+      triggersGrid.innerHTML = '<div style="font-size:13px;color:rgba(26,26,26,0.3);padding:20px 0;">No data yet. Complete a session to see patterns.</div>';
+      return;
+    }
+
+    // Build daily counts (last 12 weeks = 84 days)
+    const now = new Date();
+    const startDate = new Date(now);
+    startDate.setDate(startDate.getDate() - 83); // 84 days back
+    startDate.setHours(0, 0, 0, 0);
+
+    // Count sessions per day
+    const dailyCounts = new Array(84).fill(0);
+    const triggerSet = new Set();
+    logs.forEach(log => {
+      const logDate = new Date(log.time);
+      if (logDate >= startDate) {
+        const dayIndex = Math.floor((logDate - startDate) / 86400000);
+        if (dayIndex >= 0 && dayIndex < 84) {
+          dailyCounts[dayIndex]++;
+          if (log.trigger) triggerSet.add(log.trigger);
+        }
+      }
+    });
+
+    // Update summary stats
+    const totalSessions = logs.filter(l => new Date(l.time) >= startDate).length;
+    const weeks = 12;
+    triggersTotal.textContent = totalSessions;
+    triggersCount.textContent = triggerSet.size;
+    triggersAvg.textContent = (totalSessions / weeks).toFixed(1);
+
+    // Build month labels
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    triggersMonths.innerHTML = '';
+    let lastMonth = -1;
+    for (let w = 0; w < 12; w++) {
+      const d = new Date(startDate);
+      d.setDate(d.getDate() + w * 7);
+      const m = d.getMonth();
+      if (m !== lastMonth) {
+        const span = document.createElement('span');
+        span.className = 'triggers-month';
+        span.style.width = '52px';
+        span.textContent = months[m];
+        triggersMonths.appendChild(span);
+        lastMonth = m;
+      } else {
+        // Add empty spacer
+        const span = document.createElement('span');
+        span.style.width = '52px';
+        span.style.display = 'inline-block';
+        triggersMonths.appendChild(span);
+      }
+    }
+
+    // Build grid
+    triggersGrid.innerHTML = '';
+    for (let w = 0; w < 12; w++) {
+      const weekEl = document.createElement('div');
+      weekEl.className = 'triggers-week';
+      for (let d = 0; d < 7; d++) {
+        const count = dailyCounts[w * 7 + d] || 0;
+        const cell = document.createElement('div');
+        let level = '';
+        if (count === 1) level = 'l1';
+        else if (count === 2) level = 'l2';
+        else if (count === 3) level = 'l3';
+        else if (count >= 4) level = 'l4';
+        cell.className = 'triggers-cell ' + level;
+        weekEl.appendChild(cell);
+      }
+      triggersGrid.appendChild(weekEl);
+    }
+  }
+
+  // Open triggers from menu
+  const menuTriggers = document.getElementById('menu-triggers');
+  menuTriggers.addEventListener('click', (e) => {
+    e.stopPropagation();
+    closeMenu();
+    buildTriggerHeatmap();
+    history.pushState({screen:'triggers'}, '');
+    triggersScreen.classList.add('visible');
+  });
+
+  // Back button
+  triggersBack.addEventListener('click', (e) => {
+    e.stopPropagation();
+    triggersScreen.classList.remove('visible');
+  });
+
+  // Prevent taps propagating
+  triggersScreen.addEventListener('click', (e) => e.stopPropagation());
+  triggersScreen.addEventListener('touchstart', (e) => e.stopPropagation(), { passive: true });
+
   // Sign-out button
   const menuUserInfo = document.getElementById('menu-user-info');
 
@@ -1898,6 +2007,10 @@
   function closeActiveScreen() {
     if (settingsScreen.classList.contains('visible')) {
       settingsScreen.classList.remove('visible');
+      return true;
+    }
+    if (triggersScreen.classList.contains('visible')) {
+      triggersScreen.classList.remove('visible');
       return true;
     }
     if (menuOverlay.classList.contains('active')) {

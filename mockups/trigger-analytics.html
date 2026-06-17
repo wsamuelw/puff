@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Puff — Trigger Analytics Designs</title>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Outfit', sans-serif;
+    background: #0a0a0a;
+    color: #faf9f7;
+    padding: 40px 20px;
+  }
+  .intro {
+    text-align: center;
+    max-width: 700px;
+    margin: 0 auto 60px;
+  }
+  .intro h1 {
+    font-family: 'Libre Baskerville', serif;
+    font-size: 36px;
+    font-style: italic;
+    margin-bottom: 12px;
+  }
+  .intro p {
+    color: rgba(250,249,247,0.5);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .designs {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 80px;
+    max-width: 420px;
+    margin: 0 auto;
+  }
+  .design-label {
+    font-family: 'Libre Baskerville', serif;
+    font-size: 20px;
+    font-style: italic;
+    margin-bottom: 4px;
+  }
+  .design-desc {
+    font-size: 12px;
+    color: rgba(250,249,247,0.4);
+    margin-bottom: 24px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+  .phone {
+    width: 100%;
+    aspect-ratio: 390/844;
+    border-radius: 40px;
+    overflow: hidden;
+    border: 2px solid rgba(250,249,247,0.1);
+    position: relative;
+  }
+
+  /* ═══ SHARED ═══ */
+  .screen {
+    width: 100%;
+    height: 100%;
+    padding: 60px 24px 40px;
+    font-family: 'Outfit', sans-serif;
+    overflow-y: auto;
+  }
+  .screen-dark { background: #1a1a1a; }
+  .screen-light { background: #faf9f7; color: #1a1a1a; }
+  .back { font-size: 12px; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 48px; }
+  .back-dark { color: rgba(250,249,247,0.3); }
+  .back-light { color: rgba(26,26,26,0.3); }
+  .title {
+    font-family: 'Libre Baskerville', serif;
+    font-size: 24px;
+    font-weight: 400;
+    margin-bottom: 8px;
+  }
+  .title-dark { color: #faf9f7; }
+  .title-light { color: #1a1a1a; }
+  .subtitle {
+    font-size: 13px;
+    margin-bottom: 32px;
+  }
+  .sub-dark { color: rgba(250,249,247,0.35); }
+  .sub-light { color: rgba(26,26,26,0.35); }
+
+  /* ═══ 1. HORIZONTAL BARS ═══ */
+  .bar-chart { margin-bottom: 24px; }
+  .bar-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  .bar-emoji { font-size: 20px; width: 28px; text-align: center; }
+  .bar-label { font-size: 13px; width: 80px; }
+  .bar-track { flex: 1; height: 24px; background: rgba(255,255,255,0.06); border-radius: 6px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 6px; transition: width 0.6s ease; }
+  .bar-count { font-size: 13px; font-weight: 500; width: 30px; text-align: right; }
+  .bar-dark .bar-label { color: rgba(250,249,247,0.6); }
+  .bar-dark .bar-count { color: rgba(250,249,247,0.5); }
+  .bar-dark .bar-fill { background: linear-gradient(90deg, #d4a574, #e8c49a); }
+  .bar-light .bar-track { background: rgba(0,0,0,0.05); }
+  .bar-light .bar-label { color: rgba(26,26,26,0.6); }
+  .bar-light .bar-count { color: rgba(26,26,26,0.4); }
+  .bar-light .bar-fill { background: linear-gradient(90deg, #b8875a, #d4a574); }
+
+  /* ═══ 2. DONUT CHART ═══ */
+  .donut-container { display: flex; flex-direction: column; align-items: center; gap: 24px; }
+  .donut-svg { width: 180px; height: 180px; }
+  .donut-legend { width: 100%; }
+  .donut-legend-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  .donut-legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .donut-legend-label { font-size: 13px; flex: 1; }
+  .donut-legend-count { font-size: 13px; font-weight: 500; }
+  .donut-dark .donut-legend-label { color: rgba(250,249,247,0.6); }
+  .donut-dark .donut-legend-count { color: rgba(250,249,247,0.4); }
+  .donut-dark .donut-legend-row { border-color: rgba(250,249,247,0.06); }
+  .donut-light .donut-legend-label { color: rgba(26,26,26,0.6); }
+  .donut-light .donut-legend-count { color: rgba(26,26,26,0.4); }
+  .donut-light .donut-legend-row { border-color: rgba(0,0,0,0.06); }
+  .donut-center { font-family: 'Libre Baskerville', serif; font-size: 28px; }
+  .donut-center-sub { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; }
+
+  /* ═══ 3. HEATMAP ═══ */
+  .heatmap-grid {
+    display: grid;
+    grid-template-columns: 40px repeat(7, 1fr);
+    gap: 4px;
+    margin-bottom: 16px;
+  }
+  .heatmap-header {
+    font-size: 10px;
+    text-transform: uppercase;
+    text-align: center;
+    padding: 4px 0;
+  }
+  .heatmap-row-label {
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+  }
+  .heatmap-cell {
+    aspect-ratio: 1;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 500;
+  }
+  .heatmap-dark .heatmap-header { color: rgba(250,249,247,0.3); }
+  .heatmap-dark .heatmap-row-label { color: rgba(250,249,247,0.4); }
+  .heatmap-light .heatmap-header { color: rgba(26,26,26,0.3); }
+  .heatmap-light .heatmap-row-label { color: rgba(26,26,26,0.4); }
+
+  /* ═══ 4. RADAR/SPIDER ═══ */
+  .radar-container { display: flex; flex-direction: column; align-items: center; }
+  .radar-svg { width: 240px; height: 240px; }
+
+  /* ═══ 5. STREAK DOTS ═══ */
+  .streak-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .streak-label { font-size: 12px; width: 80px; }
+  .streak-dots { display: flex; gap: 4px; flex: 1; }
+  .streak-dot {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 8px;
+    font-weight: 600;
+  }
+  .streak-count { font-size: 12px; width: 24px; text-align: right; }
+  .streak-dark .streak-label { color: rgba(250,249,247,0.5); }
+  .streak-dark .streak-count { color: rgba(250,249,247,0.3); }
+  .streak-light .streak-label { color: rgba(26,26,26,0.5); }
+  .streak-light .streak-count { color: rgba(26,26,26,0.3); }
+
+  /* ═══ 6. CARDS STACK ═══ */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .card-item {
+    padding: 16px;
+    border-radius: 12px;
+    text-align: center;
+  }
+  .card-emoji { font-size: 28px; margin-bottom: 8px; }
+  .card-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+  .card-count { font-family: 'Libre Baskerville', serif; font-size: 28px; }
+  .card-dark .card-item { background: rgba(250,249,247,0.04); border: 1px solid rgba(250,249,247,0.06); }
+  .card-dark .card-label { color: rgba(250,249,247,0.3); }
+  .card-dark .card-count { color: #faf9f7; }
+  .card-light .card-item { background: #fff; border: 1px solid rgba(0,0,0,0.06); }
+  .card-light .card-label { color: rgba(26,26,26,0.3); }
+  .card-light .card-count { color: #1a1a1a; }
+
+  /* ═══ 7. TIMELINE ═══ */
+  .timeline-container {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    margin-bottom: 20px;
+  }
+  .timeline-dot {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+  .timeline-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .timeline-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+  }
+  .timeline-legend-dot { width: 8px; height: 8px; border-radius: 3px; }
+  .timeline-dark .timeline-legend-item { color: rgba(250,249,247,0.4); }
+  .timeline-light .timeline-legend-item { color: rgba(26,26,26,0.4); }
+
+  /* ═══ 8. RING PROGRESS ═══ */
+  .rings-container { display: flex; flex-direction: column; align-items: center; gap: 24px; }
+  .rings-stack { position: relative; width: 200px; height: 200px; }
+  .ring-svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+  .rings-legend { width: 100%; }
+  .rings-legend-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 0;
+  }
+  .rings-legend-color { width: 12px; height: 12px; border-radius: 3px; }
+  .rings-legend-label { font-size: 13px; flex: 1; }
+  .rings-legend-pct { font-size: 13px; font-weight: 500; }
+  .rings-dark .rings-legend-label { color: rgba(250,249,247,0.5); }
+  .rings-dark .rings-legend-pct { color: rgba(250,249,247,0.3); }
+  .rings-light .rings-legend-label { color: rgba(26,26,26,0.5); }
+  .rings-light .rings-legend-pct { color: rgba(26,26,26,0.3); }
+
+  /* ═══ 9. PILL BAR ═══ */
+  .pill-chart { margin-bottom: 20px; }
+  .pill-bar-container {
+    height: 36px;
+    display: flex;
+    border-radius: 18px;
+    overflow: hidden;
+    margin-bottom: 16px;
+  }
+  .pill-segment {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 500;
+    transition: width 0.6s ease;
+  }
+  .pill-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .pill-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    padding: 6px 12px;
+    border-radius: 20px;
+  }
+  .pill-dark .pill-legend-item {
+    background: rgba(250,249,247,0.05);
+    color: rgba(250,249,247,0.5);
+  }
+  .pill-light .pill-legend-item {
+    background: rgba(0,0,0,0.04);
+    color: rgba(26,26,26,0.5);
+  }
+
+  /* ═══ 10. PICTOGRAPH ═══ */
+  .picto-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .picto-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .picto-label { font-size: 13px; width: 80px; }
+  .picto-icons { display: flex; gap: 4px; flex: 1; flex-wrap: wrap; }
+  .picto-icon { font-size: 16px; opacity: 0.9; }
+  .picto-count { font-size: 13px; width: 24px; text-align: right; }
+  .picto-dark .picto-label { color: rgba(250,249,247,0.5); }
+  .picto-dark .picto-count { color: rgba(250,249,247,0.3); }
+  .picto-light .picto-label { color: rgba(26,26,26,0.5); }
+  .picto-light .picto-count { color: rgba(26,26,26,0.3); }
+</style>
+</head>
+<body>
+
+<div class="intro">
+  <h1>Trigger Analytics — 10 Directions</h1>
+  <p>Same data, 10 ways. Each shows: Stress (8), Boredom (5), After meals (3), Social (2), Coffee (1).</p>
+</div>
+
+<div class="designs">
+
+  <!-- ═══ 1. HORIZONTAL BARS ═══ -->
+  <div>
+    <div class="design-label">1. Horizontal Bars</div>
+    <div class="design-desc">Dark · Amber gradient · Classic</div>
+    <div class="phone">
+      <div class="screen screen-dark">
+        <div class="back back-dark">← Back</div>
+        <div class="title title-dark">Triggers</div>
+        <div class="subtitle sub-dark">Your patterns this month</div>
+        <div class="bar-chart bar-dark">
+          <div class="bar-row"><span class="bar-emoji">😰</span><span class="bar-label">Stress</span><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><span class="bar-count">8</span></div>
+          <div class="bar-row"><span class="bar-emoji">😑</span><span class="bar-label">Boredom</span><div class="bar-track"><div class="bar-fill" style="width:62%"></div></div><span class="bar-count">5</span></div>
+          <div class="bar-row"><span class="bar-emoji">🍽️</span><span class="bar-label">After meals</span><div class="bar-track"><div class="bar-fill" style="width:37%"></div></div><span class="bar-count">3</span></div>
+          <div class="bar-row"><span class="bar-emoji">🍺</span><span class="bar-label">Social</span><div class="bar-track"><div class="bar-fill" style="width:25%"></div></div><span class="bar-count">2</span></div>
+          <div class="bar-row"><span class="bar-emoji">☕</span><span class="bar-label">Coffee</span><div class="bar-track"><div class="bar-fill" style="width:12%"></div></div><span class="bar-count">1</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 2. DONUT CHART ═══ -->
+  <div>
+    <div class="design-label">2. Donut Chart</div>
+    <div class="design-desc">Light · Proportional · Clean legend</div>
+    <div class="phone">
+      <div class="screen screen-light">
+        <div class="back back-light">← Back</div>
+        <div class="title title-light">Triggers</div>
+        <div class="subtitle sub-light">Your patterns this month</div>
+        <div class="donut-container donut-light">
+          <svg class="donut-svg" viewBox="0 0 42 42">
+            <circle cx="21" cy="21" r="15.9" fill="none" stroke="rgba(0,0,0,0.04)" stroke-width="4"/>
+            <circle cx="21" cy="21" r="15.9" fill="none" stroke="#b8875a" stroke-width="4" stroke-dasharray="42 58" stroke-dashoffset="25" stroke-linecap="round"/>
+            <circle cx="21" cy="21" r="15.9" fill="none" stroke="#d4a574" stroke-width="4" stroke-dasharray="26 74" stroke-dashoffset="83" stroke-linecap="round"/>
+            <circle cx="21" cy="21" r="15.9" fill="none" stroke="#e8c49a" stroke-width="4" stroke-dasharray="16 84" stroke-dashoffset="57" stroke-linecap="round"/>
+            <circle cx="21" cy="21" r="15.9" fill="none" stroke="#f0d5b0" stroke-width="4" stroke-dasharray="10.5 89.5" stroke-dashoffset="41" stroke-linecap="round"/>
+            <circle cx="21" cy="21" r="15.9" fill="none" stroke="#f5e0c0" stroke-width="4" stroke-dasharray="5.3 94.7" stroke-dashoffset="30.5" stroke-linecap="round"/>
+            <text x="21" y="20" text-anchor="middle" class="donut-center" fill="#1a1a1a">19</text>
+            <text x="21" y="25" text-anchor="middle" class="donut-center-sub" fill="rgba(26,26,26,0.3)">sessions</text>
+          </svg>
+          <div class="donut-legend">
+            <div class="donut-legend-row"><div class="donut-legend-dot" style="background:#b8875a"></div><span class="donut-legend-label">😰 Stress</span><span class="donut-legend-count">8</span></div>
+            <div class="donut-legend-row"><div class="donut-legend-dot" style="background:#d4a574"></div><span class="donut-legend-label">😑 Boredom</span><span class="donut-legend-count">5</span></div>
+            <div class="donut-legend-row"><div class="donut-legend-dot" style="background:#e8c49a"></div><span class="donut-legend-label">🍽️ After meals</span><span class="donut-legend-count">3</span></div>
+            <div class="donut-legend-row"><div class="donut-legend-dot" style="background:#f0d5b0"></div><span class="donut-legend-label">🍺 Social</span><span class="donut-legend-count">2</span></div>
+            <div class="donut-legend-row"><div class="donut-legend-dot" style="background:#f5e0c0"></div><span class="donut-legend-label">☕ Coffee</span><span class="donut-legend-count">1</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 3. HEATMAP ═══ -->
+  <div>
+    <div class="design-label">3. Heatmap Grid</div>
+    <div class="design-desc">Dark · Day × trigger · Pattern finder</div>
+    <div class="phone">
+      <div class="screen screen-dark">
+        <div class="back back-dark">← Back</div>
+        <div class="title title-dark">Triggers</div>
+        <div class="subtitle sub-dark">When do you crave?</div>
+        <div class="heatmap-grid heatmap-dark">
+          <div></div>
+          <div class="heatmap-header">M</div><div class="heatmap-header">T</div><div class="heatmap-header">W</div><div class="heatmap-header">T</div><div class="heatmap-header">F</div><div class="heatmap-header">S</div><div class="heatmap-header">S</div>
+          <div class="heatmap-row-label">😰</div>
+          <div class="heatmap-cell" style="background:rgba(212,165,116,0.6)">2</div><div class="heatmap-cell" style="background:rgba(212,165,116,0.3)">1</div><div class="heatmap-cell" style="background:rgba(212,165,116,0.5)">1</div><div class="heatmap-cell" style="background:rgba(212,165,116,0.7)">2</div><div class="heatmap-cell" style="background:rgba(212,165,116,0.4)">1</div><div class="heatmap-cell" style="background:rgba(212,165,116,0.2)">1</div><div class="heatmap-cell" style="background:rgba(212,165,116,0.1)"></div>
+          <div class="heatmap-row-label">😑</div>
+          <div class="heatmap-cell" style="background:rgba(212,165,116,0.2)">1</div><div class="heatmap-cell" style="background:rgba(212,165,116,0.1)"></div><div class="heatmap-cell" style="background:rgba(212,165,116,0.4)">1</div><div class="heatmap-cell" style="background:rgba(212,165,116,0.1)"></div><div class="heatmap-cell" style="background:rgba(212,165,116,0.3)">1</div><div class="heatmap-cell" style="background:rgba(212,165,116,0.5)">1</div><div class="heatmap-cell" style="background:rgba(212,165,116,0.3)">1</div>
+          <div class="heatmap-row-label">🍽️</div>
+          <div class="heatmap-cell" style="background:rgba(212,165,116,0.1)"></div><div class="heatmap-cell" style="background:rgba(212,165,116,0.3)">1</div><div class="heatmap-cell" style="background:rgba(212,165,116,0.1)"></div><div class="heatmap-cell" style="background:rgba(212,165,116,0.3)">1</div><div class="heatmap-cell" style="background:rgba(212,165,116,0.1)"></div><div class="heatmap-cell" style="background:rgba(212,165,116,0.1)"></div><div class="heatmap-cell" style="background:rgba(212,165,116,0.3)">1</div>
+          <div class="heatmap-row-label">🍺</div>
+          <div class="heatmap-cell" style="background:rgba(212,165,116,0.1)"></div><div class="heatmap-cell" style="background:rgba(212,165,116,0.1)"></div><div class="heatmap-cell" style="background:rgba(212,165,116,0.1)"></div><div class="heatmap-cell" style="background:rgba(212,165,116,0.1)"></div><div class="heatmap-cell" style="background:rgba(212,165,116,0.3)">1</div><div class="heatmap-cell" style="background:rgba(212,165,116,0.1)"></div><div class="heatmap-cell" style="background:rgba(212,165,116,0.3)">1</div>
+          <div class="heatmap-row-label">☕</div>
+          <div class="heatmap-cell" style="background:rgba(212,165,116,0.3)">1</div><div class="heatmap-cell" style="background:rgba(212,165,116,0.1)"></div><div class="heatmap-cell" style="background:rgba(212,165,116,0.1)"></div><div class="heatmap-cell" style="background:rgba(212,165,116,0.1)"></div><div class="heatmap-cell" style="background:rgba(212,165,116,0.1)"></div><div class="heatmap-cell" style="background:rgba(212,165,116,0.1)"></div><div class="heatmap-cell" style="background:rgba(212,165,116,0.1)"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 4. RADAR CHART ═══ -->
+  <div>
+    <div class="design-label">4. Radar Chart</div>
+    <div class="design-desc">Light · Geometric · Holistic view</div>
+    <div class="phone">
+      <div class="screen screen-light">
+        <div class="back back-light">← Back</div>
+        <div class="title title-light">Triggers</div>
+        <div class="subtitle sub-light">Your craving shape</div>
+        <div class="radar-container">
+          <svg class="radar-svg" viewBox="0 0 240 240">
+            <!-- Grid -->
+            <polygon points="120,20 220,80 190,200 50,200 20,80" fill="none" stroke="rgba(0,0,0,0.06)" stroke-width="1"/>
+            <polygon points="120,50 195,95 172,180 68,180 45,95" fill="none" stroke="rgba(0,0,0,0.04)" stroke-width="1"/>
+            <polygon points="120,80 170,110 154,160 86,160 70,110" fill="none" stroke="rgba(0,0,0,0.03)" stroke-width="1"/>
+            <!-- Data -->
+            <polygon points="120,30 210,85 180,195 55,185 30,75" fill="rgba(184,135,90,0.15)" stroke="#b8875a" stroke-width="2"/>
+            <!-- Labels -->
+            <text x="120" y="14" text-anchor="middle" font-size="11" fill="rgba(26,26,26,0.5)" font-family="Outfit">😰 Stress</text>
+            <text x="228" y="82" text-anchor="start" font-size="11" fill="rgba(26,26,26,0.5)" font-family="Outfit">😑 Bored</text>
+            <text x="196" y="210" text-anchor="start" font-size="11" fill="rgba(26,26,26,0.5)" font-family="Outfit">🍽️ Meals</text>
+            <text x="44" y="210" text-anchor="end" font-size="11" fill="rgba(26,26,26,0.5)" font-family="Outfit">🍺 Social</text>
+            <text x="12" y="82" text-anchor="end" font-size="11" fill="rgba(26,26,26,0.5)" font-family="Outfit">☕ Coffee</text>
+            <!-- Dots -->
+            <circle cx="120" cy="30" r="4" fill="#b8875a"/>
+            <circle cx="210" cy="85" r="4" fill="#b8875a"/>
+            <circle cx="180" cy="195" r="4" fill="#b8875a"/>
+            <circle cx="55" cy="185" r="4" fill="#b8875a"/>
+            <circle cx="30" cy="75" r="4" fill="#b8875a"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 5. STREAK DOTS (7-DAY) ═══ -->
+  <div>
+    <div class="design-label">5. Week Dots</div>
+    <div class="design-desc">Dark · 7-day grid · Pattern per trigger</div>
+    <div class="phone">
+      <div class="screen screen-dark">
+        <div class="back back-dark">← Back</div>
+        <div class="title title-dark">Triggers</div>
+        <div class="subtitle sub-dark">This week's pattern</div>
+        <div class="streak-row streak-dark">
+          <span class="streak-label">😰 Stress</span>
+          <div class="streak-dots">
+            <div class="streak-dot" style="background:rgba(212,165,116,0.7)"></div>
+            <div class="streak-dot" style="background:rgba(212,165,116,0.3)"></div>
+            <div class="streak-dot" style="background:rgba(212,165,116,0.5)"></div>
+            <div class="streak-dot" style="background:rgba(212,165,116,0.8)"></div>
+            <div class="streak-dot" style="background:rgba(212,165,116,0.4)"></div>
+            <div class="streak-dot" style="background:rgba(212,165,116,0.6)"></div>
+            <div class="streak-dot" style="background:rgba(250,249,247,0.06)"></div>
+          </div>
+          <span class="streak-count">8</span>
+        </div>
+        <div class="streak-row streak-dark">
+          <span class="streak-label">😑 Bored</span>
+          <div class="streak-dots">
+            <div class="streak-dot" style="background:rgba(212,165,116,0.4)"></div>
+            <div class="streak-dot" style="background:rgba(250,249,247,0.06)"></div>
+            <div class="streak-dot" style="background:rgba(212,165,116,0.6)"></div>
+            <div class="streak-dot" style="background:rgba(250,249,247,0.06)"></div>
+            <div class="streak-dot" style="background:rgba(212,165,116,0.5)"></div>
+            <div class="streak-dot" style="background:rgba(212,165,116,0.7)"></div>
+            <div class="streak-dot" style="background:rgba(212,165,116,0.5)"></div>
+          </div>
+          <span class="streak-count">5</span>
+        </div>
+        <div class="streak-row streak-dark">
+          <span class="streak-label">🍽️ Meals</span>
+          <div class="streak-dots">
+            <div class="streak-dot" style="background:rgba(250,249,247,0.06)"></div>
+            <div class="streak-dot" style="background:rgba(212,165,116,0.5)"></div>
+            <div class="streak-dot" style="background:rgba(250,249,247,0.06)"></div>
+            <div class="streak-dot" style="background:rgba(212,165,116,0.5)"></div>
+            <div class="streak-dot" style="background:rgba(250,249,247,0.06)"></div>
+            <div class="streak-dot" style="background:rgba(250,249,247,0.06)"></div>
+            <div class="streak-dot" style="background:rgba(212,165,116,0.5)"></div>
+          </div>
+          <span class="streak-count">3</span>
+        </div>
+        <div class="streak-row streak-dark">
+          <span class="streak-label">🍺 Social</span>
+          <div class="streak-dots">
+            <div class="streak-dot" style="background:rgba(250,249,247,0.06)"></div>
+            <div class="streak-dot" style="background:rgba(250,249,247,0.06)"></div>
+            <div class="streak-dot" style="background:rgba(250,249,247,0.06)"></div>
+            <div class="streak-dot" style="background:rgba(250,249,247,0.06)"></div>
+            <div class="streak-dot" style="background:rgba(212,165,116,0.6)"></div>
+            <div class="streak-dot" style="background:rgba(250,249,247,0.06)"></div>
+            <div class="streak-dot" style="background:rgba(212,165,116,0.6)"></div>
+          </div>
+          <span class="streak-count">2</span>
+        </div>
+        <div class="streak-row streak-dark">
+          <span class="streak-label">☕ Coffee</span>
+          <div class="streak-dots">
+            <div class="streak-dot" style="background:rgba(212,165,116,0.5)"></div>
+            <div class="streak-dot" style="background:rgba(250,249,247,0.06)"></div>
+            <div class="streak-dot" style="background:rgba(250,249,247,0.06)"></div>
+            <div class="streak-dot" style="background:rgba(250,249,247,0.06)"></div>
+            <div class="streak-dot" style="background:rgba(250,249,247,0.06)"></div>
+            <div class="streak-dot" style="background:rgba(250,249,247,0.06)"></div>
+            <div class="streak-dot" style="background:rgba(250,249,247,0.06)"></div>
+          </div>
+          <span class="streak-count">1</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 6. CARDS STACK ═══ -->
+  <div>
+    <div class="design-label">6. Stat Cards</div>
+    <div class="design-desc">Light · Grid cards · Serif numbers</div>
+    <div class="phone">
+      <div class="screen screen-light">
+        <div class="back back-light">← Back</div>
+        <div class="title title-light">Triggers</div>
+        <div class="subtitle sub-light">Your patterns this month</div>
+        <div class="cards-grid card-light">
+          <div class="card-item"><div class="card-emoji">😰</div><div class="card-label">Stress</div><div class="card-count">8</div></div>
+          <div class="card-item"><div class="card-emoji">😑</div><div class="card-label">Boredom</div><div class="card-count">5</div></div>
+          <div class="card-item"><div class="card-emoji">🍽️</div><div class="card-label">After meals</div><div class="card-count">3</div></div>
+          <div class="card-item"><div class="card-emoji">🍺</div><div class="card-label">Social</div><div class="card-count">2</div></div>
+          <div class="card-item"><div class="card-emoji">☕</div><div class="card-label">Coffee</div><div class="card-count">1</div></div>
+          <div class="card-item"><div class="card-emoji">🚗</div><div class="card-label">Driving</div><div class="card-count">0</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 7. TIMELINE ═══ -->
+  <div>
+    <div class="design-label">7. Session Timeline</div>
+    <div class="design-desc">Dark · Horizontal scroll · Each dot = session</div>
+    <div class="phone">
+      <div class="screen screen-dark">
+        <div class="back back-dark">← Back</div>
+        <div class="title title-dark">Triggers</div>
+        <div class="subtitle sub-dark">Last 19 sessions</div>
+        <div class="timeline-container">
+          <div class="timeline-dot" style="background:rgba(212,165,116,0.4)">😰</div>
+          <div class="timeline-dot" style="background:rgba(212,165,116,0.3)">😑</div>
+          <div class="timeline-dot" style="background:rgba(212,165,116,0.4)">😰</div>
+          <div class="timeline-dot" style="background:rgba(212,165,116,0.3)">🍽️</div>
+          <div class="timeline-dot" style="background:rgba(212,165,116,0.5)">😰</div>
+          <div class="timeline-dot" style="background:rgba(212,165,116,0.2)">☕</div>
+          <div class="timeline-dot" style="background:rgba(212,165,116,0.3)">😑</div>
+          <div class="timeline-dot" style="background:rgba(212,165,116,0.4)">😰</div>
+          <div class="timeline-dot" style="background:rgba(212,165,116,0.3)">🍺</div>
+          <div class="timeline-dot" style="background:rgba(212,165,116,0.3)">😑</div>
+          <div class="timeline-dot" style="background:rgba(212,165,116,0.4)">😰</div>
+          <div class="timeline-dot" style="background:rgba(212,165,116,0.3)">🍽️</div>
+          <div class="timeline-dot" style="background:rgba(212,165,116,0.3)">😑</div>
+          <div class="timeline-dot" style="background:rgba(212,165,116,0.5)">😰</div>
+          <div class="timeline-dot" style="background:rgba(212,165,116,0.3)">🍺</div>
+          <div class="timeline-dot" style="background:rgba(212,165,116,0.3)">😑</div>
+          <div class="timeline-dot" style="background:rgba(212,165,116,0.3)">🍽️</div>
+          <div class="timeline-dot" style="background:rgba(212,165,116,0.4)">😰</div>
+          <div class="timeline-dot" style="background:rgba(212,165,116,0.4)">😰</div>
+        </div>
+        <div class="timeline-legend timeline-dark">
+          <div class="timeline-legend-item"><div class="timeline-legend-dot" style="background:#b8875a"></div> Stress</div>
+          <div class="timeline-legend-item"><div class="timeline-legend-dot" style="background:#d4a574"></div> Boredom</div>
+          <div class="timeline-legend-item"><div class="timeline-legend-dot" style="background:#e8c49a"></div> Meals</div>
+          <div class="timeline-legend-item"><div class="timeline-legend-dot" style="background:#f0d5b0"></div> Social</div>
+          <div class="timeline-legend-item"><div class="timeline-legend-dot" style="background:#f5e0c0"></div> Coffee</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 8. RING PROGRESS ═══ -->
+  <div>
+    <div class="design-label">8. Stacked Rings</div>
+    <div class="design-desc">Light · Concentric rings · Each ring = trigger</div>
+    <div class="phone">
+      <div class="screen screen-light">
+        <div class="back back-light">← Back</div>
+        <div class="title title-light">Triggers</div>
+        <div class="subtitle sub-light">Proportion by type</div>
+        <div class="rings-container rings-light">
+          <div class="rings-stack">
+            <svg class="ring-svg" viewBox="0 0 200 200">
+              <circle cx="100" cy="100" r="90" fill="none" stroke="rgba(0,0,0,0.04)" stroke-width="12"/>
+              <circle cx="100" cy="100" r="90" fill="none" stroke="#b8875a" stroke-width="12" stroke-dasharray="301.6 265.1" stroke-dashoffset="0" stroke-linecap="round" transform="rotate(-90 100 100)"/>
+              <circle cx="100" cy="100" r="74" fill="none" stroke="rgba(0,0,0,0.04)" stroke-width="12"/>
+              <circle cx="100" cy="100" r="74" fill="none" stroke="#d4a574" stroke-width="12" stroke-dasharray="188.5 278.2" stroke-dashoffset="0" stroke-linecap="round" transform="rotate(-90 100 100)"/>
+              <circle cx="100" cy="100" r="58" fill="none" stroke="rgba(0,0,0,0.04)" stroke-width="12"/>
+              <circle cx="100" cy="100" r="58" fill="none" stroke="#e8c49a" stroke-width="12" stroke-dasharray="113.1 231.6" stroke-dashoffset="0" stroke-linecap="round" transform="rotate(-90 100 100)"/>
+              <circle cx="100" cy="100" r="42" fill="none" stroke="rgba(0,0,0,0.04)" stroke-width="12"/>
+              <circle cx="100" cy="100" r="42" fill="none" stroke="#f0d5b0" stroke-width="12" stroke-dasharray="75.4 188.5" stroke-dashoffset="0" stroke-linecap="round" transform="rotate(-90 100 100)"/>
+              <circle cx="100" cy="100" r="26" fill="none" stroke="rgba(0,0,0,0.04)" stroke-width="12"/>
+              <circle cx="100" cy="100" r="26" fill="none" stroke="#f5e0c0" stroke-width="12" stroke-dasharray="37.7 125.7" stroke-dashoffset="0" stroke-linecap="round" transform="rotate(-90 100 100)"/>
+            </svg>
+          </div>
+          <div class="rings-legend">
+            <div class="rings-legend-row"><div class="rings-legend-color" style="background:#b8875a"></div><span class="rings-legend-label">😰 Stress</span><span class="rings-legend-pct">42%</span></div>
+            <div class="rings-legend-row"><div class="rings-legend-color" style="background:#d4a574"></div><span class="rings-legend-label">😑 Boredom</span><span class="rings-legend-pct">26%</span></div>
+            <div class="rings-legend-row"><div class="rings-legend-color" style="background:#e8c49a"></div><span class="rings-legend-label">🍽️ After meals</span><span class="rings-legend-pct">16%</span></div>
+            <div class="rings-legend-row"><div class="rings-legend-color" style="background:#f0d5b0"></div><span class="rings-legend-label">🍺 Social</span><span class="rings-legend-pct">11%</span></div>
+            <div class="rings-legend-row"><div class="rings-legend-color" style="background:#f5e0c0"></div><span class="rings-legend-label">☕ Coffee</span><span class="rings-legend-pct">5%</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 9. PILL BAR ═══ -->
+  <div>
+    <div class="design-label">9. Pill Bar</div>
+    <div class="design-desc">Dark · One bar · Segmented by trigger</div>
+    <div class="phone">
+      <div class="screen screen-dark">
+        <div class="back back-dark">← Back</div>
+        <div class="title title-dark">Triggers</div>
+        <div class="subtitle sub-dark">Split of all sessions</div>
+        <div class="pill-chart pill-dark">
+          <div class="pill-bar-container">
+            <div class="pill-segment" style="width:42%; background:#b8875a; color:#fff;">8</div>
+            <div class="pill-segment" style="width:26%; background:#d4a574; color:#fff;">5</div>
+            <div class="pill-segment" style="width:16%; background:#e8c49a; color:#1a1a1a;">3</div>
+            <div class="pill-segment" style="width:11%; background:#f0d5b0; color:#1a1a1a;">2</div>
+            <div class="pill-segment" style="width:5%; background:#f5e0c0; color:#1a1a1a;"></div>
+          </div>
+          <div class="pill-legend">
+            <div class="pill-legend-item">😰 Stress</div>
+            <div class="pill-legend-item">😑 Boredom</div>
+            <div class="pill-legend-item">🍽️ Meals</div>
+            <div class="pill-legend-item">🍺 Social</div>
+            <div class="pill-legend-item">☕ Coffee</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 10. PICTOGRAPH ═══ -->
+  <div>
+    <div class="design-label">10. Pictograph</div>
+    <div class="design-desc">Light · Emoji icons · Each icon = 1 session</div>
+    <div class="phone">
+      <div class="screen screen-light">
+        <div class="back back-light">← Back</div>
+        <div class="title title-light">Triggers</div>
+        <div class="subtitle sub-light">Each icon = 1 session</div>
+        <div class="picto-grid picto-light">
+          <div class="picto-row">
+            <span class="picto-label">😰 Stress</span>
+            <div class="picto-icons"><span class="picto-icon">😰</span><span class="picto-icon">😰</span><span class="picto-icon">😰</span><span class="picto-icon">😰</span><span class="picto-icon">😰</span><span class="picto-icon">😰</span><span class="picto-icon">😰</span><span class="picto-icon">😰</span></div>
+            <span class="picto-count">8</span>
+          </div>
+          <div class="picto-row">
+            <span class="picto-label">😑 Boredom</span>
+            <div class="picto-icons"><span class="picto-icon">😑</span><span class="picto-icon">😑</span><span class="picto-icon">😑</span><span class="picto-icon">😑</span><span class="picto-icon">😑</span></div>
+            <span class="picto-count">5</span>
+          </div>
+          <div class="picto-row">
+            <span class="picto-label">🍽️ Meals</span>
+            <div class="picto-icons"><span class="picto-icon">🍽️</span><span class="picto-icon">🍽️</span><span class="picto-icon">🍽️</span></div>
+            <span class="picto-count">3</span>
+          </div>
+          <div class="picto-row">
+            <span class="picto-label">🍺 Social</span>
+            <div class="picto-icons"><span class="picto-icon">🍺</span><span class="picto-icon">🍺</span></div>
+            <span class="picto-count">2</span>
+          </div>
+          <div class="picto-row">
+            <span class="picto-label">☕ Coffee</span>
+            <div class="picto-icons"><span class="picto-icon">☕</span></div>
+            <span class="picto-count">1</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
