@@ -1054,6 +1054,20 @@
     ctx.stroke();
   }
 
+  // Trigger categories for end-of-session screen
+  const TRIGGER_OPTIONS = [
+    { id: 'stress', emoji: '😰', label: 'Stress' },
+    { id: 'boredom', emoji: '😑', label: 'Boredom' },
+    { id: 'meals', emoji: '🍽️', label: 'After meals' },
+    { id: 'social', emoji: '🍺', label: 'Social' },
+    { id: 'coffee', emoji: '☕', label: 'Coffee' },
+    { id: 'driving', emoji: '🚗', label: 'Driving' },
+    { id: 'morning', emoji: '😴', label: 'Waking up' },
+    { id: 'other', emoji: '💭', label: 'Other' },
+  ];
+  let selectedTrigger = null;
+  let triggerSubmitted = false;
+
   function drawCompletion() {
     completionFrame++;
 
@@ -1061,208 +1075,119 @@
     ctx.fillStyle = isDark ? 'rgba(26,26,26,0.95)' : 'rgba(250,249,247,0.95)';
     ctx.fillRect(0, 0, W, H);
 
-    // Big animated number — cigarettes avoided
+    // Session cost — big animated number
     const numScale = Math.min(1, completionFrame / 30);
-    const displayCount = Math.floor(totalCigarettesAvoided * numScale);
+    const sessionCost = CIG_PRICE();
 
     ctx.save();
-    ctx.translate(W / 2, H * 0.22);
+    ctx.translate(W / 2, H * 0.18);
     ctx.scale(numScale, numScale);
     ctx.fillStyle = isDark ? '#faf9f7' : '#1a1a1a';
-    ctx.font = `${Math.min(W * 0.18, 72)}px 'Libre Baskerville', serif`;
+    ctx.font = `${Math.min(W * 0.14, 56)}px 'Libre Baskerville', serif`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText(displayCount, 0, 0);
+    ctx.fillText('$' + sessionCost.toFixed(2), 0, 0);
     ctx.restore();
 
-    // Label
-    const labelAlpha = Math.min(1, Math.max(0, (completionFrame - 20) / 20));
-    ctx.globalAlpha = labelAlpha;
+    // Subtitle
+    const subAlpha = Math.min(1, Math.max(0, (completionFrame - 15) / 20));
+    ctx.globalAlpha = subAlpha;
     ctx.fillStyle = isDark ? 'rgba(250,249,247,0.4)' : 'rgba(26,26,26,0.4)';
-    ctx.font = `${Math.min(W * 0.032, 13)}px 'Outfit', sans-serif`;
+    ctx.font = `${Math.min(W * 0.03, 12)}px 'Outfit', sans-serif`;
     ctx.textAlign = 'center';
-    ctx.fillText('CIGARETTES AVOIDED', W / 2, H * 0.22 + Math.min(W * 0.1, 42) + 12);
+    ctx.fillText('saved this session', W / 2, H * 0.18 + 40);
 
-    // Money saved card
-    const cardAlpha = Math.min(1, Math.max(0, (completionFrame - 35) / 20));
-    ctx.globalAlpha = cardAlpha;
-    const cardW = Math.min(W * 0.75, 280);
-    const cardH = 160;
-    const cardX = W / 2 - cardW / 2;
-    const cardY = H * 0.34;
+    // Question
+    const qAlpha = Math.min(1, Math.max(0, (completionFrame - 30) / 20));
+    ctx.globalAlpha = qAlpha;
+    ctx.fillStyle = isDark ? 'rgba(250,249,247,0.6)' : 'rgba(26,26,26,0.6)';
+    ctx.font = `${Math.min(W * 0.04, 16)}px 'Outfit', sans-serif`;
+    ctx.fillText('What triggered this session?', W / 2, H * 0.35);
 
-    // Card background
-    ctx.fillStyle = 'rgba(76,175,80,0.1)';
-    ctx.beginPath();
-    ctx.roundRect(cardX, cardY, cardW, cardH, 16);
-    ctx.fill();
-    ctx.strokeStyle = 'rgba(76,175,80,0.2)';
-    ctx.lineWidth = 1;
-    ctx.stroke();
+    // Trigger grid — 2 columns, 4 rows
+    const gridAlpha = Math.min(1, Math.max(0, (completionFrame - 40) / 20));
+    ctx.globalAlpha = gridAlpha;
+    const cols = 2;
+    const btnW = Math.min(W * 0.38, 150);
+    const btnH = 48;
+    const gap = 12;
+    const gridStartX = W / 2 - (cols * btnW + gap) / 2;
+    const gridStartY = H * 0.40;
 
-    // Money amount
-    ctx.fillStyle = '#4caf50';
-    ctx.font = `300 ${Math.min(W * 0.09, 36)}px -apple-system, sans-serif`;
-    ctx.textAlign = 'center';
-    ctx.fillText('$' + totalMoneySaved.toFixed(2), W / 2, cardY + 35);
+    // Store button positions for tap detection
+    if (!window._triggerBtns) window._triggerBtns = [];
+    window._triggerBtns = [];
 
-    // Money label
-    ctx.fillStyle = 'rgba(255,255,255,0.35)';
-    ctx.font = `${Math.min(W * 0.028, 11)}px -apple-system, sans-serif`;
-    ctx.fillText('TOTAL SAVED', W / 2, cardY + 52);
+    TRIGGER_OPTIONS.forEach((trigger, i) => {
+      const col = i % cols;
+      const row = Math.floor(i / cols);
+      const x = gridStartX + col * (btnW + gap);
+      const y = gridStartY + row * (btnH + gap);
+      const isSelected = selectedTrigger === trigger.id;
 
-    // Divider line
-    ctx.strokeStyle = 'rgba(76,175,80,0.15)';
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(cardX + 20, cardY + 68);
-    ctx.lineTo(cardX + cardW - 20, cardY + 68);
-    ctx.stroke();
+      // Button background
+      ctx.fillStyle = isSelected
+        ? (isDark ? 'rgba(212,165,116,0.2)' : 'rgba(212,165,116,0.15)')
+        : (isDark ? 'rgba(250,249,247,0.06)' : 'rgba(0,0,0,0.04)');
+      ctx.beginPath();
+      ctx.roundRect(x, y, btnW, btnH, 12);
+      ctx.fill();
 
-    // "That's enough for" label
-    ctx.fillStyle = 'rgba(255,255,255,0.3)';
-    ctx.font = `${Math.min(W * 0.025, 10)}px -apple-system, sans-serif`;
-    ctx.textAlign = 'left';
-    ctx.fillText("THAT'S ENOUGH FOR", cardX + 20, cardY + 84);
+      // Border
+      ctx.strokeStyle = isSelected
+        ? 'rgba(212,165,116,0.5)'
+        : (isDark ? 'rgba(250,249,247,0.08)' : 'rgba(0,0,0,0.08)');
+      ctx.lineWidth = 1;
+      ctx.stroke();
 
-    // "Could buy" items
-    const couldBuy = getCouldBuyItems(totalMoneySaved);
-    const itemStartY = cardY + 102;
-    const itemSpacing = 18;
-    couldBuy.slice(0, 3).forEach((item, i) => {
-      const y = itemStartY + i * itemSpacing;
-      ctx.fillStyle = 'rgba(255,255,255,0.55)';
-      ctx.font = `${Math.min(W * 0.03, 12)}px -apple-system, sans-serif`;
-      ctx.textAlign = 'left';
-      ctx.fillText(item.emoji + '  ', cardX + 20, y);
-      ctx.fillStyle = '#4caf50';
-      ctx.font = `600 ${Math.min(W * 0.03, 12)}px -apple-system, sans-serif`;
-      const emojiWidth = ctx.measureText(item.emoji + '  ').width;
-      ctx.fillText(item.quantity, cardX + 20 + emojiWidth, y);
-      ctx.fillStyle = 'rgba(255,255,255,0.55)';
-      ctx.font = `${Math.min(W * 0.03, 12)}px -apple-system, sans-serif`;
-      const qtyWidth = ctx.measureText(item.quantity).width;
-      ctx.fillText(' ' + item.text, cardX + 20 + emojiWidth + qtyWidth, y);
+      // Emoji + label
+      ctx.fillStyle = isSelected
+        ? (isDark ? '#d4a574' : '#b8875a')
+        : (isDark ? 'rgba(250,249,247,0.7)' : 'rgba(26,26,26,0.7)');
+      ctx.font = `${Math.min(W * 0.035, 14)}px 'Outfit', sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(trigger.emoji + ' ' + trigger.label, x + btnW / 2, y + btnH / 2);
+
+      // Store position for tap detection
+      window._triggerBtns.push({ id: trigger.id, x, y, w: btnW, h: btnH });
     });
 
-    // Health status card
-    const healthAlpha = Math.min(1, Math.max(0, (completionFrame - 50) / 20));
-    ctx.globalAlpha = healthAlpha;
-    const healthCardY = cardY + cardH + 16;
-    const healthCardH = 80;
+    // Done button (only after selecting a trigger)
+    if (selectedTrigger && !triggerSubmitted) {
+      const btnAlpha = Math.min(1, Math.max(0, (completionFrame - 55) / 20));
+      ctx.globalAlpha = btnAlpha;
+      const doneBtnW = Math.min(W * 0.5, 200);
+      const doneBtnH = 48;
+      const doneBtnX = W / 2 - doneBtnW / 2;
+      const doneBtnY = H * 0.82;
 
-    // Health card background
-    ctx.fillStyle = 'rgba(76,175,80,0.08)';
-    ctx.beginPath();
-    ctx.roundRect(cardX, healthCardY, cardW, healthCardH, 16);
-    ctx.fill();
-    ctx.strokeStyle = 'rgba(76,175,80,0.15)';
-    ctx.lineWidth = 1;
-    ctx.stroke();
+      ctx.fillStyle = isDark ? '#faf9f7' : '#1a1a1a';
+      ctx.beginPath();
+      ctx.roundRect(doneBtnX, doneBtnY, doneBtnW, doneBtnH, 12);
+      ctx.fill();
 
-    // Health card title
-    ctx.fillStyle = 'rgba(255,255,255,0.4)';
-    ctx.font = `${Math.min(W * 0.025, 10)}px -apple-system, sans-serif`;
-    ctx.textAlign = 'left';
-    ctx.fillText('YOUR BODY TODAY', cardX + 20, healthCardY + 18);
+      ctx.fillStyle = isDark ? '#1a1a1a' : '#faf9f7';
+      ctx.font = `${Math.min(W * 0.035, 14)}px 'Outfit', sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('Done', W / 2, doneBtnY + doneBtnH / 2);
 
-    // Health stats
-    const healthStatus = getHealthStatus();
-    if (healthStatus) {
-      healthStatus.forEach((stat, i) => {
-        const y = healthCardY + 38 + i * 16;
-        ctx.font = `${Math.min(W * 0.035, 14)}px -apple-system, sans-serif`;
-        ctx.fillText(stat.icon, cardX + 20, y);
-        ctx.fillStyle = 'rgba(255,255,255,0.6)';
-        ctx.font = `${Math.min(W * 0.03, 12)}px -apple-system, sans-serif`;
-        ctx.fillText(stat.text + ' ', cardX + 42, y);
-        ctx.fillStyle = '#4caf50';
-        ctx.font = `600 ${Math.min(W * 0.03, 12)}px -apple-system, sans-serif`;
-        const textWidth = ctx.measureText(stat.text + ' ').width;
-        ctx.fillText(stat.state, cardX + 42 + textWidth, y);
-      });
+      // Store for tap detection
+      window._doneBtn = { x: doneBtnX, y: doneBtnY, w: doneBtnW, h: doneBtnH };
     }
 
-    // Time survived
-    const elapsed = Math.floor((performance.now() - gameStartTime) / 1000);
-    const mins = Math.floor(elapsed / 60);
-    const secs = elapsed % 60;
-    const timeAlpha = Math.min(1, Math.max(0, (completionFrame - 50) / 20));
-    ctx.globalAlpha = timeAlpha;
-    ctx.fillStyle = 'rgba(255,255,255,0.5)';
-    ctx.font = `${Math.min(W * 0.035, 14)}px -apple-system, sans-serif`;
-    ctx.textAlign = 'center';
-    ctx.fillText(`Session time: ${mins}:${secs.toString().padStart(2, '0')}`, W / 2, H * 0.68);
-
-    // Daily breakdown dots
-    const daysAlpha = Math.min(1, Math.max(0, (completionFrame - 65) / 20));
-    ctx.globalAlpha = daysAlpha;
-    const days = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
-    const dayY = H * 0.74;
-    days.forEach((day, i) => {
-      const x = W / 2 + (i - 3) * 28;
-      const destroyed = i < streakCount;
-      ctx.fillStyle = destroyed ? '#4caf50' : 'rgba(255,255,255,0.08)';
-      ctx.beginPath();
-      ctx.arc(x, dayY, 10, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = destroyed ? '#fff' : 'rgba(255,255,255,0.3)';
-      ctx.font = `bold ${Math.min(W * 0.025, 11)}px -apple-system, sans-serif`;
-      ctx.fillText(day, x, dayY + 4);
-    });
-
-    // Button
-    const btnAlpha = Math.min(1, Math.max(0, (completionFrame - 85) / 20));
-    ctx.globalAlpha = btnAlpha;
-    ctx.fillStyle = isDark ? '#faf9f7' : '#1a1a1a';
-    ctx.beginPath();
-    ctx.roundRect(W / 2 - 70, H * 0.82, 140, 44, 0);
-    ctx.fill();
-    ctx.fillStyle = isDark ? '#1a1a1a' : '#faf9f7';
-    ctx.font = `${Math.min(W * 0.035, 14)}px 'Outfit', sans-serif`;
-    ctx.textAlign = 'center';
-    ctx.fillText('KEEP STREAK', W / 2, H * 0.82 + 27);
+    // Thank you message after submit
+    if (triggerSubmitted) {
+      const thanksAlpha = Math.min(1, (completionFrame - triggerSubmitted) / 20);
+      ctx.globalAlpha = thanksAlpha;
+      ctx.fillStyle = isDark ? 'rgba(250,249,247,0.5)' : 'rgba(26,26,26,0.5)';
+      ctx.font = `${Math.min(W * 0.035, 14)}px 'Outfit', sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.fillText('Tap anywhere to continue', W / 2, H * 0.85);
+    }
 
     ctx.globalAlpha = 1;
-  }
-
-  // Helper: "could buy" items based on total saved
-  function getCouldBuyItems(amount) {
-    const items = [
-      { emoji: '☕', quantity: '1 coffee', text: 'at your local café', threshold: 5 },
-      { emoji: '☕', quantity: '2 coffees', text: 'for you and a friend', threshold: 8 },
-      { emoji: '🍕', quantity: '1 pizza', text: 'for movie night', threshold: 15 },
-      { emoji: '🍕', quantity: '2 pizzas', text: 'for movie night', threshold: 25 },
-      { emoji: '⛽', quantity: 'half a tank', text: 'of petrol', threshold: 35 },
-      { emoji: '🎬', quantity: 'a movie ticket', text: 'at the cinema', threshold: 20 },
-      { emoji: '🍺', quantity: 'a few beers', text: 'at the pub', threshold: 30 },
-      { emoji: '🛒', quantity: 'a week of groceries', text: 'for one person', threshold: 50 },
-      { emoji: '⛽', quantity: 'a full tank', text: 'of petrol', threshold: 70 },
-      { emoji: '👟', quantity: 'a new pair of shoes', text: '', threshold: 100 },
-      { emoji: '✈️', quantity: 'a weekend away', text: '', threshold: 200 },
-      { emoji: '🎮', quantity: 'a new game console', text: '', threshold: 500 },
-    ];
-    // Return items that the user can afford, most expensive first
-    const affordable = items.filter(item => amount >= item.threshold);
-    return affordable.slice(-3).reverse(); // last 3 affordable, most expensive first
-  }
-
-  // Helper: get current health status based on quit duration
-  function getHealthStatus() {
-    if (!quitStartDate) return null;
-    const elapsed = (Date.now() - quitStartDate) / 1000; // seconds
-    const status = [];
-    // Heart rate
-    if (elapsed >= 20 * 60) status.push({ icon: '❤️', text: 'Heart rate', state: 'normal' });
-    else status.push({ icon: '❤️', text: 'Heart rate', state: 'recovering' });
-    // CO levels
-    if (elapsed >= 12 * 3600) status.push({ icon: '🫁', text: 'CO levels', state: 'clearing' });
-    else status.push({ icon: '🫁', text: 'CO levels', state: 'high' });
-    // Circulation
-    if (elapsed >= 90 * 24 * 3600) status.push({ icon: '🩸', text: 'Circulation', state: 'restored' });
-    else if (elapsed >= 48 * 3600) status.push({ icon: '🩸', text: 'Circulation', state: 'improving' });
-    else status.push({ icon: '🩸', text: 'Circulation', state: 'poor' });
-    return status;
   }
 
   // Helper: format elapsed time for health timeline
@@ -1520,8 +1445,8 @@
     } catch (e) {
       console.error(e);
     }
-    // Stop loop when game is over and completion animation is done
-    if (gameOver && completionFrame > 120) {
+    // Stop loop when game is over and trigger submitted + animation done
+    if (gameOver && triggerSubmitted && completionFrame - triggerSubmitted > 60) {
       loopRunning = false;
     }
     if (loopRunning) loopFrameId = requestAnimationFrame(loop);
@@ -1537,11 +1462,44 @@
         e.target.closest('.signin-screen')
       )) return;
 
-      // Game over → restart
+      // Game over — handle trigger selection screen
       if (gameOver) {
+        // Get tap coordinates
+        const touch = e.touches ? e.touches[0] : e;
+        const tx = touch.clientX;
+        const ty = touch.clientY;
+
+        // Check trigger buttons
+        if (window._triggerBtns && !triggerSubmitted) {
+          for (const btn of window._triggerBtns) {
+            if (tx >= btn.x && tx <= btn.x + btn.w && ty >= btn.y && ty <= btn.y + btn.h) {
+              selectedTrigger = btn.id;
+              return;
+            }
+          }
+          // Check done button
+          if (selectedTrigger && window._doneBtn) {
+            const db = window._doneBtn;
+            if (tx >= db.x && tx <= db.x + db.w && ty >= db.y && ty <= db.y + db.h) {
+              // Save trigger
+              const logs = JSON.parse(safeGetItem('cravingLogs', '[]'));
+              logs.push({ time: Date.now(), trigger: selectedTrigger });
+              safeSetItem('cravingLogs', JSON.stringify(logs));
+              triggerSubmitted = completionFrame;
+              return;
+            }
+          }
+        }
+
+        // Only restart after trigger has been submitted
+        if (!triggerSubmitted) return;
+
+        // Reset and restart
         burnProgress = 0;
         gameOver = false;
         started = false;
+        selectedTrigger = null;
+        triggerSubmitted = false;
         particles.length = 0;
         ashPieces.length = 0;
         ashRings.length = 0;
