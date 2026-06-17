@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Puff — Sound Design Options</title>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Outfit', sans-serif;
+    background: #0a0a0a;
+    color: #faf9f7;
+    padding: 40px 20px;
+  }
+  .intro {
+    text-align: center;
+    max-width: 700px;
+    margin: 0 auto 60px;
+  }
+  .intro h1 {
+    font-family: 'Libre Baskerville', serif;
+    font-size: 36px;
+    font-style: italic;
+    margin-bottom: 12px;
+  }
+  .intro p {
+    color: rgba(250,249,247,0.5);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .section {
+    max-width: 700px;
+    margin: 0 auto 80px;
+  }
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 8px;
+  }
+  .section-icon { font-size: 32px; }
+  .section-title {
+    font-family: 'Libre Baskerville', serif;
+    font-size: 24px;
+    font-style: italic;
+  }
+  .section-desc {
+    font-size: 13px;
+    color: rgba(250,249,247,0.35);
+    margin-bottom: 32px;
+  }
+  .current-card {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+    background: rgba(212,165,116,0.08);
+    border: 1px solid rgba(212,165,116,0.2);
+    border-radius: 16px;
+    margin-bottom: 32px;
+  }
+  .current-badge {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: rgba(212,165,116,0.6);
+    background: rgba(212,165,116,0.1);
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-bottom: 4px;
+    display: inline-block;
+  }
+  .current-name {
+    font-weight: 500;
+    font-size: 15px;
+    margin-bottom: 4px;
+  }
+  .current-spec {
+    font-size: 12px;
+    color: rgba(250,249,247,0.4);
+    line-height: 1.5;
+  }
+  .designs {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .sound-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+    background: rgba(250,249,247,0.03);
+    border: 1px solid rgba(250,249,247,0.06);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .sound-card:hover {
+    background: rgba(250,249,247,0.05);
+    border-color: rgba(212,165,116,0.15);
+  }
+  .sound-card.playing {
+    border-color: rgba(212,165,116,0.4);
+    background: rgba(212,165,116,0.06);
+  }
+  .sound-num {
+    font-family: 'Libre Baskerville', serif;
+    font-size: 20px;
+    color: rgba(250,249,247,0.08);
+    width: 32px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+  .sound-info { flex: 1; }
+  .sound-name { font-weight: 500; font-size: 14px; margin-bottom: 2px; }
+  .sound-desc { font-size: 12px; color: rgba(250,249,247,0.35); line-height: 1.4; }
+  .sound-play {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(250,249,247,0.05);
+    border: 1px solid rgba(250,249,247,0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+  }
+  .sound-play:hover {
+    background: rgba(212,165,116,0.12);
+    border-color: rgba(212,165,116,0.25);
+  }
+  .sound-play svg { fill: #faf9f7; }
+  .sound-card.playing .sound-play {
+    background: rgba(212,165,116,0.2);
+    border-color: rgba(212,165,116,0.4);
+  }
+  .divider {
+    height: 1px;
+    background: rgba(250,249,247,0.06);
+    max-width: 700px;
+    margin: 0 auto 80px;
+  }
+</style>
+</head>
+<body>
+
+<div class="intro">
+  <h1>Sound Design — Pick Your Sounds</h1>
+  <p>Click any card to preview. Choose one ember sound and one drag sound.</p>
+</div>
+
+<!-- ═══ EMBER HUM SECTION ═══ -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-icon">🔥</div>
+    <div class="section-title">Ember Hum</div>
+  </div>
+  <div class="section-desc">Plays while the cigarette burns. Ambient, subtle, continuous.</div>
+
+  <div class="current-card">
+    <div style="flex:1">
+      <div class="current-badge">Current</div>
+      <div class="current-name">Warm Sine Hum</div>
+      <div class="current-spec">120Hz sine wave, lowpass 300Hz. Volume: 0.04 × ember pulse.</div>
+    </div>
+    <div class="sound-play" onclick="playEmberCurrent()">
+      <svg width="14" height="14" viewBox="0 0 24 24"><polygon points="6,4 20,12 6,20"/></svg>
+    </div>
+  </div>
+
+  <div class="designs" id="ember-designs"></div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ═══ DRAG WHOOSH SECTION ═══ -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-icon">💨</div>
+    <div class="section-title">Drag Whoosh</div>
+  </div>
+  <div class="section-desc">Plays when blowing into the mic. Responsive, satisfying.</div>
+
+  <div class="current-card">
+    <div style="flex:1">
+      <div class="current-badge">Current</div>
+      <div class="current-name">Low Sawtooth Rumble</div>
+      <div class="current-spec">60Hz sawtooth, lowpass 200Hz. Volume: 0.12 × blow intensity.</div>
+    </div>
+    <div class="sound-play" onclick="playDragCurrent()">
+      <svg width="14" height="14" viewBox="0 0 24 24"><polygon points="6,4 20,12 6,20"/></svg>
+    </div>
+  </div>
+
+  <div class="designs" id="drag-designs"></div>
+</div>
+
+<script>
+// ═══ EMBER HUM ALTERNATIVES ═══
+const emberSounds = [
+  {
+    name: 'Deep Breath',
+    desc: 'Slow filtered noise that swells like a deep inhale. Organic.',
+    play: function(ctx, out) {
+      const buf = ctx.createBuffer(1, ctx.sampleRate * 4, ctx.sampleRate);
+      const d = buf.getChannelData(0);
+      for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+      const src = ctx.createBufferSource(); src.buffer = buf;
+      const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 600; bp.Q.value = 0.8;
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(0, ctx.currentTime);
+      g.gain.linearRampToValueAtTime(0.06, ctx.currentTime + 1);
+      g.gain.linearRampToValueAtTime(0.03, ctx.currentTime + 3);
+      g.gain.linearRampToValueAtTime(0, ctx.currentTime + 4);
+      src.connect(bp).connect(g).connect(out); src.start(); src.stop(ctx.currentTime + 4);
+    }
+  },
+  {
+    name: 'Ocean Breeze',
+    desc: 'Gentle wind with slow modulation. Like standing on a cliff.',
+    play: function(ctx, out) {
+      const buf = ctx.createBuffer(1, ctx.sampleRate * 4, ctx.sampleRate);
+      const d = buf.getChannelData(0);
+      for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+      const src = ctx.createBufferSource(); src.buffer = buf;
+      const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 400;
+      const lfo = ctx.createOscillator(); lfo.frequency.value = 0.3;
+      const lfoG = ctx.createGain(); lfoG.gain.value = 200;
+      lfo.connect(lfoG).connect(lp.frequency);
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(0, ctx.currentTime);
+      g.gain.linearRampToValueAtTime(0.05, ctx.currentTime + 1);
+      g.gain.linearRampToValueAtTime(0.03, ctx.currentTime + 3);
+      g.gain.linearRampToValueAtTime(0, ctx.currentTime + 4);
+      src.connect(lp).connect(g).connect(out); lfo.start(); src.start();
+      src.stop(ctx.currentTime + 4); lfo.stop(ctx.currentTime + 4);
+    }
+  },
+  {
+    name: 'Forest Wind',
+    desc: 'Higher-pitched wind through trees. Rustling, airy.',
+    play: function(ctx, out) {
+      const buf = ctx.createBuffer(1, ctx.sampleRate * 4, ctx.sampleRate);
+      const d = buf.getChannelData(0);
+      for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+      const src = ctx.createBufferSource(); src.buffer = buf;
+      const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 1200; bp.Q.value = 0.5;
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(0, ctx.currentTime);
+      g.gain.linearRampToValueAtTime(0.04, ctx.currentTime + 1);
+      g.gain.linearRampToValueAtTime(0.02, ctx.currentTime + 3);
+      g.gain.linearRampToValueAtTime(0, ctx.currentTime + 4);
+      src.connect(bp).connect(g).connect(out); src.start(); src.stop(ctx.currentTime + 4);
+    }
+  },
+  {
+    name: 'Whisper Wind',
+    desc: 'Very soft, high-frequency breath. Intimate and quiet.',
+    play: function(ctx, out) {
+      const buf = ctx.createBuffer(1, ctx.sampleRate * 4, ctx.sampleRate);
+      const d = buf.getChannelData(0);
+      for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+      const src = ctx.createBufferSource(); src.buffer = buf;
+      const hp = ctx.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 2000;
+      const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 3000; bp.Q.value = 1.5;
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(0, ctx.currentTime);
+      g.gain.linearRampToValueAtTime(0.02, ctx.currentTime + 1);
+      g.gain.linearRampToValueAtTime(0.01, ctx.currentTime + 3);
+      g.gain.linearRampToValueAtTime(0, ctx.currentTime + 4);
+      src.connect(hp).connect(bp).connect(g).connect(out); src.start(); src.stop(ctx.currentTime + 4);
+    }
+  },
+  {
+    name: 'Calm Hum',
+    desc: 'Pure 80Hz sine with subtle vibrato. Like a meditation bowl.',
+    play: function(ctx, out) {
+      const osc = ctx.createOscillator(); osc.type = 'sine'; osc.frequency.value = 80;
+      const lfo = ctx.createOscillator(); lfo.frequency.value = 0.5;
+      const lfoG = ctx.createGain(); lfoG.gain.value = 2;
+      lfo.connect(lfoG).connect(osc.frequency);
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(0, ctx.currentTime);
+      g.gain.linearRampToValueAtTime(0.05, ctx.currentTime + 1);
+      g.gain.linearRampToValueAtTime(0.03, ctx.currentTime + 3);
+      g.gain.linearRampToValueAtTime(0, ctx.currentTime + 4);
+      osc.connect(g).connect(out); lfo.start(); osc.start();
+      osc.stop(ctx.currentTime + 4); lfo.stop(ctx.currentTime + 4);
+    }
+  },
+  {
+    name: 'Rain Drops',
+    desc: 'Gentle noise with random pitch bursts. Like light rain on a window.',
+    play: function(ctx, out) {
+      const buf = ctx.createBuffer(1, ctx.sampleRate * 4, ctx.sampleRate);
+      const d = buf.getChannelData(0);
+      for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * (Math.random() > 0.97 ? 3 : 0.02);
+      const src = ctx.createBufferSource(); src.buffer = buf;
+      const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 4000; bp.Q.value = 2;
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(0, ctx.currentTime);
+      g.gain.linearRampToValueAtTime(0.04, ctx.currentTime + 1);
+      g.gain.linearRampToValueAtTime(0.02, ctx.currentTime + 3);
+      g.gain.linearRampToValueAtTime(0, ctx.currentTime + 4);
+      src.connect(bp).connect(g).connect(out); src.start(); src.stop(ctx.currentTime + 4);
+    }
+  },
+  {
+    name: 'Distant Wind',
+    desc: 'Very low, slow-modulating wind. Like hearing wind from inside.',
+    play: function(ctx, out) {
+      const buf = ctx.createBuffer(1, ctx.sampleRate * 5, ctx.sampleRate);
+      const d = buf.getChannelData(0);
+      for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+      const src = ctx.createBufferSource(); src.buffer = buf;
+      const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 200;
+      const lfo = ctx.createOscillator(); lfo.frequency.value = 0.15;
+      const lfoG = ctx.createGain(); lfoG.gain.value = 100;
+      lfo.connect(lfoG).connect(lp.frequency);
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(0, ctx.currentTime);
+      g.gain.linearRampToValueAtTime(0.04, ctx.currentTime + 1.5);
+      g.gain.linearRampToValueAtTime(0.02, ctx.currentTime + 4);
+      g.gain.linearRampToValueAtTime(0, ctx.currentTime + 5);
+      src.connect(lp).connect(g).connect(out); lfo.start(); src.start();
+      src.stop(ctx.currentTime + 5); lfo.stop(ctx.currentTime + 5);
+    }
+  },
+  {
+    name: 'Breath Rhythm',
+    desc: 'Oscillating volume that mimics natural breathing. 4-second cycle.',
+    play: function(ctx, out) {
+      const buf = ctx.createBuffer(1, ctx.sampleRate * 6, ctx.sampleRate);
+      const d = buf.getChannelData(0);
+      for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+      const src = ctx.createBufferSource(); src.buffer = buf;
+      const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 500; bp.Q.value = 0.6;
+      const lfo = ctx.createOscillator(); lfo.frequency.value = 0.25;
+      const lfoG = ctx.createGain(); lfoG.gain.value = 0.03;
+      const g = ctx.createGain(); g.gain.value = 0.02;
+      lfo.connect(lfoG).connect(g.gain);
+      src.connect(bp).connect(g).connect(out); lfo.start(); src.start();
+      src.stop(ctx.currentTime + 6); lfo.stop(ctx.currentTime + 6);
+    }
+  },
+  {
+    name: 'Warm Drone',
+    desc: 'Two detuned sine waves. Rich, full, slightly beating. Like a singing bowl.',
+    play: function(ctx, out) {
+      const o1 = ctx.createOscillator(); o1.type = 'sine'; o1.frequency.value = 110;
+      const o2 = ctx.createOscillator(); o2.type = 'sine'; o2.frequency.value = 112;
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(0, ctx.currentTime);
+      g.gain.linearRampToValueAtTime(0.03, ctx.currentTime + 1);
+      g.gain.linearRampToValueAtTime(0.02, ctx.currentTime + 3);
+      g.gain.linearRampToValueAtTime(0, ctx.currentTime + 4);
+      o1.connect(g); o2.connect(g); g.connect(out);
+      o1.start(); o2.start(); o1.stop(ctx.currentTime + 4); o2.stop(ctx.currentTime + 4);
+    }
+  },
+  {
+    name: 'Soft Static',
+    desc: 'Very quiet, warm white noise. Like a distant TV static. Background texture.',
+    play: function(ctx, out) {
+      const buf = ctx.createBuffer(1, ctx.sampleRate * 4, ctx.sampleRate);
+      const d = buf.getChannelData(0);
+      for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+      const src = ctx.createBufferSource(); src.buffer = buf;
+      const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 800;
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(0, ctx.currentTime);
+      g.gain.linearRampToValueAtTime(0.015, ctx.currentTime + 1);
+      g.gain.linearRampToValueAtTime(0.008, ctx.currentTime + 3);
+      g.gain.linearRampToValueAtTime(0, ctx.currentTime + 4);
+      src.connect(lp).connect(g).connect(out); src.start(); src.stop(ctx.currentTime + 4);
+    }
+  }
+];
+
+// ═══ DRAG WHOOSH ALTERNATIVES ═══
+const dragSounds = [
+  {
+    name: 'Sharp Exhale',
+    desc: 'Quick noise burst that fades fast. Like a sharp breath out.',
+    play: function(ctx, out) {
+      const buf = ctx.createBuffer(1, ctx.sampleRate * 1.5, ctx.sampleRate);
+      const d = buf.getChannelData(0);
+      for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+      const src = ctx.createBufferSource(); src.buffer = buf;
+      const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 800; bp.Q.value = 0.5;
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(0, ctx.currentTime);
+      g.gain.linearRampToValueAtTime(0.15, ctx.currentTime + 0.05);
+      g.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.8);
+      g.gain.linearRampToValueAtTime(0, ctx.currentTime + 1.5);
+      src.connect(bp).connect(g).connect(out); src.start(); src.stop(ctx.currentTime + 1.5);
+    }
+  },
+  {
+    name: 'Soft Whoosh',
+    desc: 'Gentle filtered noise sweep. Like a calm exhale.',
+    play: function(ctx, out) {
+      const buf = ctx.createBuffer(1, ctx.sampleRate * 2, ctx.sampleRate);
+      const d = buf.getChannelData(0);
+      for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+      const src = ctx.createBufferSource(); src.buffer = buf;
+      const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 500; bp.Q.value = 0.4;
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(0, ctx.currentTime);
+      g.gain.linearRampToValueAtTime(0.1, ctx.currentTime + 0.1);
+      g.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 1.2);
+      g.gain.linearRampToValueAtTime(0, ctx.currentTime + 2);
+      src.connect(bp).connect(g).connect(out); src.start(); src.stop(ctx.currentTime + 2);
+    }
+  },
+  {
+    name: 'Wind Gust',
+    desc: 'Rising then falling noise. Like opening a window. Dynamic.',
+    play: function(ctx, out) {
+      const buf = ctx.createBuffer(1, ctx.sampleRate * 2, ctx.sampleRate);
+      const d = buf.getChannelData(0);
+      for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+      const src = ctx.createBufferSource(); src.buffer = buf;
+      const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 600; bp.Q.value = 0.3;
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(0, ctx.currentTime);
+      g.gain.linearRampToValueAtTime(0.12, ctx.currentTime + 0.3);
+      g.gain.linearRampToValueAtTime(0.08, ctx.currentTime + 0.8);
+      g.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 1.5);
+      g.gain.linearRampToValueAtTime(0, ctx.currentTime + 2);
+      src.connect(bp).connect(g).connect(out); src.start(); src.stop(ctx.currentTime + 2);
+    }
+  },
+  {
+    name: 'Breath Out',
+    desc: 'Low-frequency filtered noise. Like warm breath leaving lungs.',
+    play: function(ctx, out) {
+      const buf = ctx.createBuffer(1, ctx.sampleRate * 2.5, ctx.sampleRate);
+      const d = buf.getChannelData(0);
+      for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+      const src = ctx.createBufferSource(); src.buffer = buf;
+      const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 300;
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(0, ctx.currentTime);
+      g.gain.linearRampToValueAtTime(0.12, ctx.currentTime + 0.15);
+      g.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 1.8);
+      g.gain.linearRampToValueAtTime(0, ctx.currentTime + 2.5);
+      src.connect(lp).connect(g).connect(out); src.start(); src.stop(ctx.currentTime + 2.5);
+    }
+  },
+  {
+    name: 'Rush',
+    desc: 'Quick rising noise with pitch sweep. Satisfying and punchy.',
+    play: function(ctx, out) {
+      const buf = ctx.createBuffer(1, ctx.sampleRate * 1.5, ctx.sampleRate);
+      const d = buf.getChannelData(0);
+      for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+      const src = ctx.createBufferSource(); src.buffer = buf;
+      const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.Q.value = 0.6;
+      bp.frequency.setValueAtTime(300, ctx.currentTime);
+      bp.frequency.linearRampToValueAtTime(1200, ctx.currentTime + 0.3);
+      bp.frequency.exponentialRampToValueAtTime(400, ctx.currentTime + 1.2);
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(0, ctx.currentTime);
+      g.gain.linearRampToValueAtTime(0.12, ctx.currentTime + 0.08);
+      g.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 1);
+      g.gain.linearRampToValueAtTime(0, ctx.currentTime + 1.5);
+      src.connect(bp).connect(g).connect(out); src.start(); src.stop(ctx.currentTime + 1.5);
+    }
+  },
+  {
+    name: 'Gentle Puff',
+    desc: 'Very soft, quick noise. Like blowing out a candle gently.',
+    play: function(ctx, out) {
+      const buf = ctx.createBuffer(1, ctx.sampleRate * 1, ctx.sampleRate);
+      const d = buf.getChannelData(0);
+      for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+      const src = ctx.createBufferSource(); src.buffer = buf;
+      const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 600;
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(0, ctx.currentTime);
+      g.gain.linearRampToValueAtTime(0.08, ctx.currentTime + 0.05);
+      g.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
+      g.gain.linearRampToValueAtTime(0, ctx.currentTime + 1);
+      src.connect(lp).connect(g).connect(out); src.start(); src.stop(ctx.currentTime + 1);
+    }
+  },
+  {
+    name: 'Deep Rumble',
+    desc: 'Very low frequency noise. Felt more than heard. Satisfying bass.',
+    play: function(ctx, out) {
+      const buf = ctx.createBuffer(1, ctx.sampleRate * 2, ctx.sampleRate);
+      const d = buf.getChannelData(0);
+      for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+      const src = ctx.createBufferSource(); src.buffer = buf;
+      const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 150;
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(0, ctx.currentTime);
+      g.gain.linearRampToValueAtTime(0.15, ctx.currentTime + 0.2);
+      g.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 1.5);
+      g.gain.linearRampToValueAtTime(0, ctx.currentTime + 2);
+      src.connect(lp).connect(g).connect(out); src.start(); src.stop(ctx.currentTime + 2);
+    }
+  },
+  {
+    name: 'Swirl',
+    desc: 'Noise with fast pitch modulation. Like air spiralling. Dynamic.',
+    play: function(ctx, out) {
+      const buf = ctx.createBuffer(1, ctx.sampleRate * 2, ctx.sampleRate);
+      const d = buf.getChannelData(0);
+      for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+      const src = ctx.createBufferSource(); src.buffer = buf;
+      const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.Q.value = 0.8;
+      const lfo = ctx.createOscillator(); lfo.frequency.value = 4;
+      const lfoG = ctx.createGain(); lfoG.gain.value = 400;
+      lfo.connect(lfoG).connect(bp.frequency);
+      bp.frequency.value = 600;
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(0, ctx.currentTime);
+      g.gain.linearRampToValueAtTime(0.1, ctx.currentTime + 0.1);
+      g.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 1.2);
+      g.gain.linearRampToValueAtTime(0, ctx.currentTime + 2);
+      src.connect(bp).connect(g).connect(out); lfo.start(); src.start();
+      src.stop(ctx.currentTime + 2); lfo.stop(ctx.currentTime + 2);
+    }
+  },
+  {
+    name: 'Sigh',
+    desc: 'Two-stage noise. Quick attack, slow release. Like a human sigh.',
+    play: function(ctx, out) {
+      const buf = ctx.createBuffer(1, ctx.sampleRate * 2.5, ctx.sampleRate);
+      const d = buf.getChannelData(0);
+      for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+      const src = ctx.createBufferSource(); src.buffer = buf;
+      const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 700; bp.Q.value = 0.5;
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(0, ctx.currentTime);
+      g.gain.linearRampToValueAtTime(0.1, ctx.currentTime + 0.1);
+      g.gain.linearRampToValueAtTime(0.06, ctx.currentTime + 0.5);
+      g.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 2);
+      g.gain.linearRampToValueAtTime(0, ctx.currentTime + 2.5);
+      src.connect(bp).connect(g).connect(out); src.start(); src.stop(ctx.currentTime + 2.5);
+    }
+  },
+  {
+    name: 'Thump',
+    desc: 'Short, punchy low-frequency burst. Like a soft impact. Satisfying.',
+    play: function(ctx, out) {
+      const osc = ctx.createOscillator(); osc.type = 'sine'; osc.frequency.value = 60;
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(0, ctx.currentTime);
+      g.gain.linearRampToValueAtTime(0.2, ctx.currentTime + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+      g.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.5);
+      osc.connect(g).connect(out); osc.start(); osc.stop(ctx.currentTime + 0.5);
+    }
+  }
+];
+
+// ═══ CURRENT SOUNDS ═══
+let currentAudioCtx = null;
+let currentCard = null;
+
+function stopCurrent() {
+  if (currentCard) currentCard.classList.remove('playing');
+  if (currentAudioCtx) { currentAudioCtx.close(); currentAudioCtx = null; }
+}
+
+function playEmberCurrent() {
+  stopCurrent();
+  currentAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  const osc = currentAudioCtx.createOscillator(); osc.type = 'sine'; osc.frequency.value = 120;
+  const lp = currentAudioCtx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 300;
+  const g = currentAudioCtx.createGain();
+  g.gain.setValueAtTime(0, currentAudioCtx.currentTime);
+  g.gain.linearRampToValueAtTime(0.04, currentAudioCtx.currentTime + 0.5);
+  g.gain.linearRampToValueAtTime(0.04, currentAudioCtx.currentTime + 3);
+  g.gain.linearRampToValueAtTime(0, currentAudioCtx.currentTime + 4);
+  osc.connect(lp).connect(g).connect(currentAudioCtx.destination);
+  osc.start(); osc.stop(currentAudioCtx.currentTime + 4);
+}
+
+function playDragCurrent() {
+  stopCurrent();
+  currentAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  const osc = currentAudioCtx.createOscillator(); osc.type = 'sawtooth'; osc.frequency.value = 60;
+  const lp = currentAudioCtx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 200;
+  const g = currentAudioCtx.createGain();
+  g.gain.setValueAtTime(0, currentAudioCtx.currentTime);
+  g.gain.linearRampToValueAtTime(0.12, currentAudioCtx.currentTime + 0.1);
+  g.gain.exponentialRampToValueAtTime(0.01, currentAudioCtx.currentTime + 1);
+  g.gain.linearRampToValueAtTime(0, currentAudioCtx.currentTime + 1.5);
+  osc.connect(lp).connect(g).connect(currentAudioCtx.destination);
+  osc.start(); osc.stop(currentAudioCtx.currentTime + 1.5);
+}
+
+// ═══ BUILD UI ═══
+function buildCards(containerId, sounds) {
+  const container = document.getElementById(containerId);
+  sounds.forEach((sound, i) => {
+    const card = document.createElement('div');
+    card.className = 'sound-card';
+    card.innerHTML = `
+      <div class="sound-num">${i + 1}</div>
+      <div class="sound-info">
+        <div class="sound-name">${sound.name}</div>
+        <div class="sound-desc">${sound.desc}</div>
+      </div>
+      <div class="sound-play">
+        <svg width="12" height="12" viewBox="0 0 24 24"><polygon points="6,4 20,12 6,20"/></svg>
+      </div>
+    `;
+    card.addEventListener('click', () => {
+      stopCurrent();
+      currentAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      sound.play(currentAudioCtx, currentAudioCtx.destination);
+      card.classList.add('playing');
+      currentCard = card;
+      setTimeout(() => { if (currentCard === card) card.classList.remove('playing'); }, 5000);
+    });
+    container.appendChild(card);
+  });
+}
+
+buildCards('ember-designs', emberSounds);
+buildCards('drag-designs', dragSounds);
+</script>
+
+</body>
+</html>

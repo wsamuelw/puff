@@ -190,46 +190,46 @@
 
     <!-- Settings Screen -->
     <div id="settings-screen" class="settings-screen" role="dialog" aria-label="Settings">
-      <button id="settings-back" class="settings-back" aria-label="Back to cigarette">← Back</button>
+      <button id="settings-back" class="settings-back" aria-label="Back">← Back</button>
+      <div class="settings-content">
+        <h2 class="settings-title">Settings</h2>
+        <p class="settings-sub">Price, name, habits</p>
 
-      <div class="settings-header">
-        <h1 class="settings-title">Settings</h1>
-      </div>
-
-      <!-- Total saved preview -->
-      <div class="settings-stats-preview">
-        <div class="settings-stats-value" id="settings-total-saved">$0.00</div>
-        <div class="settings-stats-label">Total saved to date</div>
-      </div>
-
-      <!-- Name card -->
-      <div class="settings-card">
-        <div class="settings-card-label">Your name</div>
-        <input type="text" id="settings-name" class="settings-card-input" placeholder="Optional" maxlength="20">
-      </div>
-
-      <!-- Price card -->
-      <div class="settings-card">
-        <div class="settings-card-label">Cigarette price</div>
-        <div style="display:flex; align-items:baseline; gap:4px;">
-          <span class="settings-card-unit">$</span>
-          <input type="number" id="settings-price" class="settings-card-input" step="0.10" min="0" max="5">
+        <!-- Total saved preview -->
+        <div class="settings-stats-preview">
+          <div class="settings-stats-value" id="settings-total-saved">$0.00</div>
+          <div class="settings-stats-label">Total saved to date</div>
         </div>
-      </div>
 
-      <!-- Dark mode toggle -->
-      <div class="settings-toggle-row">
-        <span class="settings-toggle-label">Dark mode</span>
-        <button class="settings-toggle active" id="settings-dark-mode"></button>
-      </div>
+        <!-- Name card -->
+        <div class="settings-card">
+          <div class="settings-card-label">Your name</div>
+          <input type="text" id="settings-name" class="settings-card-input" placeholder="Optional" maxlength="20">
+        </div>
 
-      <!-- Bottom actions -->
-      <div class="settings-bottom">
-        <button class="settings-signout" id="settings-signout">Sign out</button>
-        <button class="settings-reset" id="settings-reset">Reset all data</button>
-      </div>
+        <!-- Price card -->
+        <div class="settings-card">
+          <div class="settings-card-label">Cigarette price</div>
+          <div style="display:flex; align-items:baseline; gap:4px;">
+            <span class="settings-card-unit">$</span>
+            <input type="number" id="settings-price" class="settings-card-input" step="0.10" min="0" max="5">
+          </div>
+        </div>
 
-      <div class="settings-version">puff v1.0</div>
+        <!-- Dark mode toggle -->
+        <div class="settings-toggle-row">
+          <span class="settings-toggle-label">Dark mode</span>
+          <button class="settings-toggle active" id="settings-dark-mode"></button>
+        </div>
+
+        <!-- Bottom actions -->
+        <div class="settings-bottom">
+          <button class="settings-signout" id="settings-signout">Sign out</button>
+          <button class="settings-reset" id="settings-reset">Reset all data</button>
+        </div>
+
+        <div class="settings-version">puff v1.0</div>
+      </div>
     </div>
 
     <!-- Firebase SDK -->
