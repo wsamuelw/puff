@@ -1071,6 +1071,7 @@
   // HTML trigger screen elements
   const triggerScreen = document.getElementById('trigger-screen');
   const triggerSession = document.getElementById('trigger-session');
+  const triggerSub = document.getElementById('trigger-sub');
   const triggerGrid = document.getElementById('trigger-grid');
   const triggerDone = document.getElementById('trigger-done');
 
@@ -1106,6 +1107,13 @@
 
   function showTriggerScreen() {
     triggerSession.textContent = '$' + totalMoneySaved.toFixed(2);
+    if (quitStartDate) {
+      const d = new Date(quitStartDate);
+      const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      triggerSub.textContent = 'total saving since ' + d.getDate() + ' ' + months[d.getMonth()];
+    } else {
+      triggerSub.textContent = 'total saved';
+    }
     selectedTrigger = null;
     triggerSubmitted = false;
     triggerGrid.querySelectorAll('.trigger-btn').forEach(b => b.classList.remove('selected'));
