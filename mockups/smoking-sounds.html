@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smoking Sounds — Puff</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    :root { --amber: #d4a574; --serif: 'Libre Baskerville', serif; --sans: 'Outfit', sans-serif; }
+    body { font-family: var(--sans); background: #111; color: #fff; padding: 40px 20px; min-height: 100vh; }
+    h1 { font-family: var(--serif); font-size: 32px; font-style: italic; text-align: center; margin-bottom: 8px; }
+    .subtitle { text-align: center; color: rgba(255,255,255,0.4); font-size: 14px; margin-bottom: 48px; }
+    .section-label { font-family: var(--serif); font-size: 20px; font-style: italic; color: var(--amber); margin-bottom: 24px; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.06); max-width: 800px; margin-left: auto; margin-right: auto; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 16px; max-width: 800px; margin: 0 auto 64px; }
+    .card { background: #1a1a1a; border-radius: 16px; padding: 24px; border: 1px solid rgba(255,255,255,0.06); display: flex; align-items: center; gap: 20px; transition: all 0.2s ease; }
+    .card:hover { border-color: rgba(255,255,255,0.1); }
+    .card.current { border-color: rgba(212,165,116,0.3); background: rgba(212,165,116,0.05); }
+    .card-num { width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.06); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.4); flex-shrink: 0; }
+    .card.current .card-num { background: var(--amber); color: #1a1a1a; }
+    .card-info { flex: 1; }
+    .card-name { font-size: 16px; font-weight: 500; color: #fff; margin-bottom: 4px; }
+    .card-desc { font-size: 13px; color: rgba(255,255,255,0.35); line-height: 1.4; }
+    .card-tag { font-size: 11px; color: var(--amber); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+    .play-btn { width: 48px; height: 48px; border-radius: 50%; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease; flex-shrink: 0; }
+    .play-btn:hover { background: var(--amber); border-color: var(--amber); }
+    .play-btn:active { transform: scale(0.9); }
+    .play-btn.playing { background: var(--amber); border-color: var(--amber); }
+    .play-btn svg { width: 18px; height: 18px; fill: #fff; }
+    .stop-btn { display: none; }
+    .play-btn.playing .play-btn-icon { display: none; }
+    .play-btn.playing .stop-btn { display: block; }
+    .hold-hint { font-size: 11px; color: rgba(255,255,255,0.2); text-align: center; margin-top: 8px; }
+    .theme-toggle { position: fixed; top: 20px; right: 20px; z-index: 100; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 8px 14px; color: #fff; font-family: var(--sans); font-size: 13px; cursor: pointer; }
+    @media (max-width: 480px) { .grid { grid-template-columns: 1fr; } h1 { font-size: 24px; } }
+  </style>
+</head>
+<body>
+  <button class="theme-toggle" onclick="document.body.classList.toggle('light')">Toggle theme</button>
+
+  <h1>Smoking Sounds</h1>
+  <p class="subtitle">Hold screen sounds — 10 options including current</p>
+
+  <div class="section-label">Current Sound</div>
+  <div class="grid">
+    <div class="card current">
+      <div class="card-num">0</div>
+      <div class="card-info">
+        <div class="card-name">Ember Hum</div>
+        <div class="card-desc">Warm 120Hz sine wave with lowpass filter. Subtle crackle texture.</div>
+        <div class="card-tag">Current</div>
+      </div>
+      <div class="play-btn" data-sound="current">
+        <svg class="play-btn-icon" viewBox="0 0 24 24"><polygon points="8,5 19,12 8,19"/></svg>
+        <svg class="stop-btn" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12"/></svg>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">New Sounds</div>
+  <div class="grid">
+
+    <div class="card">
+      <div class="card-num">1</div>
+      <div class="card-info">
+        <div class="card-name">White Noise</div>
+        <div class="card-desc">Gentle white noise with bandpass filter. Like distant static or rain.</div>
+      </div>
+      <div class="play-btn" data-sound="white-noise">
+        <svg class="play-btn-icon" viewBox="0 0 24 24"><polygon points="8,5 19,12 8,19"/></svg>
+        <svg class="stop-btn" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12"/></svg>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-num">2</div>
+      <div class="card-info">
+        <div class="card-name">Deep Rumble</div>
+        <div class="card-desc">Low 40Hz sawtooth with heavy lowpass. Feels like a bassy exhale.</div>
+      </div>
+      <div class="play-btn" data-sound="deep-rumble">
+        <svg class="play-btn-icon" viewBox="0 0 24 24"><polygon points="8,5 19,12 8,19"/></svg>
+        <svg class="stop-btn" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12"/></svg>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-num">3</div>
+      <div class="card-info">
+        <div class="card-name">Warm Crackle</div>
+        <div class="card-desc">Noise burst with envelope. Like a campfire or burning paper.</div>
+      </div>
+      <div class="play-btn" data-sound="warm-crackle">
+        <svg class="play-btn-icon" viewBox="0 0 24 24"><polygon points="8,5 19,12 8,19"/></svg>
+        <svg class="stop-btn" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12"/></svg>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-num">4</div>
+      <div class="card-info">
+        <div class="card-name">Soft Hiss</div>
+        <div class="card-desc">High-frequency noise through bandpass. Like steam or a whisper.</div>
+      </div>
+      <div class="play-btn" data-sound="soft-hiss">
+        <svg class="play-btn-icon" viewBox="0 0 24 24"><polygon points="8,5 19,12 8,19"/></svg>
+        <svg class="stop-btn" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12"/></svg>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-num">5</div>
+      <div class="card-info">
+        <div class="card-name">Organic Breath</div>
+        <div class="card-desc">Filtered noise with slow LFO modulation. Like breathing through a straw.</div>
+      </div>
+      <div class="play-btn" data-sound="organic-breath">
+        <svg class="play-btn-icon" viewBox="0 0 24 24"><polygon points="8,5 19,12 8,19"/></svg>
+        <svg class="stop-btn" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12"/></svg>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-num">6</div>
+      <div class="card-info">
+        <div class="card-name">Vintage Radio</div>
+        <div class="card-desc">Sawtooth with bandpass and slight distortion. Old radio static feel.</div>
+      </div>
+      <div class="play-btn" data-sound="vintage-radio">
+        <svg class="play-btn-icon" viewBox="0 0 24 24"><polygon points="8,5 19,12 8,19"/></svg>
+        <svg class="stop-btn" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12"/></svg>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-num">7</div>
+      <div class="card-info">
+        <div class="card-name">Low Pulse</div>
+        <div class="card-desc">Sine wave with tremolo. Slow pulsing like a heartbeat.</div>
+      </div>
+      <div class="play-btn" data-sound="low-pulse">
+        <svg class="play-btn-icon" viewBox="0 0 24 24"><polygon points="8,5 19,12 8,19"/></svg>
+        <svg class="stop-btn" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12"/></svg>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-num">8</div>
+      <div class="card-info">
+        <div class="card-name">Distant Thunder</div>
+        <div class="card-desc">Low noise with reverb-like decay. Deep atmospheric rumble.</div>
+      </div>
+      <div class="play-btn" data-sound="distant-thunder">
+        <svg class="play-btn-icon" viewBox="0 0 24 24"><polygon points="8,5 19,12 8,19"/></svg>
+        <svg class="stop-btn" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12"/></svg>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-num">9</div>
+      <div class="card-info">
+        <div class="card-name">Warm Pad</div>
+        <div class="card-desc">Multiple detuned sines. Smooth ambient pad texture.</div>
+      </div>
+      <div class="play-btn" data-sound="warm-pad">
+        <svg class="play-btn-icon" viewBox="0 0 24 24"><polygon points="8,5 19,12 8,19"/></svg>
+        <svg class="stop-btn" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12"/></svg>
+      </div>
+    </div>
+
+  </div>
+
+  <p class="hold-hint">Click and hold the play button to hear the sound at full intensity</p>
+
+  <script>
+    let audioCtx = null;
+    let currentNodes = null;
+    let currentPlayingBtn = null;
+
+    function getAudioCtx() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      return audioCtx;
+    }
+
+    function stopCurrent() {
+      if (currentNodes) {
+        currentNodes.forEach(node => {
+          try { node.stop(); } catch(e) {}
+          try { node.disconnect(); } catch(e) {}
+        });
+        currentNodes = null;
+      }
+      if (currentPlayingBtn) {
+        currentPlayingBtn.classList.remove('playing');
+        currentPlayingBtn = null;
+      }
+    }
+
+    function createSound(type) {
+      const ctx = getAudioCtx();
+      const nodes = [];
+      const masterGain = ctx.createGain();
+      masterGain.gain.value = 0.3;
+      masterGain.connect(ctx.destination);
+
+      switch(type) {
+        case 'current': {
+          // Ember hum — warm 120Hz sine with lowpass
+          const osc = ctx.createOscillator();
+          osc.type = 'sine';
+          osc.frequency.value = 120;
+          const filter = ctx.createBiquadFilter();
+          filter.type = 'lowpass';
+          filter.frequency.value = 300;
+          const gain = ctx.createGain();
+          gain.gain.value = 0.4;
+          osc.connect(filter);
+          filter.connect(gain);
+          gain.connect(masterGain);
+          osc.start();
+          nodes.push(osc);
+          break;
+        }
+
+        case 'white-noise': {
+          // White noise with bandpass
+          const bufferSize = ctx.sampleRate * 2;
+          const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+          const data = buffer.getChannelData(0);
+          for (let i = 0; i < bufferSize; i++) {
+            data[i] = Math.random() * 2 - 1;
+          }
+          const source = ctx.createBufferSource();
+          source.buffer = buffer;
+          source.loop = true;
+          const filter = ctx.createBiquadFilter();
+          filter.type = 'bandpass';
+          filter.frequency.value = 1000;
+          filter.Q.value = 0.5;
+          const gain = ctx.createGain();
+          gain.gain.value = 0.15;
+          source.connect(filter);
+          filter.connect(gain);
+          gain.connect(masterGain);
+          source.start();
+          nodes.push(source);
+          break;
+        }
+
+        case 'deep-rumble': {
+          // Low 40Hz sawtooth with heavy lowpass
+          const osc = ctx.createOscillator();
+          osc.type = 'sawtooth';
+          osc.frequency.value = 40;
+          const filter = ctx.createBiquadFilter();
+          filter.type = 'lowpass';
+          filter.frequency.value = 100;
+          const gain = ctx.createGain();
+          gain.gain.value = 0.5;
+          osc.connect(filter);
+          filter.connect(gain);
+          gain.connect(masterGain);
+          osc.start();
+          nodes.push(osc);
+          break;
+        }
+
+        case 'warm-crackle': {
+          // Noise burst with envelope — campfire feel
+          const bufferSize = ctx.sampleRate * 2;
+          const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+          const data = buffer.getChannelData(0);
+          for (let i = 0; i < bufferSize; i++) {
+            // Create crackle pattern — sparse noise bursts
+            data[i] = Math.random() < 0.01 ? (Math.random() * 2 - 1) * 0.8 : Math.random() * 0.1;
+          }
+          const source = ctx.createBufferSource();
+          source.buffer = buffer;
+          source.loop = true;
+          const filter = ctx.createBiquadFilter();
+          filter.type = 'bandpass';
+          filter.frequency.value = 3000;
+          filter.Q.value = 1;
+          const gain = ctx.createGain();
+          gain.gain.value = 0.4;
+          source.connect(filter);
+          filter.connect(gain);
+          gain.connect(masterGain);
+          source.start();
+          nodes.push(source);
+          break;
+        }
+
+        case 'soft-hiss': {
+          // High-frequency noise through bandpass
+          const bufferSize = ctx.sampleRate * 2;
+          const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+          const data = buffer.getChannelData(0);
+          for (let i = 0; i < bufferSize; i++) {
+            data[i] = Math.random() * 2 - 1;
+          }
+          const source = ctx.createBufferSource();
+          source.buffer = buffer;
+          source.loop = true;
+          const filter = ctx.createBiquadFilter();
+          filter.type = 'bandpass';
+          filter.frequency.value = 5000;
+          filter.Q.value = 2;
+          const gain = ctx.createGain();
+          gain.gain.value = 0.1;
+          source.connect(filter);
+          filter.connect(gain);
+          gain.connect(masterGain);
+          source.start();
+          nodes.push(source);
+          break;
+        }
+
+        case 'organic-breath': {
+          // Filtered noise with LFO modulation
+          const bufferSize = ctx.sampleRate * 2;
+          const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+          const data = buffer.getChannelData(0);
+          for (let i = 0; i < bufferSize; i++) {
+            data[i] = Math.random() * 2 - 1;
+          }
+          const source = ctx.createBufferSource();
+          source.buffer = buffer;
+          source.loop = true;
+          const filter = ctx.createBiquadFilter();
+          filter.type = 'bandpass';
+          filter.frequency.value = 800;
+          filter.Q.value = 1;
+          // LFO for filter frequency
+          const lfo = ctx.createOscillator();
+          lfo.type = 'sine';
+          lfo.frequency.value = 0.3;
+          const lfoGain = ctx.createGain();
+          lfoGain.gain.value = 400;
+          lfo.connect(lfoGain);
+          lfoGain.connect(filter.frequency);
+          lfo.start();
+          const gain = ctx.createGain();
+          gain.gain.value = 0.15;
+          source.connect(filter);
+          filter.connect(gain);
+          gain.connect(masterGain);
+          source.start();
+          nodes.push(source, lfo);
+          break;
+        }
+
+        case 'vintage-radio': {
+          // Sawtooth with bandpass and slight distortion
+          const osc = ctx.createOscillator();
+          osc.type = 'sawtooth';
+          osc.frequency.value = 60;
+          const filter = ctx.createBiquadFilter();
+          filter.type = 'bandpass';
+          filter.frequency.value = 400;
+          filter.Q.value = 3;
+          // Waveshaper for distortion
+          const waveshaper = ctx.createWaveShaper();
+          const curve = new Float32Array(256);
+          for (let i = 0; i < 256; i++) {
+            const x = (i * 2) / 256 - 1;
+            curve[i] = Math.tanh(x * 2);
+          }
+          waveshaper.curve = curve;
+          const gain = ctx.createGain();
+          gain.gain.value = 0.2;
+          osc.connect(filter);
+          filter.connect(waveshaper);
+          waveshaper.connect(gain);
+          gain.connect(masterGain);
+          osc.start();
+          nodes.push(osc);
+          break;
+        }
+
+        case 'low-pulse': {
+          // Sine with tremolo
+          const osc = ctx.createOscillator();
+          osc.type = 'sine';
+          osc.frequency.value = 80;
+          // Tremolo LFO
+          const lfo = ctx.createOscillator();
+          lfo.type = 'sine';
+          lfo.frequency.value = 2;
+          const lfoGain = ctx.createGain();
+          lfoGain.gain.value = 0.3;
+          const gain = ctx.createGain();
+          gain.gain.value = 0.4;
+          lfo.connect(lfoGain);
+          lfoGain.connect(gain.gain);
+          lfo.start();
+          osc.connect(gain);
+          gain.connect(masterGain);
+          osc.start();
+          nodes.push(osc, lfo);
+          break;
+        }
+
+        case 'distant-thunder': {
+          // Low noise with reverb-like decay
+          const bufferSize = ctx.sampleRate * 2;
+          const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+          const data = buffer.getChannelData(0);
+          for (let i = 0; i < bufferSize; i++) {
+            data[i] = Math.random() * 2 - 1;
+          }
+          const source = ctx.createBufferSource();
+          source.buffer = buffer;
+          source.loop = true;
+          const filter = ctx.createBiquadFilter();
+          filter.type = 'lowpass';
+          filter.frequency.value = 200;
+          // Slow LFO for volume
+          const lfo = ctx.createOscillator();
+          lfo.type = 'sine';
+          lfo.frequency.value = 0.1;
+          const lfoGain = ctx.createGain();
+          lfoGain.gain.value = 0.15;
+          const gain = ctx.createGain();
+          gain.gain.value = 0.2;
+          lfo.connect(lfoGain);
+          lfoGain.connect(gain.gain);
+          lfo.start();
+          source.connect(filter);
+          filter.connect(gain);
+          gain.connect(masterGain);
+          source.start();
+          nodes.push(source, lfo);
+          break;
+        }
+
+        case 'warm-pad': {
+          // Multiple detuned sines
+          const freqs = [80, 82, 120, 123, 160, 164];
+          freqs.forEach(freq => {
+            const osc = ctx.createOscillator();
+            osc.type = 'sine';
+            osc.frequency.value = freq;
+            const gain = ctx.createGain();
+            gain.gain.value = 0.08;
+            osc.connect(gain);
+            gain.connect(masterGain);
+            osc.start();
+            nodes.push(osc);
+          });
+          break;
+        }
+      }
+
+      return nodes;
+    }
+
+    // Play button handlers
+    document.querySelectorAll('.play-btn').forEach(btn => {
+      let isPlaying = false;
+
+      // Click to toggle
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (isPlaying) {
+          stopCurrent();
+          isPlaying = false;
+          btn.classList.remove('playing');
+        } else {
+          stopCurrent();
+          const soundType = btn.dataset.sound;
+          currentNodes = createSound(soundType);
+          currentPlayingBtn = btn;
+          isPlaying = true;
+          btn.classList.add('playing');
+        }
+      });
+
+      // Hold to play at full intensity
+      btn.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        if (!isPlaying) {
+          stopCurrent();
+          const soundType = btn.dataset.sound;
+          currentNodes = createSound(soundType);
+          currentPlayingBtn = btn;
+          isPlaying = true;
+          btn.classList.add('playing');
+        }
+      });
+
+      btn.addEventListener('mouseup', () => {
+        if (isPlaying) {
+          stopCurrent();
+          isPlaying = false;
+          btn.classList.remove('playing');
+        }
+      });
+
+      btn.addEventListener('mouseleave', () => {
+        if (isPlaying) {
+          stopCurrent();
+          isPlaying = false;
+          btn.classList.remove('playing');
+        }
+      });
+
+      // Touch support
+      btn.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        if (!isPlaying) {
+          stopCurrent();
+          const soundType = btn.dataset.sound;
+          currentNodes = createSound(soundType);
+          currentPlayingBtn = btn;
+          isPlaying = true;
+          btn.classList.add('playing');
+        }
+      });
+
+      btn.addEventListener('touchend', () => {
+        if (isPlaying) {
+          stopCurrent();
+          isPlaying = false;
+          btn.classList.remove('playing');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

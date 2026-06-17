@@ -516,20 +516,27 @@
       document.getElementById('overlay').style.pointerEvents = 'none';
       document.getElementById('filter-stats').classList.add('visible');
 
-      // Ember hum — warm low-frequency tone
+      // White noise — gentle bandpass-filtered noise for hold
       try {
-        const humOsc = audioCtx.createOscillator();
-        humOsc.type = 'sine';
-        humOsc.frequency.value = 120;
-        const humFilter = audioCtx.createBiquadFilter();
-        humFilter.type = 'lowpass';
-        humFilter.frequency.value = 300;
+        const bufferSize = audioCtx.sampleRate * 2;
+        const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+        const data = noiseBuffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+          data[i] = Math.random() * 2 - 1;
+        }
+        const noiseSource = audioCtx.createBufferSource();
+        noiseSource.buffer = noiseBuffer;
+        noiseSource.loop = true;
+        const noiseFilter = audioCtx.createBiquadFilter();
+        noiseFilter.type = 'bandpass';
+        noiseFilter.frequency.value = 1000;
+        noiseFilter.Q.value = 0.5;
         crackleGain = audioCtx.createGain();
         crackleGain.gain.value = 0;
-        humOsc.connect(humFilter);
-        humFilter.connect(crackleGain);
+        noiseSource.connect(noiseFilter);
+        noiseFilter.connect(crackleGain);
         crackleGain.connect(audioCtx.destination);
-        humOsc.start();
+        noiseSource.start();
 
         // Drag/whoosh sound — low rumble when blowing
         const dragOsc = audioCtx.createOscillator();
