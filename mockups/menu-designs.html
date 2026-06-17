@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Menu Designs — Puff</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&family=Instrument+Serif:ital@0;1&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+    :root {
+      --amber: #d4a574;
+      --amber-dim: rgba(212,165,116,0.15);
+      --bg-dark: #1a1a1a;
+      --bg-light: #faf9f7;
+      --text-dark: #faf9f7;
+      --text-light: #1a1a1a;
+      --serif: 'Libre Baskerville', serif;
+      --sans: 'Outfit', sans-serif;
+    }
+
+    body {
+      font-family: var(--sans);
+      background: #111;
+      color: #fff;
+      padding: 40px 20px;
+    }
+
+    h1 {
+      font-family: var(--serif);
+      font-size: 32px;
+      font-style: italic;
+      text-align: center;
+      margin-bottom: 8px;
+    }
+    .subtitle {
+      text-align: center;
+      color: rgba(255,255,255,0.4);
+      font-size: 14px;
+      margin-bottom: 48px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      gap: 32px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background: #1a1a1a;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    .card-label {
+      padding: 16px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .card-label span {
+      font-weight: 600;
+      font-size: 14px;
+    }
+    .card-label small {
+      color: rgba(255,255,255,0.3);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* Phone frame */
+    .phone {
+      width: 100%;
+      max-width: 375px;
+      height: 700px;
+      margin: 0 auto;
+      position: relative;
+      overflow: hidden;
+      border-radius: 0 0 16px 16px;
+    }
+
+    /* Smoke background */
+    .phone-bg {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, #0f0f0f 0%, #1a1a1a 40%, #0f0f0f 100%);
+    }
+
+    /* ── 1: Floating Cards ── */
+    .m1 .phone-bg { background: linear-gradient(180deg, #0a0a0a 0%, #141414 100%); }
+
+    .m1 .menu-float {
+      position: absolute;
+      bottom: 100px;
+      left: 20px;
+      right: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .m1 .menu-card {
+      background: rgba(255,255,255,0.06);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      padding: 18px 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .m1 .menu-card:hover {
+      background: rgba(255,255,255,0.1);
+      transform: translateY(-1px);
+    }
+    .m1 .menu-card:active { transform: scale(0.98); }
+    .m1 .menu-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: var(--amber-dim);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    .m1 .menu-text { flex: 1; }
+    .m1 .menu-text h3 {
+      font-size: 14px;
+      font-weight: 500;
+      color: #fff;
+      margin-bottom: 2px;
+    }
+    .m1 .menu-text p {
+      font-size: 12px;
+      color: rgba(255,255,255,0.35);
+    }
+    .m1 .menu-arrow {
+      color: rgba(255,255,255,0.15);
+      font-size: 16px;
+    }
+    .m1 .menu-pill {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .m1 .menu-pill svg { opacity: 0.5; }
+
+    /* ── 2: Radial Burst ── */
+    .m2 .phone-bg { background: radial-gradient(circle at 50% 80%, rgba(212,165,116,0.08) 0%, #0a0a0a 60%); }
+
+    .m2 .menu-radial {
+      position: absolute;
+      bottom: 120px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 16px;
+    }
+    .m2 .radial-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+    .m2 .radial-circle {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      transition: all 0.2s ease;
+    }
+    .m2 .radial-circle:hover {
+      background: var(--amber-dim);
+      border-color: var(--amber);
+    }
+    .m2 .radial-circle:active { transform: scale(0.9); }
+    .m2 .radial-label {
+      font-size: 11px;
+      color: rgba(255,255,255,0.5);
+      letter-spacing: 0.5px;
+    }
+    .m2 .menu-pill {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .m2 .menu-pill svg { opacity: 0.5; }
+
+    /* ── 3: Slide-up Drawer ── */
+    .m3 .phone-bg { background: #0a0a0a; }
+
+    .m3 .drawer-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+    }
+    .m3 .drawer {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #1e1e1e;
+      border-radius: 20px 20px 0 0;
+      padding: 12px 24px 40px;
+    }
+    .m3 .drawer-handle {
+      width: 36px;
+      height: 4px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 2px;
+      margin: 0 auto 20px;
+    }
+    .m3 .drawer-title {
+      font-family: var(--serif);
+      font-size: 22px;
+      font-style: italic;
+      color: #fff;
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .m3 .drawer-items {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .m3 .drawer-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+    .m3 .drawer-item:hover { background: rgba(255,255,255,0.05); }
+    .m3 .drawer-item:active { background: rgba(255,255,255,0.08); }
+    .m3 .drawer-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: var(--amber-dim);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+    .m3 .drawer-text {
+      font-size: 15px;
+      font-weight: 500;
+      color: #fff;
+    }
+    .m3 .drawer-arrow {
+      margin-left: auto;
+      color: rgba(255,255,255,0.15);
+    }
+    .m3 .drawer-close {
+      margin-top: 16px;
+      width: 100%;
+      padding: 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: transparent;
+      color: rgba(255,255,255,0.35);
+      font-family: var(--sans);
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      cursor: pointer;
+    }
+    .m3 .menu-pill {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .m3 .menu-pill svg { opacity: 0.5; }
+
+    /* ── 4: Pill Bar ── */
+    .m4 .phone-bg { background: #0a0a0a; }
+
+    .m4 .pill-bar {
+      position: absolute;
+      bottom: 60px;
+      left: 16px;
+      right: 16px;
+      height: 56px;
+      background: rgba(255,255,255,0.06);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 28px;
+      display: flex;
+      align-items: center;
+      padding: 6px;
+    }
+    .m4 .pill-btn {
+      flex: 1;
+      height: 100%;
+      border-radius: 22px;
+      border: none;
+      background: transparent;
+      color: rgba(255,255,255,0.4);
+      font-family: var(--sans);
+      font-size: 13px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .m4 .pill-btn:hover { color: #fff; }
+    .m4 .pill-btn.active {
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+    }
+    .m4 .pill-btn:active { transform: scale(0.96); }
+    .m4 .pill-btn svg { width: 16px; height: 16px; }
+
+    /* ── 5: Side Rail ── */
+    .m5 .phone-bg { background: #0a0a0a; }
+
+    .m5 .side-rail {
+      position: absolute;
+      top: 50%;
+      right: 12px;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .m5 .rail-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+    .m5 .rail-btn:hover {
+      background: var(--amber-dim);
+      border-color: var(--amber);
+    }
+    .m5 .rail-btn:active { transform: scale(0.9); }
+    .m5 .rail-tooltip {
+      position: absolute;
+      right: 54px;
+      background: #2a2a2a;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 500;
+      padding: 6px 12px;
+      border-radius: 8px;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.15s ease;
+    }
+    .m5 .rail-btn:hover .rail-tooltip { opacity: 1; }
+
+    /* ── 6: Minimal Inline ── */
+    .m6 .phone-bg { background: #0a0a0a; }
+
+    .m6 .inline-menu {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 24px;
+      padding: 6px;
+    }
+    .m6 .inline-btn {
+      height: 36px;
+      padding: 0 16px;
+      border-radius: 18px;
+      border: none;
+      background: transparent;
+      color: rgba(255,255,255,0.4);
+      font-family: var(--sans);
+      font-size: 13px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .m6 .inline-btn:hover { color: #fff; }
+    .m6 .inline-btn.active {
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+    }
+    .m6 .inline-btn:active { transform: scale(0.96); }
+
+    /* ── 7: Frosted Sheet ── */
+    .m7 .phone-bg { background: linear-gradient(180deg, #0a0a0a 0%, #111 100%); }
+
+    .m7 .frost-sheet {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(255,255,255,0.04);
+      backdrop-filter: blur(40px) saturate(150%);
+      -webkit-backdrop-filter: blur(40px) saturate(150%);
+      border-top: 1px solid rgba(255,255,255,0.06);
+      border-radius: 24px 24px 0 0;
+      padding: 20px 24px 44px;
+    }
+    .m7 .frost-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .m7 .frost-title {
+      font-family: var(--serif);
+      font-size: 18px;
+      font-style: italic;
+      color: #fff;
+    }
+    .m7 .frost-close {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.08);
+      border: none;
+      color: rgba(255,255,255,0.4);
+      font-size: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .m7 .frost-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .m7 .frost-tile {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 16px;
+      padding: 20px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .m7 .frost-tile:hover {
+      background: rgba(255,255,255,0.08);
+      border-color: rgba(255,255,255,0.12);
+    }
+    .m7 .frost-tile:active { transform: scale(0.96); }
+    .m7 .frost-tile-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: var(--amber-dim);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+    .m7 .frost-tile-label {
+      font-size: 13px;
+      font-weight: 500;
+      color: #fff;
+    }
+
+    /* ── 8: Command Palette ── */
+    .m8 .phone-bg { background: #0a0a0a; }
+
+    .m8 .cmd-palette {
+      position: absolute;
+      top: 60px;
+      left: 16px;
+      right: 16px;
+      background: #1e1e1e;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      padding: 8px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    }
+    .m8 .cmd-search {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .m8 .cmd-search svg {
+      width: 16px;
+      height: 16px;
+      color: rgba(255,255,255,0.3);
+    }
+    .m8 .cmd-search span {
+      font-size: 14px;
+      color: rgba(255,255,255,0.25);
+    }
+    .m8 .cmd-list {
+      padding: 4px 0;
+    }
+    .m8 .cmd-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.1s ease;
+    }
+    .m8 .cmd-item:hover { background: rgba(255,255,255,0.05); }
+    .m8 .cmd-item:active { background: rgba(255,255,255,0.08); }
+    .m8 .cmd-item-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: var(--amber-dim);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+    .m8 .cmd-item-text {
+      flex: 1;
+      font-size: 14px;
+      color: #fff;
+    }
+    .m8 .cmd-item-shortcut {
+      font-size: 11px;
+      color: rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.05);
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+    .m8 .cmd-footer {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      padding: 10px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    .m8 .cmd-footer span {
+      font-size: 11px;
+      color: rgba(255,255,255,0.2);
+    }
+
+    /* ── 9: Stacked Tabs ── */
+    .m9 .phone-bg { background: #0a0a0a; }
+
+    .m9 .tab-stack {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      width: calc(100% - 40px);
+    }
+    .m9 .tab-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 14px;
+      padding: 16px 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .m9 .tab-card:hover {
+      background: rgba(255,255,255,0.08);
+      transform: translateY(-1px);
+    }
+    .m9 .tab-card:active { transform: scale(0.98); }
+    .m9 .tab-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: var(--amber);
+      color: #1a1a1a;
+      font-size: 13px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .m9 .tab-label {
+      font-size: 15px;
+      font-weight: 500;
+      color: #fff;
+    }
+    .m9 .tab-sub {
+      font-size: 12px;
+      color: rgba(255,255,255,0.3);
+      margin-left: auto;
+    }
+
+    /* ── 10: Corner Peel ── */
+    .m10 .phone-bg { background: #0a0a0a; }
+
+    .m10 .corner-menu {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .m10 .corner-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .m10 .corner-btn:hover {
+      background: var(--amber-dim);
+      border-color: var(--amber);
+    }
+    .m10 .corner-btn:active { transform: scale(0.9); }
+    .m10 .corner-expanded {
+      position: absolute;
+      top: 68px;
+      right: 12px;
+      width: 200px;
+      background: #1e1e1e;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      padding: 6px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+    }
+    .m10 .corner-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.1s ease;
+    }
+    .m10 .corner-item:hover { background: rgba(255,255,255,0.05); }
+    .m10 .corner-item:active { background: rgba(255,255,255,0.08); }
+    .m10 .corner-item-icon {
+      font-size: 16px;
+    }
+    .m10 .corner-item-label {
+      font-size: 14px;
+      color: #fff;
+    }
+    .m10 .corner-divider {
+      height: 1px;
+      background: rgba(255,255,255,0.06);
+      margin: 4px 8px;
+    }
+    .m10 .corner-item-danger {
+      color: #e55;
+    }
+
+    /* Stats preview in each phone */
+    .stats-preview {
+      position: absolute;
+      bottom: 160px;
+      left: 50%;
+      transform: translateX(-50%);
+      text-align: center;
+    }
+    .stats-preview .money {
+      font-family: var(--serif);
+      font-size: 36px;
+      font-style: italic;
+      color: var(--amber);
+    }
+    .stats-preview .label {
+      font-size: 12px;
+      color: rgba(255,255,255,0.3);
+      margin-top: 4px;
+    }
+
+    /* Theme toggle */
+    .theme-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 100;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      padding: 8px 14px;
+      color: #fff;
+      font-family: var(--sans);
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .theme-toggle:hover { background: rgba(255,255,255,0.12); }
+
+    body.light { background: #f0efed; color: #1a1a1a; }
+    body.light .card { background: #fff; border-color: rgba(0,0,0,0.06); }
+    body.light .card-label { border-color: rgba(0,0,0,0.06); }
+    body.light .card-label small { color: rgba(0,0,0,0.3); }
+
+    @media (max-width: 480px) {
+      .grid { grid-template-columns: 1fr; }
+      h1 { font-size: 24px; }
+    }
+  </style>
+</head>
+<body>
+  <button class="theme-toggle" onclick="document.body.classList.toggle('light')">Toggle theme</button>
+
+  <h1>Menu Designs</h1>
+  <p class="subtitle">10 approaches for the Puff menu</p>
+
+  <div class="grid">
+
+    <!-- 1: Floating Cards -->
+    <div class="card m1">
+      <div class="card-label"><span>A — Floating Cards</span><small>Glass cards</small></div>
+      <div class="phone">
+        <div class="phone-bg"></div>
+        <div class="stats-preview">
+          <div class="money">$12.40</div>
+          <div class="label">saved today</div>
+        </div>
+        <div class="menu-float">
+          <div class="menu-card">
+            <div class="menu-icon">📊</div>
+            <div class="menu-text">
+              <h3>Triggers</h3>
+              <p>Your patterns</p>
+            </div>
+            <div class="menu-arrow">›</div>
+          </div>
+          <div class="menu-card">
+            <div class="menu-icon">⚙️</div>
+            <div class="menu-text">
+              <h3>Settings</h3>
+              <p>Preferences</p>
+            </div>
+            <div class="menu-arrow">›</div>
+          </div>
+        </div>
+        <div class="menu-pill">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="5" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="19" r="1.5" fill="currentColor" stroke="none"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2: Radial Burst -->
+    <div class="card m2">
+      <div class="card-label"><span>B — Radial Burst</span><small>Circle icons</small></div>
+      <div class="phone">
+        <div class="phone-bg"></div>
+        <div class="stats-preview">
+          <div class="money">$12.40</div>
+          <div class="label">saved today</div>
+        </div>
+        <div class="menu-radial">
+          <div class="radial-item">
+            <div class="radial-circle">📊</div>
+            <div class="radial-label">Triggers</div>
+          </div>
+          <div class="radial-item">
+            <div class="radial-circle">⚙️</div>
+            <div class="radial-label">Settings</div>
+          </div>
+        </div>
+        <div class="menu-pill">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="5" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="19" r="1.5" fill="currentColor" stroke="none"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3: Slide-up Drawer -->
+    <div class="card m3">
+      <div class="card-label"><span>C — Slide-up Drawer</span><small>Bottom sheet</small></div>
+      <div class="phone">
+        <div class="phone-bg"></div>
+        <div class="stats-preview">
+          <div class="money">$12.40</div>
+          <div class="label">saved today</div>
+        </div>
+        <div class="drawer-overlay"></div>
+        <div class="drawer">
+          <div class="drawer-handle"></div>
+          <div class="drawer-title">puff</div>
+          <div class="drawer-items">
+            <div class="drawer-item">
+              <div class="drawer-icon">📊</div>
+              <div class="drawer-text">Triggers</div>
+              <div class="drawer-arrow">›</div>
+            </div>
+            <div class="drawer-item">
+              <div class="drawer-icon">⚙️</div>
+              <div class="drawer-text">Settings</div>
+              <div class="drawer-arrow">›</div>
+            </div>
+          </div>
+          <button class="drawer-close">Close</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4: Pill Bar -->
+    <div class="card m4">
+      <div class="card-label"><span>D — Pill Bar</span><small>Segmented control</small></div>
+      <div class="phone">
+        <div class="phone-bg"></div>
+        <div class="stats-preview">
+          <div class="money">$12.40</div>
+          <div class="label">saved today</div>
+        </div>
+        <div class="pill-bar">
+          <button class="pill-btn active">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 3v18h18"/><path d="M7 16l4-6 4 4 4-8"/></svg>
+            Triggers
+          </button>
+          <button class="pill-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            Settings
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5: Side Rail -->
+    <div class="card m5">
+      <div class="card-label"><span>E — Side Rail</span><small>Right edge icons</small></div>
+      <div class="phone">
+        <div class="phone-bg"></div>
+        <div class="stats-preview">
+          <div class="money">$12.40</div>
+          <div class="label">saved today</div>
+        </div>
+        <div class="side-rail">
+          <div class="rail-btn">
+            📊
+            <div class="rail-tooltip">Triggers</div>
+          </div>
+          <div class="rail-btn">
+            ⚙️
+            <div class="rail-tooltip">Settings</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6: Minimal Inline -->
+    <div class="card m6">
+      <div class="card-label"><span>F — Minimal Inline</span><small>Inline chips</small></div>
+      <div class="phone">
+        <div class="phone-bg"></div>
+        <div class="stats-preview">
+          <div class="money">$12.40</div>
+          <div class="label">saved today</div>
+        </div>
+        <div class="inline-menu">
+          <button class="inline-btn active">📊 Triggers</button>
+          <button class="inline-btn">⚙️ Settings</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 7: Frosted Sheet -->
+    <div class="card m7">
+      <div class="card-label"><span>G — Frosted Sheet</span><small>Grid tiles</small></div>
+      <div class="phone">
+        <div class="phone-bg"></div>
+        <div class="stats-preview">
+          <div class="money">$12.40</div>
+          <div class="label">saved today</div>
+        </div>
+        <div class="frost-sheet">
+          <div class="frost-header">
+            <div class="frost-title">Menu</div>
+            <button class="frost-close">×</button>
+          </div>
+          <div class="frost-grid">
+            <div class="frost-tile">
+              <div class="frost-tile-icon">📊</div>
+              <div class="frost-tile-label">Triggers</div>
+            </div>
+            <div class="frost-tile">
+              <div class="frost-tile-icon">⚙️</div>
+              <div class="frost-tile-label">Settings</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 8: Command Palette -->
+    <div class="card m8">
+      <div class="card-label"><span>H — Command Palette</span><small>Spotlight style</small></div>
+      <div class="phone">
+        <div class="phone-bg"></div>
+        <div class="cmd-palette">
+          <div class="cmd-search">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <span>Search menu…</span>
+          </div>
+          <div class="cmd-list">
+            <div class="cmd-item">
+              <div class="cmd-item-icon">📊</div>
+              <div class="cmd-item-text">Triggers</div>
+              <div class="cmd-item-shortcut">→</div>
+            </div>
+            <div class="cmd-item">
+              <div class="cmd-item-icon">⚙️</div>
+              <div class="cmd-item-text">Settings</div>
+              <div class="cmd-item-shortcut">→</div>
+            </div>
+          </div>
+          <div class="cmd-footer">
+            <span>↑↓ navigate</span>
+            <span>↵ select</span>
+            <span>esc close</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 9: Stacked Tabs -->
+    <div class="card m9">
+      <div class="card-label"><span>I — Stacked Tabs</span><small>Numbered cards</small></div>
+      <div class="phone">
+        <div class="phone-bg"></div>
+        <div class="stats-preview">
+          <div class="money">$12.40</div>
+          <div class="label">saved today</div>
+        </div>
+        <div class="tab-stack">
+          <div class="tab-card">
+            <div class="tab-num">1</div>
+            <div class="tab-label">Triggers</div>
+            <div class="tab-sub">Patterns →</div>
+          </div>
+          <div class="tab-card">
+            <div class="tab-num">2</div>
+            <div class="tab-label">Settings</div>
+            <div class="tab-sub">Preferences →</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 10: Corner Peel -->
+    <div class="card m10">
+      <div class="card-label"><span>J — Corner Popover</span><small>Top-right corner</small></div>
+      <div class="phone">
+        <div class="phone-bg"></div>
+        <div class="stats-preview">
+          <div class="money">$12.40</div>
+          <div class="label">saved today</div>
+        </div>
+        <div class="corner-menu">
+          <div class="corner-btn">⋯</div>
+        </div>
+        <div class="corner-expanded">
+          <div class="corner-item">
+            <div class="corner-item-icon">📊</div>
+            <div class="corner-item-label">Triggers</div>
+          </div>
+          <div class="corner-divider"></div>
+          <div class="corner-item">
+            <div class="corner-item-icon">⚙️</div>
+            <div class="corner-item-label">Settings</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

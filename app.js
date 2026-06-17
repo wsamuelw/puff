@@ -1718,7 +1718,6 @@
 
   // --- Menu ---
   const menuOverlay = document.getElementById('menu-overlay');
-  const menuClose = document.getElementById('menu-close');
 
   function closeMenu() {
     menuOverlay.classList.remove('active');
@@ -1731,11 +1730,6 @@
     updateMenuUserInfo();
     history.pushState({screen:'menu'}, '');
     menuOverlay.classList.add('active');
-  });
-
-  menuClose.addEventListener('click', (e) => {
-    e.stopPropagation();
-    closeMenu();
   });
 
   menuOverlay.addEventListener('click', (e) => {
@@ -1772,6 +1766,20 @@
     }
     menuDragging = false;
   }, { passive: true });
+
+  // Scroll dots for horizontal menu
+  const menuScrollWrap = document.getElementById('menu-scroll-wrap');
+  const menuDots = document.querySelectorAll('#menu-dots .menu-dot');
+  if (menuScrollWrap && menuDots.length) {
+    menuScrollWrap.addEventListener('scroll', () => {
+      const scrollLeft = menuScrollWrap.scrollLeft;
+      const cardWidth = 172; // card width + gap
+      const activeIndex = Math.round(scrollLeft / cardWidth);
+      menuDots.forEach((dot, i) => {
+        dot.classList.toggle('active', i === activeIndex);
+      });
+    }, { passive: true });
+  }
 
   // --- Settings Screen ---
   const settingsScreen = document.getElementById('settings-screen');

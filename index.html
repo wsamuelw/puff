@@ -109,27 +109,29 @@
     <div id="menu-overlay" class="menu-overlay" role="dialog" aria-label="Menu">
       <div class="menu-content">
         <div class="menu-drag-handle"></div>
-        <h2 class="menu-title">Menu</h2>
-        <div class="menu-list">
-          <button class="menu-item" id="menu-triggers">
-            <span class="menu-item-icon">📊</span>
-            <div class="menu-item-text">
-              <div class="menu-item-label">Triggers</div>
-              <div class="menu-item-desc">Your patterns</div>
-            </div>
-            <span class="menu-item-arrow">→</span>
-          </button>
-          <button class="menu-item" id="menu-settings">
-            <span class="menu-item-icon">⚙️</span>
-            <div class="menu-item-text">
-              <div class="menu-item-label">Settings</div>
-              <div class="menu-item-desc">Price, name, habits</div>
-            </div>
-            <span class="menu-item-arrow">→</span>
-          </button>
+        <div class="menu-scroll-wrap" id="menu-scroll-wrap">
+          <div class="menu-scroll" id="menu-scroll">
+            <button class="menu-card" id="menu-triggers">
+              <div class="menu-card-icon">📊</div>
+              <div class="menu-card-text">
+                <h3>Triggers</h3>
+                <p>Your patterns</p>
+              </div>
+            </button>
+            <button class="menu-card" id="menu-settings">
+              <div class="menu-card-icon">⚙️</div>
+              <div class="menu-card-text">
+                <h3>Settings</h3>
+                <p>Preferences</p>
+              </div>
+            </button>
+          </div>
+        </div>
+        <div class="menu-dots" id="menu-dots">
+          <div class="menu-dot active"></div>
+          <div class="menu-dot"></div>
         </div>
         <div class="menu-user" id="menu-user-info"></div>
-        <button class="menu-close" id="menu-close">Close</button>
       </div>
     </div>
 
@@ -236,7 +238,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-    <script src="app.js?v=28"></script>
+    <script src="app.js?v=29"></script>
     <script>
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('/sw.js').catch(() => {});
