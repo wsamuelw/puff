@@ -457,6 +457,127 @@ body.dark .menu-close:focus {
   color: #faf9f7;
 }
 
+/* ─── Trigger Selection Screen ─── */
+.trigger-screen {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(26,26,26,0.95);
+  z-index: 350;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+  padding: 40px 24px;
+}
+
+body.light .trigger-screen {
+  background: rgba(250,249,247,0.95);
+}
+
+.trigger-screen.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.trigger-session {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 56px;
+  font-weight: 400;
+  color: #faf9f7;
+  margin-bottom: 4px;
+}
+
+body.light .trigger-session {
+  color: #1a1a1a;
+}
+
+.trigger-sub {
+  font-size: 13px;
+  color: rgba(250,249,247,0.4);
+  margin-bottom: 40px;
+}
+
+body.light .trigger-sub {
+  color: rgba(26,26,26,0.4);
+}
+
+.trigger-question {
+  font-size: 16px;
+  color: rgba(250,249,247,0.6);
+  margin-bottom: 24px;
+}
+
+body.light .trigger-question {
+  color: rgba(26,26,26,0.6);
+}
+
+.trigger-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  width: 100%;
+  max-width: 320px;
+  margin-bottom: 32px;
+}
+
+.trigger-btn {
+  padding: 14px;
+  background: rgba(250,249,247,0.06);
+  border: 1px solid rgba(250,249,247,0.08);
+  border-radius: 12px;
+  color: rgba(250,249,247,0.7);
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+  text-align: center;
+}
+
+body.light .trigger-btn {
+  background: rgba(0,0,0,0.04);
+  border-color: rgba(0,0,0,0.08);
+  color: rgba(26,26,26,0.7);
+}
+
+.trigger-btn.selected {
+  background: rgba(212,165,116,0.2);
+  border-color: rgba(212,165,116,0.5);
+  color: #d4a574;
+}
+
+body.light .trigger-btn.selected {
+  background: rgba(212,165,116,0.15);
+  border-color: rgba(212,165,116,0.5);
+  color: #b8875a;
+}
+
+.trigger-done {
+  display: none;
+  padding: 16px 48px;
+  background: #faf9f7;
+  border: none;
+  border-radius: 12px;
+  color: #1a1a1a;
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body.light .trigger-done {
+  background: #1a1a1a;
+  color: #faf9f7;
+}
+
+.trigger-done.visible {
+  display: block;
+}
+
 /* ─── Slip-up Handling ─── */
 .slipup-screen {
   position: fixed;

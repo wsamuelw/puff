@@ -1068,126 +1068,54 @@
   let selectedTrigger = null;
   let triggerSubmitted = false;
 
-  function drawCompletion() {
-    completionFrame++;
+  // HTML trigger screen elements
+  const triggerScreen = document.getElementById('trigger-screen');
+  const triggerSession = document.getElementById('trigger-session');
+  const triggerGrid = document.getElementById('trigger-grid');
+  const triggerDone = document.getElementById('trigger-done');
 
-    // Dark overlay
-    ctx.fillStyle = isDark ? 'rgba(26,26,26,0.95)' : 'rgba(250,249,247,0.95)';
-    ctx.fillRect(0, 0, W, H);
-
-    // Session cost — big animated number
-    const numScale = Math.min(1, completionFrame / 30);
-    const sessionCost = CIG_PRICE();
-
-    ctx.save();
-    ctx.translate(W / 2, H * 0.18);
-    ctx.scale(numScale, numScale);
-    ctx.fillStyle = isDark ? '#faf9f7' : '#1a1a1a';
-    ctx.font = `${Math.min(W * 0.14, 56)}px 'Libre Baskerville', serif`;
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText('$' + sessionCost.toFixed(2), 0, 0);
-    ctx.restore();
-
-    // Subtitle
-    const subAlpha = Math.min(1, Math.max(0, (completionFrame - 15) / 20));
-    ctx.globalAlpha = subAlpha;
-    ctx.fillStyle = isDark ? 'rgba(250,249,247,0.4)' : 'rgba(26,26,26,0.4)';
-    ctx.font = `${Math.min(W * 0.03, 12)}px 'Outfit', sans-serif`;
-    ctx.textAlign = 'center';
-    ctx.fillText('saved this session', W / 2, H * 0.18 + 40);
-
-    // Question
-    const qAlpha = Math.min(1, Math.max(0, (completionFrame - 30) / 20));
-    ctx.globalAlpha = qAlpha;
-    ctx.fillStyle = isDark ? 'rgba(250,249,247,0.6)' : 'rgba(26,26,26,0.6)';
-    ctx.font = `${Math.min(W * 0.04, 16)}px 'Outfit', sans-serif`;
-    ctx.fillText('What triggered this session?', W / 2, H * 0.35);
-
-    // Trigger grid — 2 columns, 4 rows
-    const gridAlpha = Math.min(1, Math.max(0, (completionFrame - 40) / 20));
-    ctx.globalAlpha = gridAlpha;
-    const cols = 2;
-    const btnW = Math.min(W * 0.38, 150);
-    const btnH = 48;
-    const gap = 12;
-    const gridStartX = W / 2 - (cols * btnW + gap) / 2;
-    const gridStartY = H * 0.40;
-
-    // Store button positions for tap detection
-    if (!window._triggerBtns) window._triggerBtns = [];
-    window._triggerBtns = [];
-
-    TRIGGER_OPTIONS.forEach((trigger, i) => {
-      const col = i % cols;
-      const row = Math.floor(i / cols);
-      const x = gridStartX + col * (btnW + gap);
-      const y = gridStartY + row * (btnH + gap);
-      const isSelected = selectedTrigger === trigger.id;
-
-      // Button background
-      ctx.fillStyle = isSelected
-        ? (isDark ? 'rgba(212,165,116,0.2)' : 'rgba(212,165,116,0.15)')
-        : (isDark ? 'rgba(250,249,247,0.06)' : 'rgba(0,0,0,0.04)');
-      ctx.beginPath();
-      ctx.roundRect(x, y, btnW, btnH, 12);
-      ctx.fill();
-
-      // Border
-      ctx.strokeStyle = isSelected
-        ? 'rgba(212,165,116,0.5)'
-        : (isDark ? 'rgba(250,249,247,0.08)' : 'rgba(0,0,0,0.08)');
-      ctx.lineWidth = 1;
-      ctx.stroke();
-
-      // Emoji + label
-      ctx.fillStyle = isSelected
-        ? (isDark ? '#d4a574' : '#b8875a')
-        : (isDark ? 'rgba(250,249,247,0.7)' : 'rgba(26,26,26,0.7)');
-      ctx.font = `${Math.min(W * 0.035, 14)}px 'Outfit', sans-serif`;
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText(trigger.emoji + ' ' + trigger.label, x + btnW / 2, y + btnH / 2);
-
-      // Store position for tap detection
-      window._triggerBtns.push({ id: trigger.id, x, y, w: btnW, h: btnH });
+  // Build trigger buttons
+  TRIGGER_OPTIONS.forEach(trigger => {
+    const btn = document.createElement('button');
+    btn.className = 'trigger-btn';
+    btn.dataset.trigger = trigger.id;
+    btn.textContent = trigger.emoji + ' ' + trigger.label;
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      selectedTrigger = trigger.id;
+      // Update selected state
+      triggerGrid.querySelectorAll('.trigger-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      triggerDone.classList.add('visible');
     });
+    triggerGrid.appendChild(btn);
+  });
 
-    // Done button (only after selecting a trigger)
-    if (selectedTrigger && !triggerSubmitted) {
-      const btnAlpha = Math.min(1, Math.max(0, (completionFrame - 55) / 20));
-      ctx.globalAlpha = btnAlpha;
-      const doneBtnW = Math.min(W * 0.5, 200);
-      const doneBtnH = 48;
-      const doneBtnX = W / 2 - doneBtnW / 2;
-      const doneBtnY = H * 0.82;
+  // Done button handler
+  triggerDone.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (!selectedTrigger) return;
+    // Save trigger
+    const logs = JSON.parse(safeGetItem('cravingLogs', '[]'));
+    logs.push({ time: Date.now(), trigger: selectedTrigger });
+    safeSetItem('cravingLogs', JSON.stringify(logs));
+    triggerSubmitted = true;
+    triggerScreen.classList.remove('visible');
+    // Allow restart on next tap
+  });
 
-      ctx.fillStyle = isDark ? '#faf9f7' : '#1a1a1a';
-      ctx.beginPath();
-      ctx.roundRect(doneBtnX, doneBtnY, doneBtnW, doneBtnH, 12);
-      ctx.fill();
+  function showTriggerScreen() {
+    triggerSession.textContent = '$' + CIG_PRICE().toFixed(2);
+    selectedTrigger = null;
+    triggerSubmitted = false;
+    triggerGrid.querySelectorAll('.trigger-btn').forEach(b => b.classList.remove('selected'));
+    triggerDone.classList.remove('visible');
+    triggerScreen.classList.add('visible');
+  }
 
-      ctx.fillStyle = isDark ? '#1a1a1a' : '#faf9f7';
-      ctx.font = `${Math.min(W * 0.035, 14)}px 'Outfit', sans-serif`;
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText('Done', W / 2, doneBtnY + doneBtnH / 2);
-
-      // Store for tap detection
-      window._doneBtn = { x: doneBtnX, y: doneBtnY, w: doneBtnW, h: doneBtnH };
-    }
-
-    // Thank you message after submit
-    if (triggerSubmitted) {
-      const thanksAlpha = Math.min(1, (completionFrame - triggerSubmitted) / 20);
-      ctx.globalAlpha = thanksAlpha;
-      ctx.fillStyle = isDark ? 'rgba(250,249,247,0.5)' : 'rgba(26,26,26,0.5)';
-      ctx.font = `${Math.min(W * 0.035, 14)}px 'Outfit', sans-serif`;
-      ctx.textAlign = 'center';
-      ctx.fillText('Tap anywhere to continue', W / 2, H * 0.85);
-    }
-
-    ctx.globalAlpha = 1;
+  function drawCompletion() {
+    // No canvas drawing needed — HTML overlay handles it
+    completionFrame++;
   }
 
   // Helper: format elapsed time for health timeline
@@ -1382,6 +1310,7 @@
             lastSessionDate: Date.now()
           });
           completionFrame = 0;
+          showTriggerScreen();
         }
       }
 
@@ -1445,8 +1374,8 @@
     } catch (e) {
       console.error(e);
     }
-    // Stop loop when game is over and trigger submitted + animation done
-    if (gameOver && triggerSubmitted && completionFrame - triggerSubmitted > 60) {
+    // Stop loop when game is over and trigger submitted (HTML overlay handles UI)
+    if (gameOver && triggerSubmitted) {
       loopRunning = false;
     }
     if (loopRunning) loopFrameId = requestAnimationFrame(loop);
@@ -1462,37 +1391,9 @@
         e.target.closest('.signin-screen')
       )) return;
 
-      // Game over — handle trigger selection screen
+      // Game over — wait for trigger screen to be dismissed
       if (gameOver) {
-        // Get tap coordinates
-        const touch = e.touches ? e.touches[0] : e;
-        const tx = touch.clientX;
-        const ty = touch.clientY;
-
-        // Check trigger buttons
-        if (window._triggerBtns && !triggerSubmitted) {
-          for (const btn of window._triggerBtns) {
-            if (tx >= btn.x && tx <= btn.x + btn.w && ty >= btn.y && ty <= btn.y + btn.h) {
-              selectedTrigger = btn.id;
-              return;
-            }
-          }
-          // Check done button
-          if (selectedTrigger && window._doneBtn) {
-            const db = window._doneBtn;
-            if (tx >= db.x && tx <= db.x + db.w && ty >= db.y && ty <= db.y + db.h) {
-              // Save trigger
-              const logs = JSON.parse(safeGetItem('cravingLogs', '[]'));
-              logs.push({ time: Date.now(), trigger: selectedTrigger });
-              safeSetItem('cravingLogs', JSON.stringify(logs));
-              triggerSubmitted = completionFrame;
-              return;
-            }
-          }
-        }
-
-        // Only restart after trigger has been submitted
-        if (!triggerSubmitted) return;
+        if (!triggerSubmitted) return; // trigger screen still open
 
         // Reset and restart
         burnProgress = 0;
