@@ -1789,7 +1789,16 @@
   const settingsReset = document.getElementById('settings-reset');
   const settingsSignout = document.getElementById('settings-signout');
   const settingsTotalSaved = document.getElementById('settings-total-saved');
+  const settingsPriceDisplay = document.getElementById('settings-price-display');
   const menuSettings = document.getElementById('menu-settings');
+
+  // Edit modal elements
+  const settingsEditModal = document.getElementById('settings-edit-modal');
+  const settingsEditTitle = document.getElementById('settings-edit-title');
+  const settingsEditInput = document.getElementById('settings-edit-input');
+  const settingsEditCancel = document.getElementById('settings-edit-cancel');
+  const settingsEditSave = document.getElementById('settings-edit-save');
+  let currentEditField = null;
 
   // Load settings from localStorage
   function loadSettings() {
@@ -1797,6 +1806,7 @@
     settingsPrice.value = cigPrice;
     settingsDarkMode.classList.toggle('active', isDark);
     settingsTotalSaved.textContent = '$' + totalMoneySaved.toFixed(2);
+    settingsPriceDisplay.textContent = '$' + cigPrice.toFixed(2);
   }
 
   // Save settings to cloud + localStorage
@@ -1807,7 +1817,79 @@
       cigPrice: cigPrice,
       darkMode: isDark
     });
+    settingsPriceDisplay.textContent = '$' + cigPrice.toFixed(2);
   }
+
+  // Open edit modal
+  function openEditModal(field) {
+    currentEditField = field;
+    if (field === 'name') {
+      settingsEditTitle.textContent = 'Your name';
+      settingsEditInput.type = 'text';
+      settingsEditInput.value = settingsName.value;
+      settingsEditInput.placeholder = 'Optional';
+      settingsEditInput.maxLength = 20;
+    } else if (field === 'price') {
+      settingsEditTitle.textContent = 'Cigarette price';
+      settingsEditInput.type = 'number';
+      settingsEditInput.value = cigPrice;
+      settingsEditInput.placeholder = '1.00';
+      settingsEditInput.step = '0.10';
+      settingsEditInput.min = '0';
+      settingsEditInput.max = '5';
+      settingsEditInput.removeAttribute('maxlength');
+    }
+    settingsEditModal.classList.add('active');
+    setTimeout(() => settingsEditInput.focus(), 100);
+  }
+
+  // Close edit modal
+  function closeEditModal() {
+    settingsEditModal.classList.remove('active');
+    currentEditField = null;
+  }
+
+  // Edit modal handlers
+  settingsEditCancel.addEventListener('click', (e) => {
+    e.stopPropagation();
+    closeEditModal();
+  });
+
+  settingsEditSave.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (currentEditField === 'name') {
+      settingsName.value = settingsEditInput.value.trim();
+    } else if (currentEditField === 'price') {
+      settingsPrice.value = settingsEditInput.value;
+    }
+    saveSettings();
+    closeEditModal();
+  });
+
+  settingsEditModal.addEventListener('click', (e) => {
+    if (e.target === settingsEditModal) closeEditModal();
+  });
+
+  // Enter key saves, Escape key cancels
+  settingsEditInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      settingsEditSave.click();
+    } else if (e.key === 'Escape') {
+      closeEditModal();
+    }
+  });
+
+  // Card stack click handlers
+  document.getElementById('settings-name-card').addEventListener('click', (e) => {
+    e.stopPropagation();
+    openEditModal('name');
+  });
+
+  document.getElementById('settings-price-card').addEventListener('click', (e) => {
+    e.stopPropagation();
+    openEditModal('price');
+  });
 
   // Open settings from menu
   menuSettings.addEventListener('click', (e) => {
@@ -1821,89 +1903,68 @@
   // --- Trigger Analytics Screen ---
   const triggersScreen = document.getElementById('triggers-screen');
   const triggersBack = document.getElementById('triggers-back');
-  const triggersGrid = document.getElementById('triggers-grid');
-  const triggersMonths = document.getElementById('triggers-months');
-  const triggersTotal = document.getElementById('triggers-total');
-  const triggersCount = document.getElementById('triggers-count');
-  const triggersAvg = document.getElementById('triggers-avg');
 
   function buildTriggerHeatmap() {
-    // Parse craving logs
+    const triggersBars = document.getElementById('triggers-bars');
     const logs = JSON.parse(safeGetItem('cravingLogs', '[]'));
+
     if (!logs.length) {
-      triggersGrid.innerHTML = '<div style="font-size:13px;color:rgba(26,26,26,0.3);padding:20px 0;">No data yet. Complete a session to see patterns.</div>';
+      triggersBars.innerHTML = '<div class="triggers-empty">No data yet. Complete a session to see patterns.</div>';
       return;
     }
 
-    // Build daily counts (last 12 weeks = 84 days)
-    const now = new Date();
-    const startDate = new Date(now);
-    startDate.setDate(startDate.getDate() - 83); // 84 days back
-    startDate.setHours(0, 0, 0, 0);
-
-    // Count sessions per day
-    const dailyCounts = new Array(84).fill(0);
-    const triggerSet = new Set();
+    // Count triggers
+    const triggerCounts = {};
     logs.forEach(log => {
-      const logDate = new Date(log.time);
-      if (logDate >= startDate) {
-        const dayIndex = Math.floor((logDate - startDate) / 86400000);
-        if (dayIndex >= 0 && dayIndex < 84) {
-          dailyCounts[dayIndex]++;
-          if (log.trigger) triggerSet.add(log.trigger);
-        }
-      }
+      const trigger = log.trigger || 'Unknown';
+      triggerCounts[trigger] = (triggerCounts[trigger] || 0) + 1;
     });
 
-    // Update summary stats
-    const totalSessions = logs.filter(l => new Date(l.time) >= startDate).length;
-    const weeks = 12;
-    triggersTotal.textContent = totalSessions;
-    triggersCount.textContent = triggerSet.size;
-    triggersAvg.textContent = (totalSessions / weeks).toFixed(1);
+    // Sort by count descending
+    const sorted = Object.entries(triggerCounts).sort((a, b) => b[1] - a[1]);
+    const maxCount = sorted[0][1];
 
-    // Build month labels
-    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    triggersMonths.innerHTML = '';
-    let lastMonth = -1;
-    for (let w = 0; w < 12; w++) {
-      const d = new Date(startDate);
-      d.setDate(d.getDate() + w * 7);
-      const m = d.getMonth();
-      if (m !== lastMonth) {
-        const span = document.createElement('span');
-        span.className = 'triggers-month';
-        span.style.width = '52px';
-        span.textContent = months[m];
-        triggersMonths.appendChild(span);
-        lastMonth = m;
-      } else {
-        // Add empty spacer
-        const span = document.createElement('span');
-        span.style.width = '52px';
-        span.style.display = 'inline-block';
-        triggersMonths.appendChild(span);
-      }
-    }
+    // Trigger icons mapping
+    const triggerIcons = {
+      'Stress': '😰',
+      'Social drinking': '🍺',
+      'Coffee': '☕',
+      'Driving': '🚗',
+      'Boredom': '📱',
+      'After meals': '🍽️',
+      'Unknown': '❓'
+    };
 
-    // Build grid
-    triggersGrid.innerHTML = '';
-    for (let w = 0; w < 12; w++) {
-      const weekEl = document.createElement('div');
-      weekEl.className = 'triggers-week';
-      for (let d = 0; d < 7; d++) {
-        const count = dailyCounts[w * 7 + d] || 0;
-        const cell = document.createElement('div');
-        let level = '';
-        if (count === 1) level = 'l1';
-        else if (count === 2) level = 'l2';
-        else if (count === 3) level = 'l3';
-        else if (count >= 4) level = 'l4';
-        cell.className = 'triggers-cell ' + level;
-        weekEl.appendChild(cell);
-      }
-      triggersGrid.appendChild(weekEl);
-    }
+    // Bar colors
+    const barColors = ['amber', 'blue', 'green', 'pink', 'gray', 'gray'];
+
+    // Build bars
+    triggersBars.innerHTML = '';
+    sorted.forEach(([trigger, count], i) => {
+      const pct = (count / maxCount) * 100;
+      const icon = triggerIcons[trigger] || '📊';
+      const color = barColors[i] || 'gray';
+
+      const group = document.createElement('div');
+      group.className = 'trigger-bar-group';
+      group.innerHTML = `
+        <div class="trigger-bar-header">
+          <div class="trigger-bar-name"><span class="trigger-bar-icon">${icon}</span>${trigger}</div>
+          <div class="trigger-bar-count">${count}</div>
+        </div>
+        <div class="trigger-bar-track">
+          <div class="trigger-bar-fill ${color}" style="width:0%"></div>
+        </div>
+      `;
+      triggersBars.appendChild(group);
+
+      // Animate bar fill
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          group.querySelector('.trigger-bar-fill').style.width = pct + '%';
+        });
+      });
+    });
   }
 
   // Open triggers from menu
@@ -2046,13 +2107,6 @@
   });
 
   // Push state when opening screens (via menu items)
-
-  // --- Keyboard avoidance for settings inputs ---
-  document.querySelectorAll('.settings-card-input').forEach(input => {
-    input.addEventListener('focus', () => {
-      setTimeout(() => input.scrollIntoView({ behavior: 'smooth', block: 'center' }), 300);
-    });
-  });
 
   loop();
 })();

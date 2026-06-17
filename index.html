@@ -69,38 +69,8 @@
         <h2 class="triggers-title">Triggers</h2>
         <p class="triggers-sub">Your patterns</p>
 
-        <div class="triggers-summary" id="triggers-summary">
-          <div class="triggers-stat">
-            <div class="triggers-stat-num" id="triggers-total">0</div>
-            <div class="triggers-stat-label">Sessions</div>
-          </div>
-          <div class="triggers-stat">
-            <div class="triggers-stat-num" id="triggers-count">0</div>
-            <div class="triggers-stat-label">Triggers</div>
-          </div>
-          <div class="triggers-stat">
-            <div class="triggers-stat-num" id="triggers-avg">0</div>
-            <div class="triggers-stat-label">Per week</div>
-          </div>
-        </div>
-
-        <div class="triggers-heatmap-wrap">
-          <div class="triggers-months" id="triggers-months"></div>
-          <div class="triggers-body">
-            <div class="triggers-days">
-              <div class="triggers-day">M</div><div class="triggers-day"></div><div class="triggers-day">W</div><div class="triggers-day"></div><div class="triggers-day">F</div><div class="triggers-day"></div><div class="triggers-day">S</div>
-            </div>
-            <div class="triggers-grid" id="triggers-grid"></div>
-          </div>
-          <div class="triggers-legend">
-            <span class="triggers-legend-label">Less</span>
-            <div class="triggers-cell"></div>
-            <div class="triggers-cell l1"></div>
-            <div class="triggers-cell l2"></div>
-            <div class="triggers-cell l3"></div>
-            <div class="triggers-cell l4"></div>
-            <span class="triggers-legend-label">More</span>
-          </div>
+        <div class="triggers-bars" id="triggers-bars">
+          <!-- Populated by JS -->
         </div>
       </div>
     </div>
@@ -195,39 +165,85 @@
       <button id="settings-back" class="settings-back" aria-label="Back">← Back</button>
       <div class="settings-content">
         <h2 class="settings-title">Settings</h2>
-        <p class="settings-sub">Price, name, habits</p>
 
-        <!-- Total saved preview -->
-        <div class="settings-stats-preview">
-          <div class="settings-stats-value" id="settings-total-saved">$0.00</div>
-          <div class="settings-stats-label">Total saved to date</div>
-        </div>
-
-        <!-- Name card -->
-        <div class="settings-card">
-          <div class="settings-card-label">Your name</div>
-          <input type="text" id="settings-name" class="settings-card-input" placeholder="Optional" maxlength="20">
-        </div>
-
-        <!-- Price card -->
-        <div class="settings-card">
-          <div class="settings-card-label">Cigarette price</div>
-          <div style="display:flex; align-items:baseline; gap:4px;">
-            <span class="settings-card-unit">$</span>
-            <input type="number" id="settings-price" class="settings-card-input" step="0.10" min="0" max="5">
+        <div class="settings-stack">
+          <!-- Total saved -->
+          <div class="settings-stack-card" id="settings-total-card">
+            <div class="settings-stack-icon">💰</div>
+            <div class="settings-stack-text">
+              <h3>Total saved</h3>
+              <p>Your progress</p>
+            </div>
+            <div class="settings-stack-value" id="settings-total-saved">$0.00</div>
           </div>
+
+          <!-- Name -->
+          <button class="settings-stack-card" id="settings-name-card">
+            <div class="settings-stack-icon">👤</div>
+            <div class="settings-stack-text">
+              <h3>Name</h3>
+              <p>How we greet you</p>
+            </div>
+            <div class="settings-stack-arrow">›</div>
+          </button>
+
+          <!-- Price -->
+          <button class="settings-stack-card" id="settings-price-card">
+            <div class="settings-stack-icon">💵</div>
+            <div class="settings-stack-text">
+              <h3>Cigarette price</h3>
+              <p>Per cigarette</p>
+            </div>
+            <div class="settings-stack-value" id="settings-price-display">$1.00</div>
+          </button>
+
+          <!-- Dark mode -->
+          <div class="settings-stack-card" id="settings-dark-card">
+            <div class="settings-stack-icon">🌙</div>
+            <div class="settings-stack-text">
+              <h3>Dark mode</h3>
+              <p>Appearance</p>
+            </div>
+            <button class="settings-toggle active" id="settings-dark-mode"></button>
+          </div>
+
+          <!-- Reset -->
+          <button class="settings-stack-card settings-stack-danger" id="settings-reset">
+            <div class="settings-stack-icon" style="background:rgba(255,80,80,0.1)">🗑️</div>
+            <div class="settings-stack-text">
+              <h3 style="color:rgba(255,80,80,0.7)">Reset all data</h3>
+              <p>Start fresh</p>
+            </div>
+            <div class="settings-stack-arrow">›</div>
+          </button>
+
+          <!-- Sign out -->
+          <button class="settings-stack-card settings-stack-danger" id="settings-signout">
+            <div class="settings-stack-icon" style="background:rgba(255,80,80,0.1)">🚪</div>
+            <div class="settings-stack-text">
+              <h3 style="color:rgba(255,80,80,0.7)">Sign out</h3>
+              <p>Account</p>
+            </div>
+            <div class="settings-stack-arrow">›</div>
+          </button>
         </div>
 
-        <!-- Dark mode toggle -->
-        <div class="settings-toggle-row">
-          <span class="settings-toggle-label">Dark mode</span>
-          <button class="settings-toggle active" id="settings-dark-mode"></button>
+        <!-- Hidden inputs for actual editing -->
+        <div style="display:none;">
+          <input type="text" id="settings-name" maxlength="20">
+          <input type="number" id="settings-price" step="0.10" min="0" max="5">
         </div>
 
-        <!-- Bottom actions -->
-        <div class="settings-bottom">
-          <button class="settings-signout" id="settings-signout">Sign out</button>
-          <button class="settings-reset" id="settings-reset">Reset all data</button>
+        <!-- Edit modal -->
+        <div id="settings-edit-modal" class="settings-edit-modal">
+          <div class="settings-edit-content">
+            <div class="settings-edit-title" id="settings-edit-title">Edit</div>
+            <input type="text" id="settings-edit-input" class="settings-edit-input" placeholder="">
+            <div class="settings-edit-actions">
+              <button class="settings-edit-cancel" id="settings-edit-cancel">Cancel</button>
+              <button class="settings-edit-save" id="settings-edit-save">Save</button>
+            </div>
+          </div>
         </div>
 
         <div class="settings-version">puff v1.0</div>
@@ -238,7 +254,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-    <script src="app.js?v=29"></script>
+    <script src="app.js?v=30"></script>
     <script>
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('/sw.js').catch(() => {});
