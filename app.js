@@ -1183,11 +1183,19 @@
   // --- Game loop ---
   let loopFrameId = null;
   let ashDropTimeout = null;
+  let _lastAutoSave = 0;
   function loop() {
     try {
       const now = performance.now();
       const dt = lastFrameTime ? (now - lastFrameTime) / 1000 : 1/60; // delta time in seconds
       lastFrameTime = now;
+
+      // Auto-save to localStorage every 10 seconds during gameplay
+      if (started && !gameOver && now - _lastAutoSave > 10000) {
+        _lastAutoSave = now;
+        const sessionCost = burnProgress * CIG_PRICE();
+        safeSetItem('moneySaved', String(totalMoneySaved + sessionCost));
+      }
 
       ctx.fillStyle = isDark ? bgDark : bgLight;
       ctx.fillRect(0, 0, W, H);
@@ -1974,6 +1982,9 @@
       totalMoneySaved += partial;
       burnProgress = 0;
       gameOver = true;
+      // Save locally first (instant)
+      safeSetItem('moneySaved', String(totalMoneySaved));
+      // Then sync to cloud (best effort)
       saveToCloud({ moneySaved: totalMoneySaved });
     }
   }
@@ -1984,6 +1995,16 @@
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) {
       savePartialProgress();
+      // Sync all state to cloud when leaving
+      if (currentUser) {
+        saveToCloud({
+          moneySaved: totalMoneySaved,
+          quitStreak: streakCount,
+          cigarettesAvoided: totalCigarettesAvoided,
+          quitStartDate: quitStartDate,
+          lastSessionDate: Date.now()
+        });
+      }
       loopRunning = false;
       if (loopFrameId) cancelAnimationFrame(loopFrameId);
     } else if (!gameOver && started) {
