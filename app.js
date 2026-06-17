@@ -1700,6 +1700,9 @@
     if (settingsDarkMode) {
       settingsDarkMode.classList.toggle('active', isDark);
     }
+    // Update theme-color meta tag for browser chrome
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.content = isDark ? '#1a1a1a' : '#faf9f7';
   }
 
   // Apply theme on load
@@ -1875,6 +1878,8 @@
   let menuDragStartY = 0;
   let menuDragging = false;
   const menuContent = document.querySelector('.menu-content');
+  // Tap drag handle to dismiss
+  document.querySelector('.menu-drag-handle').addEventListener('click', closeMenu);
   menuContent.addEventListener('touchstart', (e) => {
     menuDragStartY = e.touches[0].clientY;
     menuDragging = false;
@@ -1891,8 +1896,11 @@
       const dy = e.changedTouches[0].clientY - menuDragStartY;
       if (dy > 100) {
         closeMenu();
+      } else {
+        menuContent.style.transition = 'transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)';
+        menuContent.style.transform = '';
+        setTimeout(() => { menuContent.style.transition = ''; }, 300);
       }
-      menuContent.style.transform = '';
     }
     menuDragging = false;
   }, { passive: true });
