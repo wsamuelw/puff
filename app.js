@@ -2178,8 +2178,11 @@
   window.addEventListener('beforeunload', savePartialProgress);
 
   // Pause loop when app is in background
+  let hiddenAt = 0; // timestamp when tab became hidden
+
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) {
+      hiddenAt = Date.now();
       savePartialProgress();
       // Sync all state to cloud when leaving
       if (currentUser) {
@@ -2194,6 +2197,36 @@
       loopRunning = false;
       if (loopFrameId) cancelAnimationFrame(loopFrameId);
     } else if (!gameOver && started) {
+      // Calculate elapsed time while hidden and advance burn progress
+      if (hiddenAt > 0) {
+        const elapsed = (Date.now() - hiddenAt) / 1000; // seconds
+        const burnRate = BASE_BURN_RATE; // idle burn rate while away
+        burnProgress = Math.min(1, burnProgress + burnRate * elapsed);
+        hiddenAt = 0;
+
+        // Check if cigarette finished while away
+        if (burnProgress >= 1) {
+          gameOver = true;
+          cleanupMic();
+          streakCount++;
+          totalMoneySaved += CIG_PRICE();
+          totalCigarettesAvoided++;
+          sessionMoneySaved = CIG_PRICE();
+          if (!quitStartDate) {
+            quitStartDate = Date.now();
+          }
+          saveToCloud({
+            quitStreak: streakCount,
+            moneySaved: totalMoneySaved,
+            cigarettesAvoided: totalCigarettesAvoided,
+            quitStartDate: quitStartDate,
+            lastSessionDate: Date.now()
+          });
+          completionFrame = 0;
+          showEndScreen();
+          return;
+        }
+      }
       loopRunning = true;
       lastFrameTime = 0;
       loopFrameId = requestAnimationFrame(loop);
