@@ -83,10 +83,12 @@
     errorDiv.textContent = message;
   }
 
+  // Set auth persistence on load (not during sign-in click)
+  auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(() => {});
+
   // Google sign-in — always use popup
   async function signInWithGoogle() {
     try {
-      await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
       const result = await auth.signInWithPopup(provider);
       currentUser = result.user;
       return result.user;
