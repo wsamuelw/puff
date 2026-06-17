@@ -211,6 +211,10 @@
   let cooldownUntil = 0;
   let started = false;
 
+  // Game flow state
+  let gameState = 'idle'; // 'idle' | 'trigger-select' | 'smoking' | 'end'
+  let currentTriggerId = null; // trigger selected before smoking
+
   // Hold + Blow mechanic
   let holding = false;           // is user holding the screen?
   let holdStartTime = 0;        // when hold started
@@ -1066,10 +1070,24 @@
 
   // HTML trigger screen elements
   const triggerScreen = document.getElementById('trigger-screen');
-  const triggerSession = document.getElementById('trigger-session');
-  const triggerSub = document.getElementById('trigger-sub');
   const triggerGrid = document.getElementById('trigger-grid');
   const triggerDone = document.getElementById('trigger-done');
+
+  // HTML idle screen elements
+  const idleScreen = document.getElementById('idle-screen');
+  const idleMoney = document.getElementById('idle-money');
+  const idleStreak = document.getElementById('idle-streak');
+  const idleMessage = document.getElementById('idle-message');
+  const idleStart = document.getElementById('idle-start');
+
+  // HTML end screen elements
+  const endScreen = document.getElementById('end-screen');
+  const endSession = document.getElementById('end-session');
+  const endTotal = document.getElementById('end-total');
+  const endTrigger = document.getElementById('end-trigger');
+  const endInsight = document.getElementById('end-insight');
+  const endDone = document.getElementById('end-done');
+  const endAnother = document.getElementById('end-another');
 
   // Build trigger buttons
   TRIGGER_OPTIONS.forEach(trigger => {
@@ -1088,34 +1106,145 @@
     triggerGrid.appendChild(btn);
   });
 
-  // Done button handler
+  // Done button handler (now "Continue" — starts smoking session)
   triggerDone.addEventListener('click', (e) => {
     e.stopPropagation();
     if (!selectedTrigger) return;
-    // Save trigger
-    const logs = JSON.parse(safeGetItem('cravingLogs', '[]'));
-    logs.push({ time: Date.now(), trigger: selectedTrigger });
-    safeSetItem('cravingLogs', JSON.stringify(logs));
-    triggerSubmitted = true;
+    // Save trigger to temp variable (will be saved to logs after session)
+    currentTriggerId = selectedTrigger;
+    // Hide trigger screen and start smoking
     triggerScreen.classList.remove('visible');
-    // Allow restart on next tap
+    gameState = 'smoking';
+    // Start mic and loop
+    startSmokingSession();
   });
 
+  // Show trigger selection screen (before smoking)
   function showTriggerScreen() {
-    triggerSession.textContent = '$' + totalMoneySaved.toFixed(2);
-    if (quitStartDate) {
-      const d = new Date(quitStartDate);
-      const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-      triggerSub.textContent = 'total saving since ' + d.getDate() + ' ' + months[d.getMonth()];
-    } else {
-      triggerSub.textContent = 'total saved';
-    }
     selectedTrigger = null;
-    triggerSubmitted = false;
+    currentTriggerId = null;
     triggerGrid.querySelectorAll('.trigger-btn').forEach(b => b.classList.remove('selected'));
     triggerDone.classList.remove('visible');
     triggerScreen.classList.add('visible');
+    gameState = 'trigger-select';
   }
+
+  // Start smoking session
+  async function startSmokingSession() {
+    // Reset smoking state
+    burnProgress = 0;
+    gameOver = false;
+    started = false;
+    particles.length = 0;
+    ashPieces.length = 0;
+    ashRings.length = 0;
+    ashHeight = 0;
+    ashDropping = false;
+    ashDropTo = 0;
+    ashCeilingSet = false;
+    blowFrames = 0;
+    blowIntensity = 0;
+    cooldownUntil = performance.now() + 800;
+    completionFrame = 0;
+    ashHintShown = false;
+    ashHintAlpha = 0;
+    sessionMoneySaved = 0;
+    // Start mic and loop
+    if (loopFrameId) cancelAnimationFrame(loopFrameId);
+    if (ashDropTimeout) { clearTimeout(ashDropTimeout); ashDropTimeout = null; }
+    loopRunning = true;
+    const ok = await startMic();
+    if (ok) {
+      started = true;
+      gameStartTime = performance.now();
+    }
+    loopFrameId = requestAnimationFrame(loop);
+  }
+
+  // Get trigger insight
+  function getTriggerInsight(triggerId) {
+    const logs = JSON.parse(safeGetItem('cravingLogs', '[]'));
+    const triggerLogs = logs.filter(l => l.trigger === triggerId);
+    const count = triggerLogs.length;
+    const trigger = TRIGGER_OPTIONS.find(t => t.id === triggerId);
+    if (!trigger) return '';
+
+    if (count <= 1) return `Your first ${trigger.label.toLowerCase()} session`;
+    if (count >= 5) return `Your ${count}th ${trigger.label.toLowerCase()} trigger — consider alternatives`;
+    return `Your ${count}${ordinal(count)} ${trigger.label.toLowerCase()} trigger`;
+  }
+
+  // Ordinal suffix helper
+  function ordinal(n) {
+    const s = ['th', 'st', 'nd', 'rd'];
+    const v = n % 100;
+    return s[(v - 20) % 10] || s[v] || s[0];
+  }
+
+  // Show end screen
+  function showEndScreen() {
+    // Save trigger to logs
+    const logs = JSON.parse(safeGetItem('cravingLogs', '[]'));
+    logs.push({ time: Date.now(), trigger: currentTriggerId });
+    safeSetItem('cravingLogs', JSON.stringify(logs));
+
+    // Update end screen content
+    endSession.textContent = '$' + sessionMoneySaved.toFixed(2);
+    endTotal.textContent = '$' + totalMoneySaved.toFixed(2);
+
+    const trigger = TRIGGER_OPTIONS.find(t => t.id === currentTriggerId);
+    endTrigger.textContent = trigger ? trigger.emoji + ' ' + trigger.label : '';
+    endInsight.textContent = getTriggerInsight(currentTriggerId);
+
+    endScreen.classList.add('visible');
+    gameState = 'end';
+  }
+
+  // Show idle screen
+  function showIdleScreen() {
+    idleMoney.textContent = '$' + totalMoneySaved.toFixed(2);
+
+    // Calculate streak
+    if (quitStartDate) {
+      const daysSinceStart = Math.floor((Date.now() - quitStartDate) / (24 * 60 * 60 * 1000));
+      idleStreak.textContent = daysSinceStart + ' day' + (daysSinceStart !== 1 ? 's' : '') + ' smoke-free';
+    } else {
+      idleStreak.textContent = '';
+    }
+
+    // Random motivational messages
+    const messages = [
+      "You're doing great",
+      "Keep going",
+      "Every cigarette counts",
+      "Stay strong",
+      "You've got this",
+    ];
+    idleMessage.textContent = messages[Math.floor(Math.random() * messages.length)];
+
+    idleScreen.classList.add('visible');
+    gameState = 'idle';
+  }
+
+  // Idle screen start button
+  idleStart.addEventListener('click', (e) => {
+    e.stopPropagation();
+    idleScreen.classList.remove('visible');
+    showTriggerScreen();
+  });
+
+  // End screen buttons
+  endDone.addEventListener('click', (e) => {
+    e.stopPropagation();
+    endScreen.classList.remove('visible');
+    showIdleScreen();
+  });
+
+  endAnother.addEventListener('click', (e) => {
+    e.stopPropagation();
+    endScreen.classList.remove('visible');
+    showTriggerScreen();
+  });
 
   function drawCompletion() {
     // No canvas drawing needed — HTML overlay handles it
@@ -1322,7 +1451,7 @@
             lastSessionDate: Date.now()
           });
           completionFrame = 0;
-          showTriggerScreen();
+          showEndScreen();
         }
       }
 
@@ -1386,8 +1515,8 @@
     } catch (e) {
       console.error(e);
     }
-    // Stop loop when game is over and trigger submitted (HTML overlay handles UI)
-    if (gameOver && triggerSubmitted) {
+    // Stop loop when game is over (end screen handles the flow)
+    if (gameOver) {
       loopRunning = false;
     }
     if (loopRunning) loopFrameId = requestAnimationFrame(loop);
@@ -1400,55 +1529,14 @@
       if (e && e.target && e.target.closest && (
         e.target.closest('.filter-stats') ||
         e.target.closest('.menu-pill') ||
-        e.target.closest('.signin-screen')
+        e.target.closest('.signin-screen') ||
+        e.target.closest('.idle-screen') ||
+        e.target.closest('.end-screen') ||
+        e.target.closest('.trigger-screen')
       )) return;
 
-      // Game over — wait for trigger screen to be dismissed
-      if (gameOver) {
-        if (!triggerSubmitted) return; // trigger screen still open
-
-        // Reset and restart
-        burnProgress = 0;
-        gameOver = false;
-        started = false;
-        selectedTrigger = null;
-        triggerSubmitted = false;
-        particles.length = 0;
-        ashPieces.length = 0;
-        ashRings.length = 0;
-        ashHeight = 0;
-        ashDropping = false;
-        ashDropTo = 0;
-        ashCeilingSet = false;
-        blowFrames = 0;
-        blowIntensity = 0;
-        cooldownUntil = performance.now() + 800;
-        completionFrame = 0;
-        ashHintShown = false;
-        ashHintAlpha = 0;
-        sessionMoneySaved = 0;
-        // Restart mic and loop (cancel pending frame + ash timeout)
-        if (loopFrameId) cancelAnimationFrame(loopFrameId);
-        if (ashDropTimeout) { clearTimeout(ashDropTimeout); ashDropTimeout = null; }
-        loopRunning = true;
-        const ok = await startMic();
-        if (ok) {
-          started = true;
-          gameStartTime = performance.now();
-        }
-        loopFrameId = requestAnimationFrame(loop);
-        return;
-      }
-
-      // First tap → request mic
-      if (!micStarted) {
-        const ok = await startMic();
-        if (ok) {
-          started = true;
-          gameStartTime = performance.now();
-        }
-        return;
-      }
+      // Game over — end screen handles the flow
+      if (gameOver) return;
 
       // Double tap to flick ash while smoking (need visible ash)
       if (started && !gameOver && ashHeight > 2 && !ashDropping && !tapCooldown) {
@@ -1476,7 +1564,10 @@
       e.target.closest('.menu-overlay') ||
       e.target.closest('.slipup-screen') ||
       e.target.closest('.settings-screen') ||
-      e.target.closest('.triggers-screen')
+      e.target.closest('.triggers-screen') ||
+      e.target.closest('.idle-screen') ||
+      e.target.closest('.end-screen') ||
+      e.target.closest('.trigger-screen')
     )) return;
 
     // Only start hold when game is running
@@ -1628,6 +1719,7 @@
       // First time user — no slip-up check needed
       lastSessionDate = Date.now();
       saveToCloud({ lastSessionDate: lastSessionDate });
+      showIdleScreen();
       return;
     }
 
@@ -1639,8 +1731,11 @@
     lastSessionDate = now;
     saveToCloud({ lastSessionDate: lastSessionDate });
 
-    // No gap — normal flow
-    if (gapHours < 24) return;
+    // No gap — show idle screen
+    if (gapHours < 24) {
+      showIdleScreen();
+      return;
+    }
 
     // Calculate streak in days (based on quitStartDate)
     const streakDays = quitStartDate ? Math.floor((now - quitStartDate) / (1000 * 60 * 60 * 24)) : 0;
@@ -1669,6 +1764,7 @@
   slipupContinue.addEventListener('click', (e) => {
     e.stopPropagation();
     slipupWelcome.classList.remove('active');
+    showIdleScreen();
   });
   slipupStartFresh.addEventListener('click', (e) => {
     e.stopPropagation();
@@ -1677,10 +1773,12 @@
     quitStartDate = Date.now();
     saveToCloud({ quitStreak: 0, quitStartDate: quitStartDate });
     slipupWelcome.classList.remove('active');
+    showIdleScreen();
   });
   slipupStartAgain.addEventListener('click', (e) => {
     e.stopPropagation();
     slipupRelapse.classList.remove('active');
+    showIdleScreen();
   });
   slipupReset.addEventListener('click', (e) => {
     e.stopPropagation();

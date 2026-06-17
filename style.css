@@ -749,6 +749,249 @@ body.light .trigger-done {
   display: block;
 }
 
+/* ─── Idle Screen ─── */
+.idle-screen {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(26,26,26,0.95);
+  z-index: 300;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+  padding: 40px 24px;
+}
+
+body.light .idle-screen {
+  background: rgba(250,249,247,0.95);
+}
+
+.idle-screen.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.idle-money {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 64px;
+  font-weight: 400;
+  color: #d4a574;
+  letter-spacing: -2px;
+  line-height: 1;
+}
+
+.idle-label {
+  font-size: 14px;
+  color: rgba(250,249,247,0.4);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-top: 8px;
+}
+
+body.light .idle-label {
+  color: rgba(26,26,26,0.4);
+}
+
+.idle-streak {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 18px;
+  color: rgba(250,249,247,0.6);
+  margin-top: 24px;
+}
+
+body.light .idle-streak {
+  color: rgba(26,26,26,0.6);
+}
+
+.idle-message {
+  font-size: 14px;
+  color: rgba(250,249,247,0.35);
+  margin-top: 8px;
+  font-style: italic;
+}
+
+body.light .idle-message {
+  color: rgba(26,26,26,0.35);
+}
+
+.idle-start {
+  margin-top: 40px;
+  padding: 16px 48px;
+  background: #d4a574;
+  border: none;
+  border-radius: 12px;
+  color: #1a1a1a;
+  font-family: 'Outfit', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.idle-start:hover {
+  background: #c49564;
+}
+
+.idle-start:active {
+  transform: scale(0.96);
+}
+
+/* ─── End Screen ─── */
+.end-screen {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(26,26,26,0.95);
+  z-index: 350;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+  padding: 40px 24px;
+}
+
+body.light .end-screen {
+  background: rgba(250,249,247,0.95);
+}
+
+.end-screen.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.end-session {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 48px;
+  font-weight: 400;
+  color: #d4a574;
+  letter-spacing: -1px;
+}
+
+.end-session-label {
+  font-size: 13px;
+  color: rgba(250,249,247,0.4);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-top: 4px;
+}
+
+body.light .end-session-label {
+  color: rgba(26,26,26,0.4);
+}
+
+.end-total {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 24px;
+  color: rgba(250,249,247,0.6);
+  margin-top: 20px;
+}
+
+body.light .end-total {
+  color: rgba(26,26,26,0.6);
+}
+
+.end-total-label {
+  font-size: 12px;
+  color: rgba(250,249,247,0.3);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 4px;
+}
+
+body.light .end-total-label {
+  color: rgba(26,26,26,0.3);
+}
+
+.end-trigger {
+  font-size: 16px;
+  color: rgba(250,249,247,0.5);
+  margin-top: 24px;
+  padding: 10px 20px;
+  background: rgba(250,249,247,0.06);
+  border-radius: 20px;
+}
+
+body.light .end-trigger {
+  color: rgba(26,26,26,0.5);
+  background: rgba(0,0,0,0.04);
+}
+
+.end-insight {
+  font-size: 13px;
+  color: rgba(250,249,247,0.35);
+  margin-top: 12px;
+  font-style: italic;
+  max-width: 280px;
+  text-align: center;
+  line-height: 1.5;
+}
+
+body.light .end-insight {
+  color: rgba(26,26,26,0.35);
+}
+
+.end-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 32px;
+}
+
+.end-done {
+  padding: 14px 28px;
+  background: transparent;
+  border: 1px solid rgba(250,249,247,0.15);
+  border-radius: 12px;
+  color: rgba(250,249,247,0.5);
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body.light .end-done {
+  border-color: rgba(0,0,0,0.1);
+  color: rgba(26,26,26,0.5);
+}
+
+.end-done:hover {
+  border-color: rgba(250,249,247,0.3);
+  color: rgba(250,249,247,0.7);
+}
+
+body.light .end-done:hover {
+  border-color: rgba(0,0,0,0.2);
+  color: rgba(26,26,26,0.7);
+}
+
+.end-another {
+  padding: 14px 28px;
+  background: #d4a574;
+  border: none;
+  border-radius: 12px;
+  color: #1a1a1a;
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.end-another:hover {
+  background: #c49564;
+}
+
+.end-another:active {
+  transform: scale(0.96);
+}
+
 /* ─── Slip-up Handling ─── */
 .slipup-screen {
   position: fixed;
