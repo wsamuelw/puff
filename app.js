@@ -1939,6 +1939,7 @@
   const settingsSignout = document.getElementById('settings-signout');
   const settingsTotalSaved = document.getElementById('settings-total-saved');
   const settingsPriceDisplay = document.getElementById('settings-price-display');
+  const settingsNameDisplay = document.getElementById('settings-name-display');
   const menuSettings = document.getElementById('menu-settings');
 
   // Edit modal elements
@@ -1956,17 +1957,23 @@
     settingsDarkMode.classList.toggle('active', isDark);
     settingsTotalSaved.textContent = '$' + totalMoneySaved.toFixed(2);
     settingsPriceDisplay.textContent = '$' + cigPrice.toFixed(2);
+
+    // Update name display
+    const userName = safeGetItem('userName', '');
+    settingsNameDisplay.textContent = userName || 'Set name';
   }
 
   // Save settings to cloud + localStorage
   function saveSettings() {
     cigPrice = parseFloat(settingsPrice.value) || 1;
+    const userName = settingsName.value.trim();
     saveToCloud({
-      userName: settingsName.value.trim(),
+      userName: userName,
       cigPrice: cigPrice,
       darkMode: isDark
     });
     settingsPriceDisplay.textContent = '$' + cigPrice.toFixed(2);
+    settingsNameDisplay.textContent = userName || 'Set name';
     // Update menu greeting immediately
     updateMenuUserInfo();
   }
