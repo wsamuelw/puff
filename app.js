@@ -86,12 +86,15 @@
 
   // Google sign-in — always use popup
   async function signInWithGoogle() {
+    logEvent('sign_in_started');
     try {
       const result = await auth.signInWithPopup(provider);
       currentUser = result.user;
+      logEvent('sign_in_completed', { uid: result.user.uid });
       return result.user;
     } catch (e) {
       console.warn('Auth failed:', e.message);
+      logEvent('sign_in_failed', { error: e.code });
       if (e.code === 'auth/popup-blocked') {
         showSigninError('Popup blocked. Please allow popups and try again.');
       } else if (e.code === 'auth/popup-closed-by-user') {
@@ -144,6 +147,21 @@
       }, { merge: true });
     } catch (e) {
       console.warn('Cloud save failed:', e.message);
+    }
+  }
+
+  // Event logging — track user actions in Firebase
+  async function logEvent(eventName, props = {}) {
+    if (!currentUser) return;
+    try {
+      await db.collection('events').add({
+        uid: currentUser.uid,
+        event: eventName,
+        props: props,
+        ts: firebase.firestore.FieldValue.serverTimestamp()
+      });
+    } catch (e) {
+      // Silently fail — don't interrupt user experience
     }
   }
 
@@ -1182,6 +1200,7 @@
       // Complete onboarding
       onboardingScreen.classList.remove('visible');
       safeSetItem('onboardingComplete', 'true');
+      logEvent('onboarding_completed');
     }
   });
 
@@ -1208,6 +1227,7 @@
     if (!selectedTrigger) return;
     // Save trigger to temp variable (will be saved to logs after session)
     currentTriggerId = selectedTrigger;
+    logEvent('trigger_selected', { trigger: selectedTrigger });
     // Hide trigger screen and start smoking
     triggerScreen.classList.remove('visible');
     gameState = 'smoking';
@@ -1361,12 +1381,14 @@
   // End screen buttons
   endDone.addEventListener('click', (e) => {
     e.stopPropagation();
+    logEvent('done_tapped', { trigger: currentTriggerId, sessionMoney: sessionMoneySaved });
     endScreen.classList.remove('visible');
     showIdleScreen();
   });
 
   endAnother.addEventListener('click', (e) => {
     e.stopPropagation();
+    logEvent('smoke_another_tapped', { trigger: currentTriggerId, sessionMoney: sessionMoneySaved });
     endScreen.classList.remove('visible');
     showTriggerScreen();
   });
@@ -1854,11 +1876,13 @@
   // Close slip-up screens
   slipupContinue.addEventListener('click', (e) => {
     e.stopPropagation();
+    logEvent('slipup_action', { action: 'continue_streak', type: 'welcome' });
     slipupWelcome.classList.remove('active');
     showIdleScreen();
   });
   slipupStartFresh.addEventListener('click', (e) => {
     e.stopPropagation();
+    logEvent('slipup_action', { action: 'start_fresh', type: 'welcome' });
     // Reset streak but keep money and cigarettes
     streakCount = 0;
     quitStartDate = Date.now();
@@ -1868,11 +1892,13 @@
   });
   slipupStartAgain.addEventListener('click', (e) => {
     e.stopPropagation();
+    logEvent('slipup_action', { action: 'start_again', type: 'relapse' });
     slipupRelapse.classList.remove('active');
     showIdleScreen();
   });
   slipupReset.addEventListener('click', (e) => {
     e.stopPropagation();
+    logEvent('slipup_action', { action: 'reset_everything', type: 'relapse' });
     // Reset everything
     streakCount = 0;
     totalMoneySaved = 0;
@@ -2066,6 +2092,7 @@
       settingsPrice.value = settingsEditInput.value;
     }
     saveSettings();
+    logEvent('setting_changed', { field: currentEditField });
     closeEditModal();
   });
 
@@ -2259,6 +2286,7 @@
     isDark = !isDark;
     applyTheme();
     saveToCloud({ darkMode: isDark });
+    logEvent('dark_mode_toggled', { enabled: isDark });
   });
 
   // Reset all data
@@ -2295,6 +2323,7 @@
 
     // Calculate money based on how much was smoked
     sessionMoneySaved = burnProgress * CIG_PRICE();
+    const isFullSession = burnProgress >= 1;
     if (sessionMoneySaved > 0) {
       totalMoneySaved += sessionMoneySaved;
       totalCigarettesAvoided++;
@@ -2305,6 +2334,14 @@
     if (!quitStartDate) {
       quitStartDate = Date.now();
     }
+
+    // Log session event
+    logEvent('session_completed', {
+      trigger: currentTriggerId,
+      burnProgress: Math.round(burnProgress * 100),
+      money: sessionMoneySaved,
+      isFullSession: isFullSession
+    });
 
     // Save to cloud + localStorage
     saveToCloud({
