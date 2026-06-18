@@ -58,9 +58,6 @@
   const provider = new firebase.auth.GoogleAuthProvider();
   let currentUser = null;
 
-  // Detect mobile (unused but kept for future reference)
-  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-
   // Reset sign-in button to default state
   function resetSigninButton() {
     const signinBtn = document.getElementById('signin-google');
@@ -251,8 +248,6 @@
   // Streak persistence
   let streakCount = parseInt(safeGetItem('quitStreak', '0'));
   let gameStartTime = 0;
-  let completionFrame = 0;
-
   // Money saved tracking (loaded from settings, default $1)
   let cigPrice = parseFloat(safeGetItem('cigPrice', '1'));
   const CIG_PRICE = () => cigPrice; // getter for backward compat
@@ -297,10 +292,6 @@
   } catch (e) {
     cravingLogs = [];
   }
-
-  // Onboarding hints
-  let ashHintShown = false;
-  let ashHintAlpha = 0;
 
   // Pre-rendered particle sprite (avoids per-frame gradient creation)
   const _particleCanvas = document.createElement('canvas');
@@ -1184,9 +1175,6 @@
     blowFrames = 0;
     blowIntensity = 0;
     cooldownUntil = performance.now() + 800;
-    completionFrame = 0;
-    ashHintShown = false;
-    ashHintAlpha = 0;
     sessionMoneySaved = 0;
     // Recalculate dimensions in case window size changed
     resize();
@@ -1309,11 +1297,6 @@
     endScreen.classList.remove('visible');
     showTriggerScreen();
   });
-
-  function drawCompletion() {
-    // No canvas drawing needed — HTML overlay handles it
-    completionFrame++;
-  }
 
   // Helper: format elapsed time for health timeline
   function formatQuitDuration() {
@@ -1495,7 +1478,6 @@
 
         if (burnProgress >= 1) {
           endSessionAndSave();
-          completionFrame = 0;
           showEndScreen();
         }
       }
@@ -1509,16 +1491,6 @@
 
       // Update HTML stats display
       updateStatsDisplay();
-
-      // Onboarding hint — show when ash becomes visible
-      if (ashHeight > 10 && !ashHintShown && started && !gameOver) {
-        ashHintAlpha = Math.min(1, ashHintAlpha + 0.02);
-        if (ashHintAlpha >= 1) {
-          ashHintShown = true;
-          setTimeout(() => { ashHintAlpha = 0; }, 3000);
-        }
-      }
-      // Ash hint removed
 
       // Particles — swap-and-pop for O(1) removal
       for (let i = particles.length - 1; i >= 0; i--) {
@@ -1552,8 +1524,6 @@
           ashPieces[i].draw(ctx);
         }
       }
-
-      if (gameOver) drawCompletion();
 
       ctx.restore(); // undo shake translation
 
@@ -2330,7 +2300,6 @@
           // Check if cigarette finished while away
           if (burnProgress >= 1) {
             endSessionAndSave();
-            completionFrame = 0;
             showEndScreen();
             return;
           }

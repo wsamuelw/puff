@@ -171,15 +171,6 @@ body.light .fs-item span {
   color: rgba(26,26,26,0.7);
 }
 
-.fs-dot {
-  font-size: 12px;
-  color: rgba(255,255,255,0.3);
-}
-
-body.light .fs-dot {
-  color: rgba(26,26,26,0.3);
-}
-
 /* ─── Sign-in Screen ─── */
 .signin-screen {
   position: fixed;
@@ -662,28 +653,6 @@ body.light .trigger-screen {
 .trigger-screen.visible {
   opacity: 1;
   pointer-events: auto;
-}
-
-.trigger-session {
-  font-family: 'Libre Baskerville', serif;
-  font-size: 56px;
-  font-weight: 400;
-  color: #faf9f7;
-  margin-bottom: 4px;
-}
-
-body.light .trigger-session {
-  color: #1a1a1a;
-}
-
-.trigger-sub {
-  font-size: 13px;
-  color: rgba(250,249,247,0.4);
-  margin-bottom: 40px;
-}
-
-body.light .trigger-sub {
-  color: rgba(26,26,26,0.4);
 }
 
 .trigger-question {
