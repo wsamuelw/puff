@@ -2430,12 +2430,14 @@
       quitStartDate = Date.now();
     }
 
-    // Log session event
+    // Log session event with duration
+    const sessionDuration = gameStartTime ? Math.round((performance.now() - gameStartTime) / 1000) : 0;
     logEvent('session_completed', {
       trigger: currentTriggerId,
       burnProgress: Math.round(burnProgress * 100),
       money: sessionMoneySaved,
-      isFullSession: isFullSession
+      isFullSession: isFullSession,
+      durationSeconds: sessionDuration
     });
 
     // Save to cloud + localStorage
