@@ -1473,26 +1473,7 @@
         }
 
         if (burnProgress >= 1) {
-          gameOver = true;
-          cleanupMic(); // release mic and audio when cigarette finishes
-          // Increment streak and save
-          streakCount++;
-          // Update money saved
-          totalMoneySaved += CIG_PRICE();
-          totalCigarettesAvoided++;
-          sessionMoneySaved = CIG_PRICE();
-          // Set quit start date if not already set
-          if (!quitStartDate) {
-            quitStartDate = Date.now();
-          }
-          // Save to cloud + localStorage
-          saveToCloud({
-            quitStreak: streakCount,
-            moneySaved: totalMoneySaved,
-            cigarettesAvoided: totalCigarettesAvoided,
-            quitStartDate: quitStartDate,
-            lastSessionDate: Date.now()
-          });
+          endSessionAndSave();
           completionFrame = 0;
           showEndScreen();
         }
@@ -2238,16 +2219,39 @@
   // (Already handled in the existing bail check)
 
   // Save partial progress when app goes to background or unloads
+  // End session and save money (handles both full and partial)
+  function endSessionAndSave() {
+    if (gameOver) return; // Already ended
+
+    gameOver = true;
+    cleanupMic();
+
+    // Calculate money based on how much was smoked
+    sessionMoneySaved = burnProgress * CIG_PRICE();
+    if (sessionMoneySaved > 0) {
+      totalMoneySaved += sessionMoneySaved;
+      totalCigarettesAvoided++;
+      streakCount++;
+    }
+
+    // Set quit start date if not already set
+    if (!quitStartDate) {
+      quitStartDate = Date.now();
+    }
+
+    // Save to cloud + localStorage
+    saveToCloud({
+      quitStreak: streakCount,
+      moneySaved: totalMoneySaved,
+      cigarettesAvoided: totalCigarettesAvoided,
+      quitStartDate: quitStartDate,
+      lastSessionDate: Date.now()
+    });
+  }
+
   function savePartialProgress() {
     if (started && !gameOver && burnProgress > 0 && burnProgress < 1) {
-      const partial = burnProgress * CIG_PRICE();
-      totalMoneySaved += partial;
-      burnProgress = 0;
-      gameOver = true;
-      // Save locally first (instant)
-      safeSetItem('moneySaved', String(totalMoneySaved));
-      // Then sync to cloud (best effort)
-      saveToCloud({ moneySaved: totalMoneySaved });
+      endSessionAndSave();
     }
   }
 
@@ -2284,22 +2288,7 @@
           if (burnProgress >= 1) {
             clearInterval(backgroundInterval);
             backgroundInterval = null;
-            gameOver = true;
-            cleanupMic();
-            streakCount++;
-            totalMoneySaved += CIG_PRICE();
-            totalCigarettesAvoided++;
-            sessionMoneySaved = CIG_PRICE();
-            if (!quitStartDate) {
-              quitStartDate = Date.now();
-            }
-            saveToCloud({
-              quitStreak: streakCount,
-              moneySaved: totalMoneySaved,
-              cigarettesAvoided: totalCigarettesAvoided,
-              quitStartDate: quitStartDate,
-              lastSessionDate: Date.now()
-            });
+            endSessionAndSave();
           }
         }, 1000);
       }
@@ -2319,22 +2308,7 @@
 
           // Check if cigarette finished while away
           if (burnProgress >= 1) {
-            gameOver = true;
-            cleanupMic();
-            streakCount++;
-            totalMoneySaved += CIG_PRICE();
-            totalCigarettesAvoided++;
-            sessionMoneySaved = CIG_PRICE();
-            if (!quitStartDate) {
-              quitStartDate = Date.now();
-            }
-            saveToCloud({
-              quitStreak: streakCount,
-              moneySaved: totalMoneySaved,
-              cigarettesAvoided: totalCigarettesAvoided,
-              quitStartDate: quitStartDate,
-              lastSessionDate: Date.now()
-            });
+            endSessionAndSave();
             completionFrame = 0;
             showEndScreen();
             return;
