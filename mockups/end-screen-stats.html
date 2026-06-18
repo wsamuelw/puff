@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>End Screen — Stats & Triggers</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    :root { --amber: #d4a574; --serif: 'Libre Baskerville', serif; --sans: 'Outfit', sans-serif; }
+    body { font-family: var(--sans); background: #111; color: #fff; padding: 40px 20px; min-height: 100vh; }
+    h1 { font-family: var(--serif); font-size: 32px; font-style: italic; text-align: center; margin-bottom: 8px; }
+    .subtitle { text-align: center; color: rgba(255,255,255,0.4); font-size: 14px; margin-bottom: 48px; }
+    .section-label { font-family: var(--serif); font-size: 20px; font-style: italic; color: var(--amber); margin-bottom: 24px; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.06); max-width: 400px; margin-left: auto; margin-right: auto; }
+    .phone { width: 100%; max-width: 375px; height: 740px; margin: 0 auto 48px; background: #1a1a1a; border-radius: 16px; overflow: hidden; border: 1px solid rgba(255,255,255,0.06); position: relative; }
+
+    /* A: Current end screen */
+    .end-a { position: absolute; inset: 0; background: #1a1a1a; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 24px; }
+    .end-a .session { font-family: var(--serif); font-size: 48px; color: var(--amber); letter-spacing: -1px; }
+    .end-a .session-label { font-size: 13px; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 1.5px; margin-top: 4px; }
+    .end-a .total { font-family: var(--serif); font-size: 24px; color: rgba(255,255,255,0.6); margin-top: 20px; }
+    .end-a .total-label { font-size: 12px; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+    .end-a .trigger { font-size: 16px; color: rgba(255,255,255,0.5); margin-top: 24px; padding: 10px 20px; background: rgba(255,255,255,0.06); border-radius: 20px; }
+    .end-a .insight { font-size: 13px; color: rgba(255,255,255,0.35); margin-top: 12px; font-style: italic; }
+    .end-a .actions { display: flex; gap: 12px; margin-top: 32px; }
+    .end-a .btn-done { padding: 14px 28px; background: var(--amber); border: none; border-radius: 12px; color: #1a1a1a; font-family: var(--sans); font-size: 14px; font-weight: 600; }
+    .end-a .btn-another { padding: 14px 28px; background: transparent; border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; color: rgba(255,255,255,0.5); font-family: var(--sans); font-size: 14px; }
+
+    /* B: Stats card + trigger breakdown */
+    .end-b { position: absolute; inset: 0; background: #1a1a1a; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 24px; }
+    .end-b .session { font-family: var(--serif); font-size: 48px; color: var(--amber); letter-spacing: -1px; }
+    .end-b .session-label { font-size: 13px; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 1.5px; margin-top: 4px; }
+    .end-b .stats-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; padding: 20px; margin-top: 24px; width: 100%; max-width: 280px; }
+    .end-b .stats-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+    .end-b .stats-row:last-child { border-bottom: none; }
+    .end-b .stats-label { font-size: 13px; color: rgba(255,255,255,0.5); }
+    .end-b .stats-value { font-family: var(--serif); font-size: 14px; color: #fff; }
+    .end-b .stats-value.amber { color: var(--amber); }
+    .end-b .trigger-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; padding: 20px; margin-top: 12px; width: 100%; max-width: 280px; }
+    .end-b .trigger-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+    .end-b .trigger-icon { font-size: 20px; }
+    .end-b .trigger-name { font-size: 15px; font-weight: 500; color: #fff; }
+    .end-b .trigger-bars { display: flex; flex-direction: column; gap: 8px; }
+    .end-b .trigger-bar { display: flex; align-items: center; gap: 10px; }
+    .end-b .trigger-bar-label { font-size: 12px; color: rgba(255,255,255,0.4); width: 60px; }
+    .end-b .trigger-bar-track { flex: 1; height: 6px; background: rgba(255,255,255,0.06); border-radius: 3px; overflow: hidden; }
+    .end-b .trigger-bar-fill { height: 100%; border-radius: 3px; background: var(--amber); }
+    .end-b .trigger-bar-count { font-size: 12px; color: rgba(255,255,255,0.4); width: 20px; text-align: right; }
+    .end-b .actions { display: flex; gap: 12px; margin-top: 24px; }
+    .end-b .btn-done { padding: 14px 28px; background: var(--amber); border: none; border-radius: 12px; color: #1a1a1a; font-family: var(--sans); font-size: 14px; font-weight: 600; }
+    .end-b .btn-another { padding: 14px 28px; background: transparent; border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; color: rgba(255,255,255,0.5); font-family: var(--sans); font-size: 14px; }
+
+    /* C: Two-column stats */
+    .end-c { position: absolute; inset: 0; background: #1a1a1a; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 24px; }
+    .end-c .session { font-family: var(--serif); font-size: 48px; color: var(--amber); letter-spacing: -1px; }
+    .end-c .session-label { font-size: 13px; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 1.5px; margin-top: 4px; }
+    .end-c .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 24px; width: 100%; max-width: 280px; }
+    .end-c .stat-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 16px; text-align: center; }
+    .end-c .stat-num { font-family: var(--serif); font-size: 24px; color: var(--amber); }
+    .end-c .stat-lbl { font-size: 11px; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+    .end-c .trigger-section { margin-top: 20px; width: 100%; max-width: 280px; }
+    .end-c .trigger-title { font-size: 12px; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+    .end-c .trigger-list { display: flex; flex-direction: column; gap: 6px; }
+    .end-c .trigger-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: rgba(255,255,255,0.04); border-radius: 10px; }
+    .end-c .trigger-item-icon { font-size: 16px; }
+    .end-c .trigger-item-name { flex: 1; font-size: 13px; color: #fff; }
+    .end-c .trigger-item-count { font-family: var(--serif); font-size: 14px; color: var(--amber); }
+    .end-c .actions { display: flex; gap: 12px; margin-top: 24px; }
+    .end-c .btn-done { padding: 14px 28px; background: var(--amber); border: none; border-radius: 12px; color: #1a1a1a; font-family: var(--sans); font-size: 14px; font-weight: 600; }
+    .end-c .btn-another { padding: 14px 28px; background: transparent; border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; color: rgba(255,255,255,0.5); font-family: var(--sans); font-size: 14px; }
+
+    /* D: Trigger insight focus */
+    .end-d { position: absolute; inset: 0; background: #1a1a1a; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 24px; }
+    .end-d .session { font-family: var(--serif); font-size: 36px; color: var(--amber); }
+    .end-d .session-label { font-size: 12px; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+    .end-d .insight-card { background: linear-gradient(135deg, rgba(212,165,116,0.1), rgba(212,165,116,0.03)); border: 1px solid rgba(212,165,116,0.15); border-radius: 16px; padding: 24px; margin-top: 24px; width: 100%; max-width: 280px; text-align: center; }
+    .end-d .insight-trigger { font-size: 24px; margin-bottom: 8px; }
+    .end-d .insight-name { font-family: var(--serif); font-size: 18px; color: #fff; margin-bottom: 4px; }
+    .end-d .insight-count { font-size: 13px; color: rgba(255,255,255,0.5); margin-bottom: 12px; }
+    .end-d .insight-message { font-size: 14px; color: rgba(255,255,255,0.6); line-height: 1.5; font-style: italic; }
+    .end-d .total-row { display: flex; justify-content: space-between; width: 100%; max-width: 280px; margin-top: 20px; padding: 12px 0; border-top: 1px solid rgba(255,255,255,0.06); }
+    .end-d .total-label { font-size: 13px; color: rgba(255,255,255,0.4); }
+    .end-d .total-value { font-family: var(--serif); font-size: 14px; color: #fff; }
+    .end-d .actions { display: flex; gap: 12px; margin-top: 24px; }
+    .end-d .btn-done { padding: 14px 28px; background: var(--amber); border: none; border-radius: 12px; color: #1a1a1a; font-family: var(--sans); font-size: 14px; font-weight: 600; }
+    .end-d .btn-another { padding: 14px 28px; background: transparent; border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; color: rgba(255,255,255,0.5); font-family: var(--sans); font-size: 14px; }
+
+    /* E: Compact stats with trigger history */
+    .end-e { position: absolute; inset: 0; background: #1a1a1a; display: flex; flex-direction: column; padding: 40px 24px; }
+    .end-e .header { text-align: center; margin-bottom: 24px; }
+    .end-e .session { font-family: var(--serif); font-size: 48px; color: var(--amber); letter-spacing: -1px; }
+    .end-e .session-label { font-size: 13px; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 1.5px; margin-top: 4px; }
+    .end-e .stats-row { display: flex; gap: 12px; margin-bottom: 20px; }
+    .end-e .stat { flex: 1; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 14px; text-align: center; }
+    .end-e .stat-num { font-family: var(--serif); font-size: 20px; color: var(--amber); }
+    .end-e .stat-lbl { font-size: 10px; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+    .end-e .trigger-section { flex: 1; }
+    .end-e .trigger-header { font-size: 12px; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+    .end-e .trigger-bars { display: flex; flex-direction: column; gap: 10px; }
+    .end-e .trigger-bar { display: flex; align-items: center; gap: 10px; }
+    .end-e .trigger-bar-icon { font-size: 16px; width: 24px; }
+    .end-e .trigger-bar-info { flex: 1; }
+    .end-e .trigger-bar-name { font-size: 13px; color: #fff; margin-bottom: 4px; }
+    .end-e .trigger-bar-track { height: 6px; background: rgba(255,255,255,0.06); border-radius: 3px; overflow: hidden; }
+    .end-e .trigger-bar-fill { height: 100%; border-radius: 3px; }
+    .end-e .trigger-bar-fill.amber { background: var(--amber); }
+    .end-e .trigger-bar-fill.blue { background: rgba(116,165,212,0.7); }
+    .end-e .trigger-bar-fill.green { background: rgba(165,212,116,0.7); }
+    .end-e .trigger-bar-count { font-size: 12px; color: rgba(255,255,255,0.4); width: 20px; text-align: right; }
+    .end-e .actions { display: flex; gap: 12px; margin-top: 20px; }
+    .end-e .btn-done { flex: 1; padding: 14px; background: var(--amber); border: none; border-radius: 12px; color: #1a1a1a; font-family: var(--sans); font-size: 14px; font-weight: 600; }
+    .end-e .btn-another { flex: 1; padding: 14px; background: transparent; border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; color: rgba(255,255,255,0.5); font-family: var(--sans); font-size: 14px; }
+
+    .theme-toggle { position: fixed; top: 20px; right: 20px; z-index: 100; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 8px 14px; color: #fff; font-family: var(--sans); font-size: 13px; cursor: pointer; }
+    @media (max-width: 480px) { .phone { max-width: 100%; height: 680px; } h1 { font-size: 24px; } }
+  </style>
+</head>
+<body>
+  <button class="theme-toggle" onclick="document.body.classList.toggle('light')">Toggle theme</button>
+
+  <h1>End Screen — Stats & Triggers</h1>
+  <p class="subtitle">5 designs for showing session data and trigger history</p>
+
+  <!-- A: Current end screen -->
+  <div class="section-label">Current End Screen</div>
+  <div class="phone">
+    <div class="end-a">
+      <div class="session">$1.00</div>
+      <div class="session-label">saved this session</div>
+      <div class="total">$12.40</div>
+      <div class="total-label">total saved</div>
+      <div class="trigger">😰 Stress</div>
+      <div class="insight">Your 3rd stress trigger</div>
+      <div class="actions">
+        <button class="btn-done">I'm done</button>
+        <button class="btn-another">Smoke another</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- B: Stats card + trigger breakdown -->
+  <div class="section-label">B — Stats Card + Trigger Breakdown</div>
+  <div class="phone">
+    <div class="end-b">
+      <div class="session">$1.00</div>
+      <div class="session-label">saved this session</div>
+      <div class="stats-card">
+        <div class="stats-row">
+          <div class="stats-label">Total saved</div>
+          <div class="stats-value amber">$12.40</div>
+        </div>
+        <div class="stats-row">
+          <div class="stats-label">Cigarettes avoided</div>
+          <div class="stats-value">12</div>
+        </div>
+        <div class="stats-row">
+          <div class="stats-label">Sessions today</div>
+          <div class="stats-value">3</div>
+        </div>
+      </div>
+      <div class="trigger-card">
+        <div class="trigger-header">
+          <div class="trigger-icon">😰</div>
+          <div class="trigger-name">Stress</div>
+        </div>
+        <div class="trigger-bars">
+          <div class="trigger-bar">
+            <div class="trigger-bar-label">Today</div>
+            <div class="trigger-bar-track"><div class="trigger-bar-fill" style="width:60%"></div></div>
+            <div class="trigger-bar-count">2</div>
+          </div>
+          <div class="trigger-bar">
+            <div class="trigger-bar-label">This week</div>
+            <div class="trigger-bar-track"><div class="trigger-bar-fill" style="width:80%"></div></div>
+            <div class="trigger-bar-count">5</div>
+          </div>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn-done">I'm done</button>
+        <button class="btn-another">Smoke another</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- C: Two-column stats -->
+  <div class="section-label">C — Two-column Stats</div>
+  <div class="phone">
+    <div class="end-c">
+      <div class="session">$1.00</div>
+      <div class="session-label">saved this session</div>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-num">$12</div>
+          <div class="stat-lbl">Total saved</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">12</div>
+          <div class="stat-lbl">Cigarettes</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">3</div>
+          <div class="stat-lbl">Days</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">3</div>
+          <div class="stat-lbl">Today</div>
+        </div>
+      </div>
+      <div class="trigger-section">
+        <div class="trigger-title">Your triggers</div>
+        <div class="trigger-list">
+          <div class="trigger-item">
+            <div class="trigger-item-icon">😰</div>
+            <div class="trigger-item-name">Stress</div>
+            <div class="trigger-item-count">5</div>
+          </div>
+          <div class="trigger-item">
+            <div class="trigger-item-icon">☕</div>
+            <div class="trigger-item-name">Coffee</div>
+            <div class="trigger-item-count">3</div>
+          </div>
+          <div class="trigger-item">
+            <div class="trigger-item-icon">🍺</div>
+            <div class="trigger-item-name">Drinking</div>
+            <div class="trigger-item-count">2</div>
+          </div>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn-done">I'm done</button>
+        <button class="btn-another">Smoke another</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- D: Trigger insight focus -->
+  <div class="section-label">D — Trigger Insight Focus</div>
+  <div class="phone">
+    <div class="end-d">
+      <div class="session">$1.00</div>
+      <div class="session-label">saved this session</div>
+      <div class="insight-card">
+        <div class="insight-trigger">😰</div>
+        <div class="insight-name">Stress</div>
+        <div class="insight-count">Your 3rd stress trigger this week</div>
+        <div class="insight-message">"Stress is your #1 trigger. Consider a 5-min walk next time."</div>
+      </div>
+      <div class="total-row">
+        <div class="total-label">Total saved</div>
+        <div class="total-value">$12.40</div>
+      </div>
+      <div class="total-row">
+        <div class="total-label">Cigarettes avoided</div>
+        <div class="total-value">12</div>
+      </div>
+      <div class="actions">
+        <button class="btn-done">I'm done</button>
+        <button class="btn-another">Smoke another</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- E: Compact stats with trigger history -->
+  <div class="section-label">E — Compact Stats + Trigger History</div>
+  <div class="phone">
+    <div class="end-e">
+      <div class="header">
+        <div class="session">$1.00</div>
+        <div class="session-label">saved this session</div>
+      </div>
+      <div class="stats-row">
+        <div class="stat">
+          <div class="stat-num">$12</div>
+          <div class="stat-lbl">Total</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">12</div>
+          <div class="stat-lbl">Cigarettes</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">3</div>
+          <div class="stat-lbl">Days</div>
+        </div>
+      </div>
+      <div class="trigger-section">
+        <div class="trigger-header">Your triggers</div>
+        <div class="trigger-bars">
+          <div class="trigger-bar">
+            <div class="trigger-bar-icon">😰</div>
+            <div class="trigger-bar-info">
+              <div class="trigger-bar-name">Stress</div>
+              <div class="trigger-bar-track"><div class="trigger-bar-fill amber" style="width:80%"></div></div>
+            </div>
+            <div class="trigger-bar-count">5</div>
+          </div>
+          <div class="trigger-bar">
+            <div class="trigger-bar-icon">☕</div>
+            <div class="trigger-bar-info">
+              <div class="trigger-bar-name">Coffee</div>
+              <div class="trigger-bar-track"><div class="trigger-bar-fill blue" style="width:50%"></div></div>
+            </div>
+            <div class="trigger-bar-count">3</div>
+          </div>
+          <div class="trigger-bar">
+            <div class="trigger-bar-icon">🍺</div>
+            <div class="trigger-bar-info">
+              <div class="trigger-bar-name">Drinking</div>
+              <div class="trigger-bar-track"><div class="trigger-bar-fill green" style="width:30%"></div></div>
+            </div>
+            <div class="trigger-bar-count">2</div>
+          </div>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn-done">I'm done</button>
+        <button class="btn-another">Smoke another</button>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

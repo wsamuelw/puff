@@ -1153,9 +1153,10 @@
   // HTML end screen elements
   const endScreen = document.getElementById('end-screen');
   const endSession = document.getElementById('end-session');
-  const endTotal = document.getElementById('end-total');
-  const endTrigger = document.getElementById('end-trigger');
-  const endInsight = document.getElementById('end-insight');
+  const endTotalStat = document.getElementById('end-total-stat');
+  const endCigsStat = document.getElementById('end-cigs-stat');
+  const endDaysStat = document.getElementById('end-days-stat');
+  const endTriggersBars = document.getElementById('end-triggers-bars');
   const endDone = document.getElementById('end-done');
   const endAnother = document.getElementById('end-another');
 
@@ -1324,14 +1325,101 @@
 
     // Update end screen content
     endSession.textContent = '$' + sessionMoneySaved.toFixed(2);
-    endTotal.textContent = '$' + totalMoneySaved.toFixed(2);
+    endTotalStat.textContent = '$' + Math.floor(totalMoneySaved);
+    endCigsStat.textContent = totalCigarettesAvoided;
 
-    const trigger = TRIGGER_OPTIONS.find(t => t.id === currentTriggerId);
-    endTrigger.textContent = trigger ? trigger.emoji + ' ' + trigger.label : '';
-    endInsight.textContent = getTriggerInsight(currentTriggerId);
+    // Calculate days since quit start
+    const daysSinceStart = quitStartDate ? Math.floor((Date.now() - quitStartDate) / (24 * 60 * 60 * 1000)) : 0;
+    endDaysStat.textContent = daysSinceStart;
+
+    // Build trigger bars
+    buildEndTriggerBars();
 
     endScreen.classList.add('visible');
     gameState = 'end';
+  }
+
+  // Build trigger bars for end screen
+  function buildEndTriggerBars() {
+    const logs = JSON.parse(safeGetItem('cravingLogs', '[]'));
+
+    // Count triggers
+    const triggerCounts = {};
+    logs.forEach(log => {
+      const trigger = log.trigger || 'Unknown';
+      triggerCounts[trigger] = (triggerCounts[trigger] || 0) + 1;
+    });
+
+    // Sort by count descending
+    const sorted = Object.entries(triggerCounts).sort((a, b) => b[1] - a[1]).slice(0, 5);
+    const maxCount = sorted.length > 0 ? sorted[0][1] : 1;
+
+    // Trigger icons mapping
+    const triggerIcons = {
+      'stress': '😰',
+      'drinking': '🍺',
+      'coffee': '☕',
+      'meals': '🍽️',
+      'boredom': '😑',
+      'driving': '🚗',
+      'aftersex': '❤️',
+      'workbreak': '💼',
+      'scrolling': '📱',
+      'walking': '🚶',
+      'social': '🍻',
+      'morning': '🌅',
+      'other': '💭'
+    };
+
+    // Trigger labels mapping
+    const triggerLabels = {
+      'stress': 'Stress',
+      'drinking': 'Drinking',
+      'coffee': 'Coffee',
+      'meals': 'After meals',
+      'boredom': 'Boredom',
+      'driving': 'Driving',
+      'aftersex': 'After sex',
+      'workbreak': 'Work break',
+      'scrolling': 'Scrolling',
+      'walking': 'Walking',
+      'social': 'Social pressure',
+      'morning': 'Morning routine',
+      'other': 'Other'
+    };
+
+    // Bar colors
+    const barColors = ['amber', 'blue', 'green', 'pink', 'gray'];
+
+    // Build bars
+    endTriggersBars.innerHTML = '';
+    sorted.forEach(([trigger, count], i) => {
+      const pct = (count / maxCount) * 100;
+      const icon = triggerIcons[trigger] || '📊';
+      const label = triggerLabels[trigger] || trigger;
+      const color = barColors[i] || 'gray';
+
+      const bar = document.createElement('div');
+      bar.className = 'end-trigger-bar';
+      bar.innerHTML = `
+        <div class="end-trigger-bar-icon">${icon}</div>
+        <div class="end-trigger-bar-info">
+          <div class="end-trigger-bar-name">${label}</div>
+          <div class="end-trigger-bar-track">
+            <div class="end-trigger-bar-fill ${color}" style="width:0%"></div>
+          </div>
+        </div>
+        <div class="end-trigger-bar-count">${count}</div>
+      `;
+      endTriggersBars.appendChild(bar);
+
+      // Animate bar fill
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          bar.querySelector('.end-trigger-bar-fill').style.width = pct + '%';
+        });
+      });
+    });
   }
 
   // Show idle screen

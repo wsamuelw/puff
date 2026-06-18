@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Progress Reminder — Puff</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    :root { --amber: #d4a574; --serif: 'Libre Baskerville', serif; --sans: 'Outfit', sans-serif; }
+    body { font-family: var(--sans); background: #111; color: #fff; padding: 40px 20px; min-height: 100vh; }
+    h1 { font-family: var(--serif); font-size: 32px; font-style: italic; text-align: center; margin-bottom: 8px; }
+    .subtitle { text-align: center; color: rgba(255,255,255,0.4); font-size: 14px; margin-bottom: 48px; }
+    .section-label { font-family: var(--serif); font-size: 20px; font-style: italic; color: var(--amber); margin-bottom: 24px; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.06); max-width: 400px; margin-left: auto; margin-right: auto; }
+    .phone { width: 100%; max-width: 375px; height: 740px; margin: 0 auto 48px; background: #1a1a1a; border-radius: 16px; overflow: hidden; border: 1px solid rgba(255,255,255,0.06); position: relative; }
+
+    /* A: Current end screen */
+    .end-a { position: absolute; inset: 0; background: #1a1a1a; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 24px; }
+    .end-a .session { font-family: var(--serif); font-size: 48px; color: var(--amber); letter-spacing: -1px; }
+    .end-a .session-label { font-size: 13px; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 1.5px; margin-top: 4px; }
+    .end-a .total { font-family: var(--serif); font-size: 24px; color: rgba(255,255,255,0.6); margin-top: 20px; }
+    .end-a .total-label { font-size: 12px; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+    .end-a .trigger { font-size: 16px; color: rgba(255,255,255,0.5); margin-top: 24px; padding: 10px 20px; background: rgba(255,255,255,0.06); border-radius: 20px; }
+    .end-a .insight { font-size: 13px; color: rgba(255,255,255,0.35); margin-top: 12px; font-style: italic; }
+    .end-a .actions { display: flex; gap: 12px; margin-top: 32px; }
+    .end-a .btn-done { padding: 14px 28px; background: var(--amber); border: none; border-radius: 12px; color: #1a1a1a; font-family: var(--sans); font-size: 14px; font-weight: 600; }
+    .end-a .btn-another { padding: 14px 28px; background: transparent; border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; color: rgba(255,255,255,0.5); font-family: var(--sans); font-size: 14px; }
+
+    /* B: Progress highlight */
+    .end-b { position: absolute; inset: 0; background: #1a1a1a; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 24px; }
+    .end-b .session { font-family: var(--serif); font-size: 48px; color: var(--amber); letter-spacing: -1px; }
+    .end-b .session-label { font-size: 13px; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 1.5px; margin-top: 4px; }
+    .end-b .progress-card { background: linear-gradient(135deg, rgba(212,165,116,0.1), rgba(212,165,116,0.03)); border: 1px solid rgba(212,165,116,0.15); border-radius: 16px; padding: 24px; margin-top: 24px; text-align: center; width: 100%; max-width: 280px; }
+    .end-b .progress-title { font-size: 14px; color: rgba(255,255,255,0.5); margin-bottom: 12px; }
+    .end-b .progress-stats { display: flex; justify-content: space-around; }
+    .end-b .progress-stat { text-align: center; }
+    .end-b .progress-num { font-family: var(--serif); font-size: 24px; color: var(--amber); }
+    .end-b .progress-lbl { font-size: 11px; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+    .end-b .trigger { font-size: 16px; color: rgba(255,255,255,0.5); margin-top: 20px; padding: 10px 20px; background: rgba(255,255,255,0.06); border-radius: 20px; }
+    .end-b .actions { display: flex; gap: 12px; margin-top: 28px; }
+    .end-b .btn-done { padding: 14px 28px; background: var(--amber); border: none; border-radius: 12px; color: #1a1a1a; font-family: var(--sans); font-size: 14px; font-weight: 600; }
+
+    /* C: Milestone celebration */
+    .end-c { position: absolute; inset: 0; background: #1a1a1a; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 24px; text-align: center; }
+    .end-c .milestone-icon { font-size: 48px; margin-bottom: 16px; }
+    .end-c .milestone-title { font-family: var(--serif); font-size: 24px; color: #fff; margin-bottom: 8px; }
+    .end-c .milestone-desc { font-size: 14px; color: rgba(255,255,255,0.5); line-height: 1.5; margin-bottom: 24px; max-width: 260px; }
+    .end-c .session { font-family: var(--serif); font-size: 36px; color: var(--amber); }
+    .end-c .session-label { font-size: 12px; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+    .end-c .actions { display: flex; gap: 12px; margin-top: 28px; }
+    .end-c .btn-done { padding: 14px 28px; background: var(--amber); border: none; border-radius: 12px; color: #1a1a1a; font-family: var(--sans); font-size: 14px; font-weight: 600; }
+
+    /* D: Health timeline */
+    .end-d { position: absolute; inset: 0; background: #1a1a1a; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 24px; }
+    .end-d .session { font-family: var(--serif); font-size: 48px; color: var(--amber); letter-spacing: -1px; }
+    .end-d .session-label { font-size: 13px; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 1.5px; margin-top: 4px; }
+    .end-d .health-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; padding: 20px; margin-top: 24px; width: 100%; max-width: 280px; }
+    .end-d .health-title { font-size: 12px; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
+    .end-d .health-item { display: flex; align-items: center; gap: 12px; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+    .end-d .health-item:last-child { border-bottom: none; }
+    .end-d .health-icon { font-size: 18px; }
+    .end-d .health-text { flex: 1; }
+    .end-d .health-name { font-size: 13px; color: #fff; }
+    .end-d .health-time { font-size: 11px; color: rgba(255,255,255,0.3); }
+    .end-d .health-status { font-size: 11px; color: var(--amber); }
+    .end-d .actions { display: flex; gap: 12px; margin-top: 28px; }
+    .end-d .btn-done { padding: 14px 28px; background: var(--amber); border: none; border-radius: 12px; color: #1a1a1a; font-family: var(--sans); font-size: 14px; font-weight: 600; }
+
+    /* E: Money impact */
+    .end-e { position: absolute; inset: 0; background: #1a1a1a; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 24px; text-align: center; }
+    .end-e .impact-icon { font-size: 48px; margin-bottom: 16px; }
+    .end-e .impact-title { font-family: var(--serif); font-size: 20px; color: #fff; margin-bottom: 8px; }
+    .end-e .impact-desc { font-size: 14px; color: rgba(255,255,255,0.5); line-height: 1.5; margin-bottom: 24px; max-width: 260px; }
+    .end-e .impact-amount { font-family: var(--serif); font-size: 56px; color: var(--amber); letter-spacing: -2px; }
+    .end-e .impact-label { font-size: 13px; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 1.5px; margin-top: 4px; }
+    .end-e .impact-convert { font-size: 14px; color: rgba(255,255,255,0.5); margin-top: 16px; padding: 12px 20px; background: rgba(255,255,255,0.04); border-radius: 12px; }
+    .end-e .impact-convert span { color: var(--amber); font-weight: 500; }
+    .end-e .actions { display: flex; gap: 12px; margin-top: 28px; }
+    .end-e .btn-done { padding: 14px 28px; background: var(--amber); border: none; border-radius: 12px; color: #1a1a1a; font-family: var(--sans); font-size: 14px; font-weight: 600; }
+
+    .theme-toggle { position: fixed; top: 20px; right: 20px; z-index: 100; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 8px 14px; color: #fff; font-family: var(--sans); font-size: 13px; cursor: pointer; }
+    @media (max-width: 480px) { .phone { max-width: 100%; height: 680px; } h1 { font-size: 24px; } }
+  </style>
+</head>
+<body>
+  <button class="theme-toggle" onclick="document.body.classList.toggle('light')">Toggle theme</button>
+
+  <h1>Progress Reminder</h1>
+  <p class="subtitle">5 ways to show progress on the end screen</p>
+
+  <!-- A: Current end screen -->
+  <div class="section-label">Current End Screen</div>
+  <div class="phone">
+    <div class="end-a">
+      <div class="session">$1.00</div>
+      <div class="session-label">saved this session</div>
+      <div class="total">$12.40</div>
+      <div class="total-label">total saved</div>
+      <div class="trigger">😰 Stress</div>
+      <div class="insight">Your 3rd stress trigger</div>
+      <div class="actions">
+        <button class="btn-done">I'm done</button>
+        <button class="btn-another">Smoke another</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- B: Progress highlight -->
+  <div class="section-label">B — Progress Highlight</div>
+  <div class="phone">
+    <div class="end-b">
+      <div class="session">$1.00</div>
+      <div class="session-label">saved this session</div>
+      <div class="progress-card">
+        <div class="progress-title">Your progress so far</div>
+        <div class="progress-stats">
+          <div class="progress-stat">
+            <div class="progress-num">$12</div>
+            <div class="progress-lbl">Saved</div>
+          </div>
+          <div class="progress-stat">
+            <div class="progress-num">12</div>
+            <div class="progress-lbl">Cigarettes</div>
+          </div>
+          <div class="progress-stat">
+            <div class="progress-num">3</div>
+            <div class="progress-lbl">Days</div>
+          </div>
+        </div>
+      </div>
+      <div class="trigger">😰 Stress</div>
+      <div class="actions">
+        <button class="btn-done">Continue</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- C: Milestone celebration -->
+  <div class="section-label">C — Milestone Celebration</div>
+  <div class="phone">
+    <div class="end-c">
+      <div class="milestone-icon">🎉</div>
+      <div class="milestone-title">10 cigarettes avoided!</div>
+      <div class="milestone-desc">You've saved enough for a coffee. Keep going — your lungs are already thanking you.</div>
+      <div class="session">$1.00</div>
+      <div class="session-label">saved this session</div>
+      <div class="actions">
+        <button class="btn-done">Continue</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- D: Health timeline -->
+  <div class="section-label">D — Health Timeline</div>
+  <div class="phone">
+    <div class="end-d">
+      <div class="session">$1.00</div>
+      <div class="session-label">saved this session</div>
+      <div class="health-card">
+        <div class="health-title">Your body is recovering</div>
+        <div class="health-item">
+          <div class="health-icon">❤️</div>
+          <div class="health-text">
+            <div class="health-name">Heart rate normalised</div>
+            <div class="health-time">20 minutes</div>
+          </div>
+          <div class="health-status">✓ Done</div>
+        </div>
+        <div class="health-item">
+          <div class="health-icon">🫁</div>
+          <div class="health-text">
+            <div class="health-name">CO levels clearing</div>
+            <div class="health-time">12 hours</div>
+          </div>
+          <div class="health-status">In progress</div>
+        </div>
+        <div class="health-item">
+          <div class="health-icon">👃</div>
+          <div class="health-text">
+            <div class="health-name">Taste & smell return</div>
+            <div class="health-time">48 hours</div>
+          </div>
+          <div class="health-status">Upcoming</div>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn-done">Continue</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- E: Money impact -->
+  <div class="section-label">E — Money Impact</div>
+  <div class="phone">
+    <div class="end-e">
+      <div class="impact-icon">💰</div>
+      <div class="impact-title">That's real money</div>
+      <div class="impact-desc">Every cigarette you don't smoke is money in your pocket.</div>
+      <div class="impact-amount">$12.40</div>
+      <div class="impact-label">saved so far</div>
+      <div class="impact-convert">That's <span>2 coffees</span> or <span>a nice lunch</span></div>
+      <div class="actions">
+        <button class="btn-done">Continue</button>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

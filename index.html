@@ -92,12 +92,30 @@
 
     <!-- End Screen (after smoking) -->
     <div id="end-screen" class="end-screen">
-      <div class="end-session" id="end-session">$0.00</div>
-      <div class="end-session-label">saved this session</div>
-      <div class="end-total" id="end-total">$0.00</div>
-      <div class="end-total-label">total saved</div>
-      <div class="end-trigger" id="end-trigger"></div>
-      <div class="end-insight" id="end-insight"></div>
+      <div class="end-header">
+        <div class="end-session" id="end-session">$0.00</div>
+        <div class="end-session-label">saved this session</div>
+      </div>
+      <div class="end-stats-row">
+        <div class="end-stat">
+          <div class="end-stat-num" id="end-total-stat">$0</div>
+          <div class="end-stat-lbl">Total</div>
+        </div>
+        <div class="end-stat">
+          <div class="end-stat-num" id="end-cigs-stat">0</div>
+          <div class="end-stat-lbl">Cigarettes</div>
+        </div>
+        <div class="end-stat">
+          <div class="end-stat-num" id="end-days-stat">0</div>
+          <div class="end-stat-lbl">Days</div>
+        </div>
+      </div>
+      <div class="end-triggers-section">
+        <div class="end-triggers-header">Your triggers</div>
+        <div class="end-triggers-bars" id="end-triggers-bars">
+          <!-- Populated by JS -->
+        </div>
+      </div>
       <div class="end-actions">
         <button class="end-done" id="end-done">I'm done</button>
         <button class="end-another" id="end-another">Smoke another</button>
@@ -297,7 +315,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-    <script src="app.js?v=61"></script>
+    <script src="app.js?v=62"></script>
     <script>
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('/sw.js').catch(() => {});

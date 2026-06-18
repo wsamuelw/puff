@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>End Screen — Encourage to Leave</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    :root { --amber: #d4a574; --serif: 'Libre Baskerville', serif; --sans: 'Outfit', sans-serif; }
+    body { font-family: var(--sans); background: #111; color: #fff; padding: 40px 20px; min-height: 100vh; }
+    h1 { font-family: var(--serif); font-size: 32px; font-style: italic; text-align: center; margin-bottom: 8px; }
+    .subtitle { text-align: center; color: rgba(255,255,255,0.4); font-size: 14px; margin-bottom: 48px; }
+    .section-label { font-family: var(--serif); font-size: 20px; font-style: italic; color: var(--amber); margin-bottom: 24px; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.06); max-width: 400px; margin-left: auto; margin-right: auto; }
+    .phone { width: 100%; max-width: 375px; height: 740px; margin: 0 auto 48px; background: #1a1a1a; border-radius: 16px; overflow: hidden; border: 1px solid rgba(255,255,255,0.06); position: relative; }
+
+    /* A: Victory lap */
+    .end-a { position: absolute; inset: 0; background: #1a1a1a; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 24px; text-align: center; }
+    .end-a .checkmark { width: 64px; height: 64px; border-radius: 50%; background: rgba(76,175,80,0.15); border: 2px solid rgba(76,175,80,0.3); display: flex; align-items: center; justify-content: center; font-size: 32px; margin-bottom: 20px; }
+    .end-a .title { font-family: var(--serif); font-size: 28px; color: #fff; margin-bottom: 8px; }
+    .end-a .subtitle { font-size: 15px; color: rgba(255,255,255,0.5); line-height: 1.5; margin-bottom: 28px; max-width: 260px; }
+    .end-a .saved { font-family: var(--serif); font-size: 48px; color: var(--amber); letter-spacing: -1px; }
+    .end-a .saved-label { font-size: 12px; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 1.5px; margin-top: 4px; }
+    .end-a .cta { margin-top: 32px; padding: 16px 48px; background: var(--amber); border: none; border-radius: 12px; color: #1a1a1a; font-family: var(--sans); font-size: 16px; font-weight: 600; cursor: pointer; }
+
+    /* B: Countdown to freedom */
+    .end-b { position: absolute; inset: 0; background: #1a1a1a; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 24px; text-align: center; }
+    .end-b .freedom-label { font-size: 12px; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 16px; }
+    .end-b .freedom-time { font-family: var(--serif); font-size: 56px; color: var(--amber); letter-spacing: -2px; line-height: 1; }
+    .end-b .freedom-unit { font-size: 14px; color: rgba(255,255,255,0.4); margin-top: 4px; }
+    .end-b .freedom-msg { font-size: 15px; color: rgba(255,255,255,0.5); margin-top: 20px; line-height: 1.5; max-width: 260px; }
+    .end-b .session { font-family: var(--serif); font-size: 24px; color: rgba(255,255,255,0.4); margin-top: 28px; }
+    .end-b .session-label { font-size: 11px; color: rgba(255,255,255,0.2); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+    .end-b .cta { margin-top: 28px; padding: 16px 48px; background: var(--amber); border: none; border-radius: 12px; color: #1a1a1a; font-family: var(--sans); font-size: 16px; font-weight: 600; cursor: pointer; }
+
+    /* C: What you avoided */
+    .end-c { position: absolute; inset: 0; background: #1a1a1a; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 24px; text-align: center; }
+    .end-c .avoided-icon { font-size: 48px; margin-bottom: 16px; }
+    .end-c .avoided-title { font-family: var(--serif); font-size: 24px; color: #fff; margin-bottom: 8px; }
+    .end-c .avoided-desc { font-size: 14px; color: rgba(255,255,255,0.5); line-height: 1.5; margin-bottom: 24px; max-width: 260px; }
+    .end-c .avoided-stats { display: flex; gap: 24px; margin-bottom: 28px; }
+    .end-c .avoided-stat { text-align: center; }
+    .end-c .avoided-num { font-family: var(--serif); font-size: 28px; color: var(--amber); }
+    .end-c .avoided-lbl { font-size: 11px; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+    .end-c .cta { padding: 16px 48px; background: var(--amber); border: none; border-radius: 12px; color: #1a1a1a; font-family: var(--sans); font-size: 16px; font-weight: 600; cursor: pointer; }
+
+    /* D: Your body thanks you */
+    .end-d { position: absolute; inset: 0; background: #1a1a1a; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 24px; text-align: center; }
+    .end-d .body-icon { font-size: 48px; margin-bottom: 16px; }
+    .end-d .body-title { font-family: var(--serif); font-size: 24px; color: #fff; margin-bottom: 12px; }
+    .end-d .body-benefits { display: flex; flex-direction: column; gap: 12px; margin-bottom: 28px; width: 100%; max-width: 260px; }
+    .end-d .benefit { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: rgba(255,255,255,0.04); border-radius: 12px; }
+    .end-d .benefit-icon { font-size: 20px; }
+    .end-d .benefit-text { font-size: 13px; color: rgba(255,255,255,0.6); text-align: left; }
+    .end-d .session { font-family: var(--serif); font-size: 20px; color: rgba(255,255,255,0.4); margin-top: 8px; }
+    .end-d .cta { margin-top: 24px; padding: 16px 48px; background: var(--amber); border: none; border-radius: 12px; color: #1a1a1a; font-family: var(--sans); font-size: 16px; font-weight: 600; cursor: pointer; }
+
+    /* E: Go do something */
+    .end-e { position: absolute; inset: 0; background: #1a1a1a; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 24px; text-align: center; }
+    .end-e .done-icon { font-size: 48px; margin-bottom: 16px; }
+    .end-e .done-title { font-family: var(--serif); font-size: 24px; color: #fff; margin-bottom: 8px; }
+    .end-e .done-desc { font-size: 14px; color: rgba(255,255,255,0.5); line-height: 1.5; margin-bottom: 24px; max-width: 260px; }
+    .end-e .suggestions { display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px; width: 100%; max-width: 260px; }
+    .end-e .suggestion { display: flex; align-items: center; gap: 12px; padding: 14px 16px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; cursor: pointer; transition: all 0.2s ease; }
+    .end-e .suggestion:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.1); }
+    .end-e .suggestion-icon { font-size: 20px; }
+    .end-e .suggestion-text { font-size: 14px; color: #fff; text-align: left; }
+    .end-e .session { font-family: var(--serif); font-size: 18px; color: rgba(255,255,255,0.3); margin-top: 8px; }
+    .end-e .cta { margin-top: 20px; padding: 14px 32px; background: transparent; border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; color: rgba(255,255,255,0.5); font-family: var(--sans); font-size: 14px; cursor: pointer; }
+
+    .theme-toggle { position: fixed; top: 20px; right: 20px; z-index: 100; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 8px 14px; color: #fff; font-family: var(--sans); font-size: 13px; cursor: pointer; }
+    @media (max-width: 480px) { .phone { max-width: 100%; height: 680px; } h1 { font-size: 24px; } }
+  </style>
+</head>
+<body>
+  <button class="theme-toggle" onclick="document.body.classList.toggle('light')">Toggle theme</button>
+
+  <h1>End Screen — Encourage to Leave</h1>
+  <p class="subtitle">5 ways to send users off feeling good</p>
+
+  <!-- A: Victory lap -->
+  <div class="section-label">A — Victory Lap</div>
+  <div class="phone">
+    <div class="end-a">
+      <div class="checkmark">✓</div>
+      <div class="title">Well done</div>
+      <div class="subtitle">You resisted the craving. Every cigarette you don't smoke is a win.</div>
+      <div class="saved">$1.00</div>
+      <div class="saved-label">saved this session</div>
+      <button class="cta">Keep going</button>
+    </div>
+  </div>
+
+  <!-- B: Countdown to freedom -->
+  <div class="section-label">B — Countdown to Freedom</div>
+  <div class="phone">
+    <div class="end-b">
+      <div class="freedom-label">Next milestone</div>
+      <div class="freedom-time">4:32</div>
+      <div class="freedom-unit">hours until CO levels normalise</div>
+      <div class="freedom-msg">Your body is already healing. Every hour without a cigarette counts.</div>
+      <div class="session">$1.00 saved</div>
+      <button class="cta">I'm done</button>
+    </div>
+  </div>
+
+  <!-- C: What you avoided -->
+  <div class="section-label">C — What You Avoided</div>
+  <div class="phone">
+    <div class="end-c">
+      <div class="avoided-icon">🫁</div>
+      <div class="avoided-title">Your lungs thank you</div>
+      <div class="avoided-desc">By not smoking that cigarette, you avoided:</div>
+      <div class="avoided-stats">
+        <div class="avoided-stat">
+          <div class="avoided-num">4000+</div>
+          <div class="avoided-lbl">Chemicals</div>
+        </div>
+        <div class="avoided-stat">
+          <div class="avoided-num">70</div>
+          <div class="avoided-lbl">Cancer agents</div>
+        </div>
+        <div class="avoided-stat">
+          <div class="avoided-num">11</div>
+          <div class="avoided-lbl">Minutes lost</div>
+        </div>
+      </div>
+      <button class="cta">Keep going</button>
+    </div>
+  </div>
+
+  <!-- D: Your body thanks you -->
+  <div class="section-label">D — Your Body Thanks You</div>
+  <div class="phone">
+    <div class="end-d">
+      <div class="body-icon">💪</div>
+      <div class="body-title">Your body is recovering</div>
+      <div class="body-benefits">
+        <div class="benefit">
+          <div class="benefit-icon">❤️</div>
+          <div class="benefit-text">Heart rate dropping to normal</div>
+        </div>
+        <div class="benefit">
+          <div class="benefit-icon">🫁</div>
+          <div class="benefit-text">Oxygen levels improving</div>
+        </div>
+        <div class="benefit">
+          <div class="benefit-icon">🧠</div>
+          <div class="benefit-text">Nicotine leaving your brain</div>
+        </div>
+      </div>
+      <div class="session">$1.00 saved</div>
+      <button class="cta">I'm done</button>
+    </div>
+  </div>
+
+  <!-- E: Go do something -->
+  <div class="section-label">E — Go Do Something</div>
+  <div class="phone">
+    <div class="end-e">
+      <div class="done-icon">✨</div>
+      <div class="done-title">Now go enjoy your day</div>
+      <div class="done-desc">The craving will pass in a few minutes. Try one of these:</div>
+      <div class="suggestions">
+        <div class="suggestion">
+          <div class="suggestion-icon">💧</div>
+          <div class="suggestion-text">Drink a glass of water</div>
+        </div>
+        <div class="suggestion">
+          <div class="suggestion-icon">🚶</div>
+          <div class="suggestion-text">Take a 5-minute walk</div>
+        </div>
+        <div class="suggestion">
+          <div class="suggestion-icon">📱</div>
+          <div class="suggestion-text">Call a friend</div>
+        </div>
+      </div>
+      <div class="session">$1.00 saved</div>
+      <button class="cta">Close app</button>
+    </div>
+  </div>
+
+</body>
+</html>
