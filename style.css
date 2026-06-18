@@ -859,6 +859,69 @@ body.dark .triggers-sub {
   color: rgba(250,249,247,0.5);
 }
 
+/* Weekly summary card */
+.triggers-summary-card {
+  background: linear-gradient(135deg, rgba(212,165,116,0.1), rgba(212,165,116,0.03));
+  border: 1px solid rgba(212,165,116,0.15);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+.triggers-summary-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.triggers-summary-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+body.dark .triggers-summary-title {
+  color: #faf9f7;
+}
+
+.triggers-summary-trend {
+  font-size: 12px;
+  color: #4ade80;
+}
+
+.triggers-summary-trend.down {
+  color: #f87171;
+}
+
+.triggers-summary-stats {
+  display: flex;
+  gap: 16px;
+}
+
+.triggers-summary-stat {
+  flex: 1;
+  text-align: center;
+}
+
+.triggers-summary-num {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 24px;
+  color: #d4a574;
+}
+
+.triggers-summary-lbl {
+  font-size: 10px;
+  color: rgba(26,26,26,0.3);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 4px;
+}
+
+body.dark .triggers-summary-lbl {
+  color: rgba(250,249,247,0.3);
+}
+
 /* Horizontal bars */
 .triggers-bars {
   display: flex;

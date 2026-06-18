@@ -157,6 +157,28 @@
         <h2 class="triggers-title">Triggers</h2>
         <p class="triggers-sub">Your patterns</p>
 
+        <!-- Weekly summary card -->
+        <div class="triggers-summary-card" id="triggers-summary-card">
+          <div class="triggers-summary-header">
+            <div class="triggers-summary-title">This Week</div>
+            <div class="triggers-summary-trend" id="triggers-summary-trend"></div>
+          </div>
+          <div class="triggers-summary-stats">
+            <div class="triggers-summary-stat">
+              <div class="triggers-summary-num" id="triggers-summary-sessions">0</div>
+              <div class="triggers-summary-lbl">Sessions</div>
+            </div>
+            <div class="triggers-summary-stat">
+              <div class="triggers-summary-num" id="triggers-summary-saved">$0</div>
+              <div class="triggers-summary-lbl">Saved</div>
+            </div>
+            <div class="triggers-summary-stat">
+              <div class="triggers-summary-num" id="triggers-summary-perday">0</div>
+              <div class="triggers-summary-lbl">Per day</div>
+            </div>
+          </div>
+        </div>
+
         <div class="triggers-bars" id="triggers-bars">
           <!-- Populated by JS -->
         </div>
@@ -397,7 +419,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-    <script src="app.js?v=69"></script>
+    <script src="app.js?v=70"></script>
     <script>
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('/sw.js').catch(() => {});

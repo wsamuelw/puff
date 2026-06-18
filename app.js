@@ -2577,9 +2577,68 @@
   const triggersScreen = document.getElementById('triggers-screen');
   const triggersBack = document.getElementById('triggers-back');
 
+  // Build weekly summary card
+  function buildWeeklySummary(logs) {
+    const summaryCard = document.getElementById('triggers-summary-card');
+    const summaryTrend = document.getElementById('triggers-summary-trend');
+    const summarySessions = document.getElementById('triggers-summary-sessions');
+    const summarySaved = document.getElementById('triggers-summary-saved');
+    const summaryPerDay = document.getElementById('triggers-summary-perday');
+
+    if (!logs.length) {
+      summaryCard.style.display = 'none';
+      return;
+    }
+
+    summaryCard.style.display = 'block';
+
+    // Calculate this week and last week
+    const now = Date.now();
+    const oneWeek = 7 * 24 * 60 * 60 * 1000;
+    const thisWeekLogs = logs.filter(l => (now - l.time) < oneWeek);
+    const lastWeekLogs = logs.filter(l => (now - l.time) >= oneWeek && (now - l.time) < 2 * oneWeek);
+
+    const thisWeekCount = thisWeekLogs.length;
+    const lastWeekCount = lastWeekLogs.length;
+
+    // Calculate savings (assume $1 per session as default)
+    const cigPrice = parseFloat(safeGetItem('cigPrice', '1'));
+    const thisWeekSaved = thisWeekCount * cigPrice;
+
+    // Calculate per day
+    const daysInWeek = Math.min(7, Math.ceil((now - Math.min(...logs.map(l => l.time))) / (24 * 60 * 60 * 1000)));
+    const perDay = daysInWeek > 0 ? (thisWeekCount / daysInWeek).toFixed(1) : '0';
+
+    // Update summary
+    summarySessions.textContent = thisWeekCount;
+    summarySaved.textContent = '$' + Math.floor(thisWeekSaved);
+    summaryPerDay.textContent = perDay;
+
+    // Calculate trend
+    if (lastWeekCount > 0) {
+      const change = ((thisWeekCount - lastWeekCount) / lastWeekCount * 100).toFixed(0);
+      if (thisWeekCount < lastWeekCount) {
+        summaryTrend.textContent = '↓ ' + Math.abs(change) + '% from last week';
+        summaryTrend.className = 'triggers-summary-trend';
+      } else if (thisWeekCount > lastWeekCount) {
+        summaryTrend.textContent = '↑ ' + change + '% from last week';
+        summaryTrend.className = 'triggers-summary-trend down';
+      } else {
+        summaryTrend.textContent = 'Same as last week';
+        summaryTrend.className = 'triggers-summary-trend';
+      }
+    } else {
+      summaryTrend.textContent = 'Your first week';
+      summaryTrend.className = 'triggers-summary-trend';
+    }
+  }
+
   function buildTriggerHeatmap() {
     const triggersBars = document.getElementById('triggers-bars');
     const logs = JSON.parse(safeGetItem('cravingLogs', '[]'));
+
+    // Build weekly summary
+    buildWeeklySummary(logs);
 
     if (!logs.length) {
       triggersBars.innerHTML = '<div class="triggers-empty">No data yet. Complete a session to see patterns.</div>';

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weekly Insights — Puff</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    :root { --amber: #d4a574; --serif: 'Libre Baskerville', serif; --sans: 'Outfit', sans-serif; }
+    body { font-family: var(--sans); background: #111; color: #fff; padding: 40px 20px; min-height: 100vh; }
+    h1 { font-family: var(--serif); font-size: 32px; font-style: italic; text-align: center; margin-bottom: 8px; }
+    .subtitle { text-align: center; color: rgba(255,255,255,0.4); font-size: 14px; margin-bottom: 48px; }
+    .section-label { font-family: var(--serif); font-size: 20px; font-style: italic; color: var(--amber); margin-bottom: 24px; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.06); max-width: 400px; margin-left: auto; margin-right: auto; }
+    .phone { width: 100%; max-width: 375px; margin: 0 auto 48px; background: #1a1a1a; border-radius: 16px; overflow: hidden; border: 1px solid rgba(255,255,255,0.06); position: relative; overflow-y: auto; }
+
+    /* A: Summary card in triggers */
+    .insight-a { padding: 32px 24px; }
+    .insight-a .title { font-family: var(--serif); font-size: 24px; color: #fff; margin-bottom: 4px; }
+    .insight-a .sub { font-size: 13px; color: rgba(255,255,255,0.35); margin-bottom: 24px; }
+    .insight-a .summary-card { background: linear-gradient(135deg, rgba(212,165,116,0.1), rgba(212,165,116,0.03)); border: 1px solid rgba(212,165,116,0.15); border-radius: 16px; padding: 20px; margin-bottom: 24px; }
+    .insight-a .summary-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .insight-a .summary-title { font-size: 14px; font-weight: 600; color: #fff; }
+    .insight-a .summary-trend { font-size: 12px; color: #4ade80; }
+    .insight-a .summary-trend.down { color: #f87171; }
+    .insight-a .summary-stats { display: flex; gap: 16px; }
+    .insight-a .summary-stat { flex: 1; text-align: center; }
+    .insight-a .summary-num { font-family: var(--serif); font-size: 24px; color: var(--amber); }
+    .insight-a .summary-lbl { font-size: 10px; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+    .insight-a .trigger-bars { display: flex; flex-direction: column; gap: 10px; }
+    .insight-a .trigger-bar { display: flex; align-items: center; gap: 10px; }
+    .insight-a .trigger-bar-icon { font-size: 16px; width: 24px; }
+    .insight-a .trigger-bar-info { flex: 1; }
+    .insight-a .trigger-bar-name { font-size: 13px; color: #fff; margin-bottom: 4px; }
+    .insight-a .trigger-bar-track { height: 6px; background: rgba(255,255,255,0.06); border-radius: 3px; overflow: hidden; }
+    .insight-a .trigger-bar-fill { height: 100%; border-radius: 3px; background: var(--amber); }
+    .insight-a .trigger-bar-count { font-size: 12px; color: rgba(255,255,255,0.4); width: 20px; text-align: right; }
+
+    /* B: Standalone report screen */
+    .insight-b { padding: 32px 24px; }
+    .insight-b .report-header { text-align: center; margin-bottom: 24px; }
+    .insight-b .report-title { font-family: var(--serif); font-size: 24px; color: #fff; margin-bottom: 4px; }
+    .insight-b .report-date { font-size: 13px; color: rgba(255,255,255,0.35); }
+    .insight-b .report-stats { display: flex; gap: 12px; margin-bottom: 24px; }
+    .insight-b .report-stat { flex: 1; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 14px; text-align: center; }
+    .insight-b .report-stat-num { font-family: var(--serif); font-size: 20px; color: var(--amber); }
+    .insight-b .report-stat-lbl { font-size: 10px; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+    .insight-b .report-stat-trend { font-size: 11px; margin-top: 4px; }
+    .insight-b .report-stat-trend.up { color: #4ade80; }
+    .insight-b .report-stat-trend.down { color: #f87171; }
+    .insight-b .report-insight { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 16px; margin-bottom: 12px; }
+    .insight-b .report-insight-label { font-size: 11px; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+    .insight-b .report-insight-text { font-size: 14px; color: #fff; line-height: 1.5; }
+    .insight-b .report-insight-text span { color: var(--amber); font-weight: 500; }
+
+    /* C: Tip of the week */
+    .insight-c { padding: 32px 24px; }
+    .insight-c .tip-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; padding: 24px; text-align: center; }
+    .insight-c .tip-icon { font-size: 48px; margin-bottom: 16px; }
+    .insight-c .tip-title { font-family: var(--serif); font-size: 20px; color: #fff; margin-bottom: 8px; }
+    .insight-c .tip-text { font-size: 14px; color: rgba(255,255,255,0.5); line-height: 1.6; margin-bottom: 16px; }
+    .insight-c .tip-action { font-size: 13px; color: var(--amber); font-weight: 500; }
+
+    /* D: Comparison cards */
+    .insight-d { padding: 32px 24px; }
+    .insight-d .compare-header { text-align: center; margin-bottom: 24px; }
+    .insight-d .compare-title { font-family: var(--serif); font-size: 20px; color: #fff; margin-bottom: 4px; }
+    .insight-d .compare-sub { font-size: 13px; color: rgba(255,255,255,0.35); }
+    .insight-d .compare-cards { display: flex; gap: 12px; margin-bottom: 24px; }
+    .insight-d .compare-card { flex: 1; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 16px; text-align: center; }
+    .insight-d .compare-week { font-size: 11px; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+    .insight-d .compare-num { font-family: var(--serif); font-size: 28px; color: #fff; }
+    .insight-d .compare-label { font-size: 11px; color: rgba(255,255,255,0.3); margin-top: 4px; }
+    .insight-d .compare-arrow { display: flex; align-items: center; justify-content: center; font-size: 24px; color: var(--amber); }
+    .insight-d .insight-box { background: rgba(212,165,116,0.08); border: 1px solid rgba(212,165,116,0.15); border-radius: 12px; padding: 16px; text-align: center; }
+    .insight-d .insight-text { font-size: 14px; color: rgba(255,255,255,0.6); }
+    .insight-d .insight-text span { color: var(--amber); font-weight: 500; }
+
+    .theme-toggle { position: fixed; top: 20px; right: 20px; z-index: 100; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 8px 14px; color: #fff; font-family: var(--sans); font-size: 13px; cursor: pointer; }
+    @media (max-width: 480px) { .phone { max-width: 100%; } h1 { font-size: 24px; } }
+  </style>
+</head>
+<body>
+  <button class="theme-toggle" onclick="document.body.classList.toggle('light')">Toggle theme</button>
+
+  <h1>Weekly Insights</h1>
+  <p class="subtitle">4 designs for weekly summary</p>
+
+  <!-- A: Summary card in triggers -->
+  <div class="section-label">A — Summary Card in Triggers</div>
+  <div class="phone">
+    <div class="insight-a">
+      <div class="title">Triggers</div>
+      <div class="sub">Your patterns</div>
+      <div class="summary-card">
+        <div class="summary-header">
+          <div class="summary-title">This Week</div>
+          <div class="summary-trend">↓ 33% from last week</div>
+        </div>
+        <div class="summary-stats">
+          <div class="summary-stat">
+            <div class="summary-num">12</div>
+            <div class="summary-lbl">Sessions</div>
+          </div>
+          <div class="summary-stat">
+            <div class="summary-num">$12</div>
+            <div class="summary-lbl">Saved</div>
+          </div>
+          <div class="summary-stat">
+            <div class="summary-num">3.4</div>
+            <div class="summary-lbl">Per day</div>
+          </div>
+        </div>
+      </div>
+      <div class="trigger-bars">
+        <div class="trigger-bar">
+          <div class="trigger-bar-icon">😰</div>
+          <div class="trigger-bar-info">
+            <div class="trigger-bar-name">Stress</div>
+            <div class="trigger-bar-track"><div class="trigger-bar-fill" style="width:80%"></div></div>
+          </div>
+          <div class="trigger-bar-count">5</div>
+        </div>
+        <div class="trigger-bar">
+          <div class="trigger-bar-icon">☕</div>
+          <div class="trigger-bar-info">
+            <div class="trigger-bar-name">Coffee</div>
+            <div class="trigger-bar-track"><div class="trigger-bar-fill" style="width:50%"></div></div>
+          </div>
+          <div class="trigger-bar-count">3</div>
+        </div>
+        <div class="trigger-bar">
+          <div class="trigger-bar-icon">🍺</div>
+          <div class="trigger-bar-info">
+            <div class="trigger-bar-name">Drinking</div>
+            <div class="trigger-bar-track"><div class="trigger-bar-fill" style="width:30%"></div></div>
+          </div>
+          <div class="trigger-bar-count">2</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- B: Standalone report screen -->
+  <div class="section-label">B — Standalone Report Screen</div>
+  <div class="phone">
+    <div class="insight-b">
+      <div class="report-header">
+        <div class="report-title">Weekly Report</div>
+        <div class="report-date">June 9 – 15, 2026</div>
+      </div>
+      <div class="report-stats">
+        <div class="report-stat">
+          <div class="report-stat-num">12</div>
+          <div class="report-stat-lbl">Sessions</div>
+          <div class="report-stat-trend down">↓ 33%</div>
+        </div>
+        <div class="report-stat">
+          <div class="report-stat-num">$12</div>
+          <div class="report-stat-lbl">Saved</div>
+          <div class="report-stat-trend up">↑ 20%</div>
+        </div>
+        <div class="report-stat">
+          <div class="report-stat-num">3</div>
+          <div class="report-stat-lbl">Days clean</div>
+          <div class="report-stat-trend up">↑ 50%</div>
+        </div>
+      </div>
+      <div class="report-insight">
+        <div class="report-insight-label">Top Trigger</div>
+        <div class="report-insight-text">😰 <span>Stress</span> was your #1 trigger, mostly at <span>3pm on weekdays</span>.</div>
+      </div>
+      <div class="report-insight">
+        <div class="report-insight-label">Pattern</div>
+        <div class="report-insight-text">You smoke <span>2x more</span> on days you don't exercise.</div>
+      </div>
+      <div class="report-insight">
+        <div class="report-insight-label">Tip</div>
+        <div class="report-insight-text">Try a 5-minute walk at 2:45pm to beat the afternoon stress craving.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- C: Tip of the week -->
+  <div class="section-label">C — Tip of the Week</div>
+  <div class="phone">
+    <div class="insight-c">
+      <div class="tip-card">
+        <div class="tip-icon">💡</div>
+        <div class="tip-title">This Week's Tip</div>
+        <div class="tip-text">Your stress cravings peak at 3pm on weekdays. Try scheduling a 5-minute walk or breathing exercise at 2:45pm to get ahead of the urge.</div>
+        <div class="tip-action">Based on your trigger patterns</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- D: Comparison cards -->
+  <div class="section-label">D — Comparison Cards</div>
+  <div class="phone">
+    <div class="insight-d">
+      <div class="compare-header">
+        <div class="compare-title">Week Over Week</div>
+        <div class="compare-sub">Your progress</div>
+      </div>
+      <div class="compare-cards">
+        <div class="compare-card">
+          <div class="compare-week">Last Week</div>
+          <div class="compare-num">18</div>
+          <div class="compare-label">sessions</div>
+        </div>
+        <div class="compare-arrow">→</div>
+        <div class="compare-card">
+          <div class="compare-week">This Week</div>
+          <div class="compare-num">12</div>
+          <div class="compare-label">sessions</div>
+        </div>
+      </div>
+      <div class="insight-box">
+        <div class="insight-text">You reduced sessions by <span>33%</span>. Keep it up!</div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
