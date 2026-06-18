@@ -55,7 +55,10 @@ canvas {
 
 /* Theme transition for child elements */
 .menu-content, .settings-stack-card, .slipup-screen, .menu-card,
-.slipup-btn, .slipup-stat, .slipup-quote-card, .slipup-progress-item {
+.slipup-btn, .slipup-stat, .slipup-quote-card, .slipup-progress-item,
+.consent-card, .onboarding-card, .trigger-btn, .end-stat,
+.triggers-back, .badges-back, .settings-back,
+.idle-streak, .idle-msg, .end-session-label {
   transition: background-color 0.4s, color 0.4s, border-color 0.4s;
 }
 
@@ -97,6 +100,23 @@ canvas {
   opacity: 1;
   transition: opacity 0.5s ease, background 0.2s;
   -webkit-tap-highlight-color: transparent;
+}
+
+.menu-pill-label {
+  position: absolute;
+  bottom: -18px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 10px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: rgba(250,249,247,0.4);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+body.light .menu-pill-label {
+  color: rgba(26,26,26,0.4);
 }
 
 .menu-pill {
@@ -699,7 +719,7 @@ body.light .menu-card:hover {
 }
 
 .menu-card-text h3 {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
   color: #fff;
   margin-bottom: 4px;
@@ -884,7 +904,7 @@ body.light .onboarding-dot {
   padding: 12px 32px;
   background: #d4a574;
   border: none;
-  border-radius: 10px;
+  border-radius: 12px;
   color: #1a1a1a;
   font-family: 'Outfit', sans-serif;
   font-size: 14px;
@@ -1163,7 +1183,7 @@ body.dark .triggers-heatmap-title {
 }
 
 .triggers-heatmap-hours span {
-  font-size: 9px;
+  font-size: 10px;
   color: rgba(26,26,26,0.3);
   width: 26px;
   text-align: center;
@@ -1244,7 +1264,8 @@ body.dark .triggers-heatmap-insight {
   z-index: 350;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.4s ease;
+  transition: opacity 0.35s ease, transform 0.35s ease;
+  transform: scale(0.96);
   padding: 40px 24px;
 }
 
@@ -1260,6 +1281,7 @@ body.light .trigger-screen {
 
 .trigger-screen.visible {
   opacity: 1;
+  transform: scale(1);
   pointer-events: auto;
 }
 
@@ -2001,7 +2023,8 @@ body.light .badge-modal-close:hover {
   z-index: 350;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.4s ease;
+  transition: opacity 0.35s ease, transform 0.35s ease;
+  transform: scale(0.96);
   padding: 40px 24px;
 }
 
@@ -2017,6 +2040,7 @@ body.light .end-screen {
 
 .end-screen.visible {
   opacity: 1;
+  transform: scale(1);
   pointer-events: auto;
 }
 
@@ -2633,7 +2657,7 @@ body.dark .settings-stack-danger {
 }
 
 .settings-stack-text h3 {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 500;
   color: #1a1a1a;
   margin-bottom: 2px;
