@@ -200,6 +200,7 @@
   // --- State ---
   let dpr = window.devicePixelRatio || 1;
   let W, H;
+  let H_REF = 0; // fixed reference height for cigarette dimensions
   let micStarted = false;
   let micStream = null; // store stream for cleanup
   let audioCtx, analyser, dataArray, crackleGain, dragGain;
@@ -477,6 +478,9 @@
     canvas.style.height = H + 'px';
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
+    // Set reference height once (use largest observed height for consistency)
+    if (H > H_REF) H_REF = H;
+
     // Position stats just above menu pill
     const menuPill = document.getElementById('menu-pill');
     if (menuPill) {
@@ -490,7 +494,8 @@
     }
 
     // Realistic proportions: total ~85mm, filter ~30mm (35%), paper ~55mm (65%)
-    CIG.bodyLength = H * 0.38;                    // paper section
+    // Use H_REF (fixed) instead of H (variable) for consistent cigarette size
+    CIG.bodyLength = H_REF * 0.38;                    // paper section
     CIG.filterHeight = CIG.bodyLength * 0.38;     // filter = 38% of paper (realistic)
     CIG.fullWidth = Math.min(W * 0.075, 28);      // slender diameter
     CIG.tipRadius = CIG.fullWidth / 2;
@@ -704,7 +709,7 @@
 
   // --- Helpers ---
   // Filter stays fixed, paper burns from the top down
-  const FILTER_Y = () => H * 0.617; // fixed filter position
+  const FILTER_Y = () => H_REF * 0.617; // fixed filter position (uses reference height)
   function getCigTopY() {
     const burnHeight = CIG.bodyLength * (1 - burnProgress);
     return FILTER_Y() - burnHeight;
