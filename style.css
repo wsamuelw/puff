@@ -955,34 +955,6 @@ body.light .end-insight {
 
 .end-done {
   padding: 14px 28px;
-  background: transparent;
-  border: 1px solid rgba(250,249,247,0.15);
-  border-radius: 12px;
-  color: rgba(250,249,247,0.5);
-  font-family: 'Outfit', sans-serif;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  -webkit-tap-highlight-color: transparent;
-}
-
-body.light .end-done {
-  border-color: rgba(0,0,0,0.1);
-  color: rgba(26,26,26,0.5);
-}
-
-.end-done:hover {
-  border-color: rgba(250,249,247,0.3);
-  color: rgba(250,249,247,0.7);
-}
-
-body.light .end-done:hover {
-  border-color: rgba(0,0,0,0.2);
-  color: rgba(26,26,26,0.7);
-}
-
-.end-another {
-  padding: 14px 28px;
   background: #d4a574;
   border: none;
   border-radius: 12px;
@@ -995,12 +967,40 @@ body.light .end-done:hover {
   -webkit-tap-highlight-color: transparent;
 }
 
-.end-another:hover {
+.end-done:hover {
   background: #c49564;
 }
 
-.end-another:active {
+.end-done:active {
   transform: scale(0.96);
+}
+
+.end-another {
+  padding: 14px 28px;
+  background: transparent;
+  border: 1px solid rgba(250,249,247,0.15);
+  border-radius: 12px;
+  color: rgba(250,249,247,0.5);
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body.light .end-another {
+  border-color: rgba(0,0,0,0.1);
+  color: rgba(26,26,26,0.5);
+}
+
+.end-another:hover {
+  border-color: rgba(250,249,247,0.3);
+  color: rgba(250,249,247,0.7);
+}
+
+body.light .end-another:hover {
+  border-color: rgba(0,0,0,0.2);
+  color: rgba(26,26,26,0.7);
 }
 
 /* ─── Slip-up Handling ─── */
