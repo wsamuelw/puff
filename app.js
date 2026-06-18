@@ -157,43 +157,29 @@
       if (doc.exists) {
         const cloudData = doc.data().data;
 
-        // Always apply cloud data on sign-in (keeps devices in sync)
+        // Use cloud data as source of truth (no merging)
         if (cloudData.quitStreak !== undefined) streakCount = parseInt(cloudData.quitStreak) || 0;
         if (cloudData.moneySaved !== undefined) totalMoneySaved = parseFloat(cloudData.moneySaved) || 0;
         if (cloudData.cigarettesAvoided !== undefined) totalCigarettesAvoided = parseInt(cloudData.cigarettesAvoided) || 0;
         if (cloudData.quitStartDate !== undefined) quitStartDate = parseInt(cloudData.quitStartDate) || 0;
         if (cloudData.cigPrice !== undefined) cigPrice = parseFloat(cloudData.cigPrice) || 1;
         if (cloudData.cravingLogs) {
-          // Merge craving logs — keep entries from both sources
-          const localLogs = safeGetItem('cravingLogs', '[]');
-          try {
-            const localArr = JSON.parse(localLogs);
-            const cloudArr = cloudData.cravingLogs || [];
-            const merged = [...localArr, ...cloudArr];
-            const seen = new Set();
-            cravingLogs = merged.filter(log => {
-              const key = log.time + log.trigger;
-              if (seen.has(key)) return false;
-              seen.add(key);
-              return true;
-            });
-          } catch {
-            cravingLogs = cloudData.cravingLogs;
-          }
+          cravingLogs = cloudData.cravingLogs;
+          safeSetItem('cravingLogs', JSON.stringify(cravingLogs));
         }
         if (cloudData.lastSessionDate !== undefined) lastSessionDate = parseInt(cloudData.lastSessionDate) || 0;
         if (cloudData.darkMode !== undefined) {
           isDark = cloudData.darkMode !== 'false';
           applyTheme();
         }
-        // Save to localStorage for offline access
-        Object.entries(cloudData).forEach(([key, value]) => {
-          safeSetItem(key, typeof value === 'object' ? JSON.stringify(value) : String(value));
-        });
+        // Save other fields to localStorage
+        safeSetItem('userName', cloudData.userName || '');
+        safeSetItem('cigPrice', String(cigPrice));
+        safeSetItem('darkMode', String(isDark));
         updateStatsDisplay();
       }
     } catch (e) {
-      console.warn('Cloud load failed, using local:', e.message);
+      console.warn('Cloud load failed:', e.message);
     }
   }
 
