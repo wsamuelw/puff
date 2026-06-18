@@ -2162,9 +2162,9 @@
       settingsEditInput.type = 'number';
       settingsEditInput.value = cigPrice;
       settingsEditInput.placeholder = '1.00';
-      settingsEditInput.step = '0.10';
-      settingsEditInput.min = '0';
-      settingsEditInput.max = '5';
+      settingsEditInput.step = '0.01';
+      settingsEditInput.min = '0.01';
+      settingsEditInput.max = '10';
       settingsEditInput.removeAttribute('maxlength');
     }
     settingsEditModal.classList.add('active');
