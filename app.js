@@ -242,7 +242,7 @@
         if (cloudData.moneySaved !== undefined) totalMoneySaved = parseFloat(cloudData.moneySaved) || 0;
         if (cloudData.cigarettesAvoided !== undefined) totalCigarettesAvoided = parseInt(cloudData.cigarettesAvoided) || 0;
         if (cloudData.quitStartDate !== undefined) quitStartDate = parseInt(cloudData.quitStartDate) || 0;
-        if (cloudData.cigPrice !== undefined) cigPrice = parseFloat(cloudData.cigPrice) || 1;
+        if (cloudData.cigPrice !== undefined) cigPrice = parseFloat(cloudData.cigPrice) || 0.50;
         if (cloudData.cravingLogs) {
           cravingLogs = cloudData.cravingLogs;
           safeSetItem('cravingLogs', JSON.stringify(cravingLogs));
@@ -351,7 +351,7 @@
   let sessionCount = parseInt(safeGetItem('quitStreak', '0'));
   let gameStartTime = 0;
   // Money saved tracking (loaded from settings, default $1)
-  let cigPrice = parseFloat(safeGetItem('cigPrice', '1'));
+  let cigPrice = parseFloat(safeGetItem('cigPrice', '0.50'));
   const CIG_PRICE = () => cigPrice; // getter for backward compat
   let totalMoneySaved = parseFloat(safeGetItem('moneySaved', '0'));
   let sessionMoneySaved = 0;
@@ -1323,13 +1323,6 @@
       </div>
     `;
     document.body.appendChild(notification);
-
-    // Auto-remove after 5 seconds
-    setTimeout(() => {
-      if (notification.parentElement) {
-        notification.remove();
-      }
-    }, 5000);
   }
 
   // HTML trigger screen elements
@@ -1351,6 +1344,7 @@
   const endTotalStat = document.getElementById('end-total-stat');
   const endCigsStat = document.getElementById('end-cigs-stat');
   const endDaysStat = document.getElementById('end-days-stat');
+  const endDurationStat = document.getElementById('end-duration-stat');
   const endTriggersBars = document.getElementById('end-triggers-bars');
   const endDone = document.getElementById('end-done');
   const endAnother = document.getElementById('end-another');
@@ -1417,6 +1411,20 @@
     });
     triggerGrid.appendChild(btn);
   });
+
+  // Add "Not sure" skip option
+  const skipBtn = document.createElement('button');
+  skipBtn.className = 'trigger-btn trigger-skip';
+  skipBtn.dataset.trigger = 'unknown';
+  skipBtn.textContent = '🤷 Not sure';
+  skipBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    selectedTrigger = 'unknown';
+    triggerGrid.querySelectorAll('.trigger-btn').forEach(b => b.classList.remove('selected'));
+    skipBtn.classList.add('selected');
+    triggerDone.classList.add('visible');
+  });
+  triggerGrid.appendChild(skipBtn);
 
   // Done button handler (now "Continue" — starts smoking session)
   triggerDone.addEventListener('click', (e) => {
@@ -1527,6 +1535,12 @@
     // Calculate days since quit start
     const daysSinceStart = quitStartDate ? Math.floor((Date.now() - quitStartDate) / (24 * 60 * 60 * 1000)) : 0;
     endDaysStat.textContent = daysSinceStart;
+
+    // Session duration
+    const sessionDuration = gameStartTime ? Math.round((performance.now() - gameStartTime) / 1000) : 0;
+    const durationMin = Math.floor(sessionDuration / 60);
+    const durationSec = sessionDuration % 60;
+    endDurationStat.textContent = durationMin > 0 ? durationMin + 'm ' + durationSec + 's' : durationSec + 's';
 
     // Build trigger bars
     buildEndTriggerBars();
@@ -1717,6 +1731,14 @@
 
     idleMoney.textContent = '$' + totalMoneySaved.toFixed(2);
 
+    // Show cigarettes avoided
+    const idleCigs = document.getElementById('idle-cigs');
+    if (totalCigarettesAvoided > 0) {
+      idleCigs.textContent = totalCigarettesAvoided + ' cigarette' + (totalCigarettesAvoided !== 1 ? 's' : '') + ' avoided';
+    } else {
+      idleCigs.textContent = '';
+    }
+
     // Calculate days since last session (smoke-free streak)
     const lastSession = parseInt(safeGetItem('lastSessionDate', '0'));
     if (lastSession) {
@@ -1771,8 +1793,23 @@
   endAnother.addEventListener('click', (e) => {
     e.stopPropagation();
     logEvent('smoke_another_tapped', { trigger: currentTriggerId, sessionMoney: sessionMoneySaved });
-    endScreen.classList.remove('visible');
-    showTriggerScreen();
+    // Show cooldown
+    endAnother.style.display = 'none';
+    const endCooldown = document.getElementById('end-cooldown');
+    const endCooldownTimer = document.getElementById('end-cooldown-timer');
+    endCooldown.classList.add('visible');
+    let cooldownLeft = 30;
+    endCooldownTimer.textContent = '0:30';
+    const cooldownInterval = setInterval(() => {
+      cooldownLeft--;
+      endCooldownTimer.textContent = '0:' + String(cooldownLeft).padStart(2, '0');
+      if (cooldownLeft <= 0) {
+        clearInterval(cooldownInterval);
+        endCooldown.classList.remove('visible');
+        endScreen.classList.remove('visible');
+        showTriggerScreen();
+      }
+    }, 1000);
   });
 
   // Helper: format elapsed time for health timeline
@@ -2429,7 +2466,7 @@
 
   // Save settings to cloud + localStorage
   function saveSettings() {
-    cigPrice = parseFloat(settingsPrice.value) || 1;
+    cigPrice = parseFloat(settingsPrice.value) || 0.50;
     const userName = settingsName.value.trim();
     saveToCloud({
       userName: userName,
@@ -2825,6 +2862,16 @@
     triggersScreen.classList.add('visible');
   });
 
+  // Open badges from menu
+  const menuBadges = document.getElementById('menu-badges');
+  menuBadges.addEventListener('click', (e) => {
+    e.stopPropagation();
+    closeMenu();
+    buildBadgesGrid();
+    history.pushState({screen:'badges'}, '');
+    badgesScreen.classList.add('visible');
+  });
+
   // Back button
   triggersBack.addEventListener('click', (e) => {
     e.stopPropagation();
@@ -2890,6 +2937,30 @@
       localStorage.clear();
       location.reload();
     }
+  });
+
+  // Export data
+  const settingsExport = document.getElementById('settings-export');
+  settingsExport.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const exportData = {
+      exportDate: new Date().toISOString(),
+      userName: safeGetItem('userName', ''),
+      cigPrice: parseFloat(safeGetItem('cigPrice', '0.50')),
+      totalMoneySaved: parseFloat(safeGetItem('totalMoneySaved', '0')),
+      totalCigarettesAvoided: parseInt(safeGetItem('totalCigarettesAvoided', '0')),
+      sessionCount: parseInt(safeGetItem('sessionCount', '0')),
+      quitStartDate: parseInt(safeGetItem('quitStartDate', '0')),
+      earnedBadges: JSON.parse(safeGetItem('earnedBadges', '[]')),
+      cravingLogs: JSON.parse(safeGetItem('cravingLogs', '[]'))
+    };
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'puff-data-' + new Date().toISOString().split('T')[0] + '.json';
+    a.click();
+    URL.revokeObjectURL(url);
   });
 
   // Delete cloud data

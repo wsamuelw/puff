@@ -117,6 +117,7 @@
     <div id="idle-screen" class="idle-screen">
       <div class="idle-money" id="idle-money">$0.00</div>
       <div class="idle-label">saved</div>
+      <div class="idle-cigs" id="idle-cigs"></div>
       <div class="idle-streak" id="idle-streak"></div>
       <div class="idle-message" id="idle-message">You're doing great</div>
       <div class="idle-offline" id="idle-offline">Offline — data will sync when connected</div>
@@ -163,6 +164,10 @@
           <div class="end-stat-num" id="end-days-stat">0</div>
           <div class="end-stat-lbl">Days</div>
         </div>
+        <div class="end-stat">
+          <div class="end-stat-num" id="end-duration-stat">0m</div>
+          <div class="end-stat-lbl">Duration</div>
+        </div>
       </div>
       <div class="end-triggers-section">
         <div class="end-triggers-header">Your triggers</div>
@@ -173,6 +178,10 @@
       <div class="end-actions">
         <button class="end-done" id="end-done">I'm done</button>
         <button class="end-another" id="end-another">Smoke another</button>
+      </div>
+      <div class="end-cooldown" id="end-cooldown">
+        <div class="end-cooldown-text">Take a moment before your next session</div>
+        <div class="end-cooldown-timer" id="end-cooldown-timer"></div>
       </div>
     </div>
 
@@ -257,6 +266,13 @@
               <div class="menu-card-text">
                 <h3>Triggers</h3>
                 <p>Your patterns</p>
+              </div>
+            </button>
+            <button class="menu-card" id="menu-badges">
+              <div class="menu-card-icon">🏆</div>
+              <div class="menu-card-text">
+                <h3>Badges</h3>
+                <p>Your achievements</p>
               </div>
             </button>
             <button class="menu-card" id="menu-settings">
@@ -388,6 +404,16 @@
             <button class="settings-toggle active" id="settings-dark-mode"></button>
           </div>
 
+          <!-- Export data -->
+          <button class="settings-stack-card" id="settings-export">
+            <div class="settings-stack-icon" style="background:rgba(212,165,116,0.15)">📤</div>
+            <div class="settings-stack-text">
+              <h3>Export data</h3>
+              <p>Download your history</p>
+            </div>
+            <div class="settings-stack-arrow">›</div>
+          </button>
+
           <!-- Reset -->
           <button class="settings-stack-card settings-stack-danger" id="settings-reset">
             <div class="settings-stack-icon" style="background:rgba(255,80,80,0.1)">🗑️</div>
@@ -445,7 +471,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-    <script src="app.js?v=72"></script>
+    <script src="app.js?v=73"></script>
     <script>
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('/sw.js').catch(() => {});

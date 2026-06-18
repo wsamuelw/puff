@@ -1336,6 +1336,15 @@ body.light .trigger-btn.selected {
   color: #b8875a;
 }
 
+.trigger-skip {
+  opacity: 0.5;
+  font-size: 13px;
+}
+
+.trigger-skip.selected {
+  opacity: 1;
+}
+
 .trigger-done {
   display: none;
   padding: 16px 48px;
@@ -1409,6 +1418,16 @@ body.light .idle-screen {
 
 body.light .idle-label {
   color: rgba(26,26,26,0.4);
+}
+
+.idle-cigs {
+  font-size: 14px;
+  color: rgba(250,249,247,0.5);
+  margin-top: 8px;
+}
+
+body.light .idle-cigs {
+  color: rgba(26,26,26,0.5);
 }
 
 .idle-streak {
@@ -2244,6 +2263,39 @@ body.light .end-another {
 body.light .end-another:hover {
   border-color: rgba(0,0,0,0.2);
   color: rgba(26,26,26,0.7);
+}
+
+.end-cooldown {
+  display: none;
+  text-align: center;
+  margin-top: 16px;
+  padding: 16px;
+  background: rgba(250,249,247,0.04);
+  border-radius: 12px;
+}
+
+body.light .end-cooldown {
+  background: rgba(0,0,0,0.03);
+}
+
+.end-cooldown.visible {
+  display: block;
+}
+
+.end-cooldown-text {
+  font-size: 13px;
+  color: rgba(250,249,247,0.5);
+  margin-bottom: 8px;
+}
+
+body.light .end-cooldown-text {
+  color: rgba(26,26,26,0.5);
+}
+
+.end-cooldown-timer {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 24px;
+  color: #d4a574;
 }
 
 /* ─── Slip-up Handling ─── */
