@@ -1176,6 +1176,8 @@
     ashHintShown = false;
     ashHintAlpha = 0;
     sessionMoneySaved = 0;
+    // Recalculate dimensions in case window size changed
+    resize();
     // Start mic and loop
     if (loopFrameId) cancelAnimationFrame(loopFrameId);
     if (ashDropTimeout) { clearTimeout(ashDropTimeout); ashDropTimeout = null; }
