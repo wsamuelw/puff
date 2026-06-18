@@ -1265,15 +1265,19 @@
       idleStreak.textContent = '';
     }
 
-    // Random motivational messages
-    const messages = [
-      "You're doing great",
-      "Keep going",
-      "Every cigarette counts",
-      "Stay strong",
-      "You've got this",
-    ];
-    idleMessage.textContent = messages[Math.floor(Math.random() * messages.length)];
+    // Different messages for new vs returning users
+    if (totalMoneySaved === 0) {
+      idleMessage.textContent = 'Your journey starts here';
+    } else {
+      const messages = [
+        "You're doing great",
+        "Keep going",
+        "Every cigarette counts",
+        "Stay strong",
+        "You've got this",
+      ];
+      idleMessage.textContent = messages[Math.floor(Math.random() * messages.length)];
+    }
 
     idleScreen.classList.add('visible');
     gameState = 'idle';
