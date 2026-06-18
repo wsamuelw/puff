@@ -1333,25 +1333,6 @@ body.dark .settings-sub {
   color: rgba(250,249,247,0.35);
 }
 
-.settings-greeting {
-  font-size: 14px;
-  color: rgba(26,26,26,0.5);
-  margin-bottom: 24px;
-}
-
-body.dark .settings-greeting {
-  color: rgba(250,249,247,0.5);
-}
-
-.settings-greeting span {
-  color: #1a1a1a;
-  font-weight: 500;
-}
-
-body.dark .settings-greeting span {
-  color: #faf9f7;
-}
-
 /* Card stack design */
 .settings-stack {
   display: flex;

@@ -1927,7 +1927,6 @@
   const settingsSignout = document.getElementById('settings-signout');
   const settingsTotalSaved = document.getElementById('settings-total-saved');
   const settingsPriceDisplay = document.getElementById('settings-price-display');
-  const settingsGreeting = document.getElementById('settings-greeting');
   const menuSettings = document.getElementById('menu-settings');
 
   // Edit modal elements
@@ -1945,14 +1944,6 @@
     settingsDarkMode.classList.toggle('active', isDark);
     settingsTotalSaved.textContent = '$' + totalMoneySaved.toFixed(2);
     settingsPriceDisplay.textContent = '$' + cigPrice.toFixed(2);
-
-    // Update greeting
-    const userName = safeGetItem('userName', '');
-    if (userName) {
-      settingsGreeting.innerHTML = 'Hi, <span>' + userName + '</span> 👋';
-    } else {
-      settingsGreeting.textContent = '';
-    }
   }
 
   // Save settings to cloud + localStorage
