@@ -2179,6 +2179,7 @@
 
   // Pause loop when app is in background
   let hiddenAt = 0; // timestamp when tab became hidden
+  let backgroundInterval = null; // interval for burning while hidden
 
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) {
@@ -2194,42 +2195,80 @@
           lastSessionDate: Date.now()
         });
       }
+      // Stop the animation loop
       loopRunning = false;
       if (loopFrameId) cancelAnimationFrame(loopFrameId);
-    } else if (!gameOver && started) {
-      // Calculate elapsed time while hidden and advance burn progress
-      if (hiddenAt > 0) {
-        const elapsed = (Date.now() - hiddenAt) / 1000; // seconds
-        const burnRate = BASE_BURN_RATE; // idle burn rate while away
-        burnProgress = Math.min(1, burnProgress + burnRate * elapsed);
-        hiddenAt = 0;
 
-        // Check if cigarette finished while away
-        if (burnProgress >= 1) {
-          gameOver = true;
-          cleanupMic();
-          streakCount++;
-          totalMoneySaved += CIG_PRICE();
-          totalCigarettesAvoided++;
-          sessionMoneySaved = CIG_PRICE();
-          if (!quitStartDate) {
-            quitStartDate = Date.now();
+      // Start background interval to keep burning while hidden
+      if (started && !gameOver) {
+        backgroundInterval = setInterval(() => {
+          burnProgress = Math.min(1, burnProgress + BASE_BURN_RATE);
+          if (burnProgress >= 1) {
+            clearInterval(backgroundInterval);
+            backgroundInterval = null;
+            gameOver = true;
+            cleanupMic();
+            streakCount++;
+            totalMoneySaved += CIG_PRICE();
+            totalCigarettesAvoided++;
+            sessionMoneySaved = CIG_PRICE();
+            if (!quitStartDate) {
+              quitStartDate = Date.now();
+            }
+            saveToCloud({
+              quitStreak: streakCount,
+              moneySaved: totalMoneySaved,
+              cigarettesAvoided: totalCigarettesAvoided,
+              quitStartDate: quitStartDate,
+              lastSessionDate: Date.now()
+            });
           }
-          saveToCloud({
-            quitStreak: streakCount,
-            moneySaved: totalMoneySaved,
-            cigarettesAvoided: totalCigarettesAvoided,
-            quitStartDate: quitStartDate,
-            lastSessionDate: Date.now()
-          });
-          completionFrame = 0;
-          showEndScreen();
-          return;
-        }
+        }, 1000);
       }
-      loopRunning = true;
-      lastFrameTime = 0;
-      loopFrameId = requestAnimationFrame(loop);
+    } else {
+      // Clear background interval
+      if (backgroundInterval) {
+        clearInterval(backgroundInterval);
+        backgroundInterval = null;
+      }
+
+      if (!gameOver && started) {
+        // Calculate elapsed time while hidden and advance burn progress
+        if (hiddenAt > 0) {
+          const elapsed = (Date.now() - hiddenAt) / 1000; // seconds
+          burnProgress = Math.min(1, burnProgress + BASE_BURN_RATE * elapsed);
+          hiddenAt = 0;
+
+          // Check if cigarette finished while away
+          if (burnProgress >= 1) {
+            gameOver = true;
+            cleanupMic();
+            streakCount++;
+            totalMoneySaved += CIG_PRICE();
+            totalCigarettesAvoided++;
+            sessionMoneySaved = CIG_PRICE();
+            if (!quitStartDate) {
+              quitStartDate = Date.now();
+            }
+            saveToCloud({
+              quitStreak: streakCount,
+              moneySaved: totalMoneySaved,
+              cigarettesAvoided: totalCigarettesAvoided,
+              quitStartDate: quitStartDate,
+              lastSessionDate: Date.now()
+            });
+            completionFrame = 0;
+            showEndScreen();
+            return;
+          }
+        }
+        loopRunning = true;
+        lastFrameTime = 0;
+        loopFrameId = requestAnimationFrame(loop);
+      } else if (gameOver && started) {
+        // Cigarette finished while hidden, show end screen
+        showEndScreen();
+      }
     }
   });
 
