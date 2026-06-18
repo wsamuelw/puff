@@ -1876,6 +1876,7 @@
 
   function closeMenu() {
     menuOverlay.classList.remove('active');
+    menuContent.style.transform = '';
   }
 
   // Menu pill below cigarette opens menu
