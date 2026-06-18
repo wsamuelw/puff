@@ -67,6 +67,7 @@
       <div class="idle-label">saved</div>
       <div class="idle-streak" id="idle-streak"></div>
       <div class="idle-message" id="idle-message">You're doing great</div>
+      <div class="idle-offline" id="idle-offline">Offline — data will sync when connected</div>
       <button class="idle-start" id="idle-start">Start session</button>
     </div>
 
@@ -315,7 +316,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-    <script src="app.js?v=63"></script>
+    <script src="app.js?v=64"></script>
     <script>
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('/sw.js').catch(() => {});

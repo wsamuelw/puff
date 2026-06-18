@@ -1149,6 +1149,7 @@
   const idleStreak = document.getElementById('idle-streak');
   const idleMessage = document.getElementById('idle-message');
   const idleStart = document.getElementById('idle-start');
+  const idleOffline = document.getElementById('idle-offline');
 
   // HTML end screen elements
   const endScreen = document.getElementById('end-screen');
@@ -1461,6 +1462,9 @@
       ];
       idleMessage.textContent = messages[Math.floor(Math.random() * messages.length)];
     }
+
+    // Show offline indicator if needed
+    idleOffline.classList.toggle('visible', !navigator.onLine);
 
     idleScreen.classList.add('visible');
     gameState = 'idle';
@@ -2457,6 +2461,16 @@
   }
 
   window.addEventListener('beforeunload', savePartialProgress);
+
+  // Online/offline status
+  window.addEventListener('online', () => {
+    idleOffline.classList.remove('visible');
+  });
+  window.addEventListener('offline', () => {
+    if (gameState === 'idle') {
+      idleOffline.classList.add('visible');
+    }
+  });
 
   // Pause loop when app is in background
   let hiddenAt = 0; // timestamp when tab became hidden
