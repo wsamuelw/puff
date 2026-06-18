@@ -1225,6 +1225,16 @@
     logs.push({ time: Date.now(), trigger: currentTriggerId });
     safeSetItem('cravingLogs', JSON.stringify(logs));
 
+    // Sync craving logs to cloud
+    saveToCloud({
+      cravingLogs: logs,
+      moneySaved: totalMoneySaved,
+      quitStreak: streakCount,
+      cigarettesAvoided: totalCigarettesAvoided,
+      quitStartDate: quitStartDate,
+      lastSessionDate: Date.now()
+    });
+
     // Update end screen content
     endSession.textContent = '$' + sessionMoneySaved.toFixed(2);
     endTotal.textContent = '$' + totalMoneySaved.toFixed(2);
@@ -2249,7 +2259,9 @@
       savePartialProgress();
       // Sync all state to cloud when leaving
       if (currentUser) {
+        const logs = JSON.parse(safeGetItem('cravingLogs', '[]'));
         saveToCloud({
+          cravingLogs: logs,
           moneySaved: totalMoneySaved,
           quitStreak: streakCount,
           cigarettesAvoided: totalCigarettesAvoided,
