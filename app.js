@@ -174,7 +174,7 @@
         const cloudData = doc.data().data;
 
         // Use cloud data as source of truth (no merging)
-        if (cloudData.quitStreak !== undefined) streakCount = parseInt(cloudData.quitStreak) || 0;
+        if (cloudData.quitStreak !== undefined) sessionCount = parseInt(cloudData.quitStreak) || 0;
         if (cloudData.moneySaved !== undefined) totalMoneySaved = parseFloat(cloudData.moneySaved) || 0;
         if (cloudData.cigarettesAvoided !== undefined) totalCigarettesAvoided = parseInt(cloudData.cigarettesAvoided) || 0;
         if (cloudData.quitStartDate !== undefined) quitStartDate = parseInt(cloudData.quitStartDate) || 0;
@@ -282,7 +282,7 @@
   }
 
   // Streak persistence
-  let streakCount = parseInt(safeGetItem('quitStreak', '0'));
+  let sessionCount = parseInt(safeGetItem('quitStreak', '0'));
   let gameStartTime = 0;
   // Money saved tracking (loaded from settings, default $1)
   let cigPrice = parseFloat(safeGetItem('cigPrice', '1'));
@@ -1316,7 +1316,7 @@
     saveToCloud({
       cravingLogs: logs,
       moneySaved: totalMoneySaved,
-      quitStreak: streakCount,
+      quitStreak: sessionCount,
       cigarettesAvoided: totalCigarettesAvoided,
       quitStartDate: quitStartDate,
       lastSessionDate: Date.now()
@@ -1345,10 +1345,17 @@
 
     idleMoney.textContent = '$' + totalMoneySaved.toFixed(2);
 
-    // Calculate streak
-    if (quitStartDate) {
-      const daysSinceStart = Math.floor((Date.now() - quitStartDate) / (24 * 60 * 60 * 1000));
-      idleStreak.textContent = daysSinceStart + ' day' + (daysSinceStart !== 1 ? 's' : '') + ' smoke-free';
+    // Calculate days since last session (smoke-free streak)
+    const lastSession = parseInt(safeGetItem('lastSessionDate', '0'));
+    if (lastSession) {
+      const daysSinceLastSession = Math.floor((Date.now() - lastSession) / (24 * 60 * 60 * 1000));
+      if (daysSinceLastSession === 0) {
+        idleStreak.textContent = 'Today';
+      } else if (daysSinceLastSession === 1) {
+        idleStreak.textContent = '1 day smoke-free';
+      } else {
+        idleStreak.textContent = daysSinceLastSession + ' days smoke-free';
+      }
     } else {
       idleStreak.textContent = '';
     }
@@ -1884,7 +1891,7 @@
     e.stopPropagation();
     logEvent('slipup_action', { action: 'start_fresh', type: 'welcome' });
     // Reset streak but keep money and cigarettes
-    streakCount = 0;
+    sessionCount = 0;
     quitStartDate = Date.now();
     saveToCloud({ quitStreak: 0, quitStartDate: quitStartDate });
     slipupWelcome.classList.remove('active');
@@ -1900,7 +1907,7 @@
     e.stopPropagation();
     logEvent('slipup_action', { action: 'reset_everything', type: 'relapse' });
     // Reset everything
-    streakCount = 0;
+    sessionCount = 0;
     totalMoneySaved = 0;
     totalCigarettesAvoided = 0;
     quitStartDate = Date.now();
@@ -2327,7 +2334,7 @@
     if (sessionMoneySaved > 0) {
       totalMoneySaved += sessionMoneySaved;
       totalCigarettesAvoided++;
-      streakCount++;
+      sessionCount++;
     }
 
     // Set quit start date if not already set
@@ -2345,7 +2352,7 @@
 
     // Save to cloud + localStorage
     saveToCloud({
-      quitStreak: streakCount,
+      quitStreak: sessionCount,
       moneySaved: totalMoneySaved,
       cigarettesAvoided: totalCigarettesAvoided,
       quitStartDate: quitStartDate,
@@ -2375,7 +2382,7 @@
         saveToCloud({
           cravingLogs: logs,
           moneySaved: totalMoneySaved,
-          quitStreak: streakCount,
+          quitStreak: sessionCount,
           cigarettesAvoided: totalCigarettesAvoided,
           quitStartDate: quitStartDate,
           lastSessionDate: Date.now()
