@@ -2148,8 +2148,8 @@
   triggersScreen.addEventListener('click', (e) => e.stopPropagation());
   triggersScreen.addEventListener('touchstart', (e) => e.stopPropagation(), { passive: true });
 
-  // Sign-out button
-  const menuUserInfo = document.getElementById('menu-user-info');
+  // Menu greeting
+  const menuGreeting = document.getElementById('menu-greeting');
 
   // Sign out from settings
   settingsSignout.addEventListener('click', (e) => {
@@ -2161,9 +2161,19 @@
   function updateMenuUserInfo() {
     if (currentUser) {
       const name = currentUser.displayName;
-      menuUserInfo.textContent = name ? name.split(' ')[0] : currentUser.email;
+      const firstName = name ? name.split(' ')[0] : '';
+      const email = currentUser.email || '';
+
+      if (firstName) {
+        menuGreeting.innerHTML = '<div class="menu-greeting-text">Hi, ' + firstName + ' 👋</div>' +
+          (email ? '<div class="menu-greeting-sub">' + email + '</div>' : '');
+      } else if (email) {
+        menuGreeting.innerHTML = '<div class="menu-greeting-text">' + email + '</div>';
+      } else {
+        menuGreeting.innerHTML = '';
+      }
     } else {
-      menuUserInfo.textContent = '';
+      menuGreeting.innerHTML = '';
     }
   }
 

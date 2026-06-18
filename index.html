@@ -100,6 +100,7 @@
     <div id="menu-overlay" class="menu-overlay" role="dialog" aria-label="Menu">
       <div class="menu-content">
         <div class="menu-drag-handle"></div>
+        <div class="menu-greeting" id="menu-greeting"></div>
         <div class="menu-scroll-wrap" id="menu-scroll-wrap">
           <div class="menu-scroll" id="menu-scroll">
             <button class="menu-card" id="menu-triggers">
@@ -122,7 +123,6 @@
           <div class="menu-dot active"></div>
           <div class="menu-dot"></div>
         </div>
-        <div class="menu-user" id="menu-user-info"></div>
       </div>
     </div>
 
@@ -276,7 +276,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-    <script src="app.js?v=41"></script>
+    <script src="app.js?v=42"></script>
     <script>
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('/sw.js').catch(() => {});
