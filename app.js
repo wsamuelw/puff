@@ -500,10 +500,17 @@
 
   // --- Mic ---
   async function startMic() {
-    if (micStarted) return;
+    if (micStarted) return true;
     try {
       micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+      // Create new audio context or resume existing one
+      if (!audioCtx || audioCtx.state === 'closed') {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      } else if (audioCtx.state === 'suspended') {
+        await audioCtx.resume();
+      }
+
       const source = audioCtx.createMediaStreamSource(micStream);
       analyser = audioCtx.createAnalyser();
       analyser.fftSize = 256;
@@ -561,6 +568,19 @@
 
   // Cleanup mic and audio when game ends or page unloads
   function cleanupMic() {
+    // Only stop the mic stream, keep audio context open for reuse
+    if (micStream) {
+      micStream.getTracks().forEach(t => t.stop());
+      micStream = null;
+    }
+    // Don't close audioCtx — it can be reused for next session
+    micStarted = false;
+    analyser = null;
+    dataArray = null;
+  }
+
+  // Full cleanup on page unload
+  function fullCleanup() {
     if (micStream) {
       micStream.getTracks().forEach(t => t.stop());
       micStream = null;
@@ -1160,8 +1180,16 @@
     if (loopFrameId) cancelAnimationFrame(loopFrameId);
     if (ashDropTimeout) { clearTimeout(ashDropTimeout); ashDropTimeout = null; }
     loopRunning = true;
-    const ok = await startMic();
-    if (ok) {
+
+    // Check if mic needs to be restarted
+    if (!micStarted) {
+      const ok = await startMic();
+      if (ok) {
+        started = true;
+        gameStartTime = performance.now();
+      }
+    } else {
+      // Mic already started, just restart the game
       started = true;
       gameStartTime = performance.now();
     }
@@ -1679,7 +1707,7 @@
   applyTheme();
 
   // Cleanup on page unload
-  window.addEventListener('beforeunload', cleanupMic);
+  window.addEventListener('beforeunload', fullCleanup);
 
 
 
