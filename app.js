@@ -245,6 +245,24 @@
   // Loop control
   let loopRunning = true;
 
+  // Gradient cache — avoid recreating every frame
+  const _gradCache = {};
+  let _gradCacheFrame = 0;
+  function _getCachedGrad(key, createFn) {
+    if (!_gradCache[key]) {
+      _gradCache[key] = createFn();
+    }
+    return _gradCache[key];
+  }
+  // Clear cache every 100 frames to prevent memory leaks
+  function _maybeCleanGradCache() {
+    _gradCacheFrame++;
+    if (_gradCacheFrame >= 100) {
+      _gradCacheFrame = 0;
+      Object.keys(_gradCache).forEach(k => delete _gradCache[k]);
+    }
+  }
+
   // Streak persistence
   let streakCount = parseInt(safeGetItem('quitStreak', '0'));
   let gameStartTime = 0;
@@ -733,12 +751,16 @@
       ctx.fillStyle = glowGrad;
       ctx.fillRect(x - glowRadius * 1.2, filterCenterY - glowRadius, glowRadius * 2.4, glowRadius * 2);
     }
-    const grad = ctx.createLinearGradient(x - CIG.tipRadius, filterY, x + CIG.tipRadius, filterY);
-    grad.addColorStop(0, '#a06820');
-    grad.addColorStop(0.3, '#c87a2a');
-    grad.addColorStop(0.5, '#d4943a');
-    grad.addColorStop(0.7, '#c87a2a');
-    grad.addColorStop(1, '#a06820');
+    const filterGradKey = `filter_${Math.round(filterY)}`;
+    const grad = _getCachedGrad(filterGradKey, () => {
+      const g = ctx.createLinearGradient(x - CIG.tipRadius, filterY, x + CIG.tipRadius, filterY);
+      g.addColorStop(0, '#a06820');
+      g.addColorStop(0.3, '#c87a2a');
+      g.addColorStop(0.5, '#d4943a');
+      g.addColorStop(0.7, '#c87a2a');
+      g.addColorStop(1, '#a06820');
+      return g;
+    });
     ctx.fillStyle = grad;
     ctx.beginPath();
     ctx.roundRect(x - CIG.tipRadius, filterY, CIG.fullWidth, CIG.filterHeight, [0, 0, 5, 5]);
@@ -1371,6 +1393,9 @@
       const now = performance.now();
       const dt = lastFrameTime ? (now - lastFrameTime) / 1000 : 1/60; // delta time in seconds
       lastFrameTime = now;
+
+      // Clean gradient cache periodically
+      _maybeCleanGradCache();
 
       // Auto-save to localStorage every 10 seconds during gameplay
       if (started && !gameOver && now - _lastAutoSave > 10000) {
