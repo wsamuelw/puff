@@ -40,6 +40,27 @@
       </div>
     </div>
 
+    <!-- Onboarding Screen -->
+    <div id="onboarding-screen" class="onboarding-screen">
+      <div class="onboarding-content">
+        <div class="onboarding-card-area">
+          <div class="onboarding-card" id="onboarding-card">
+            <div class="onboarding-card-icon" id="onboarding-icon">👆</div>
+            <div class="onboarding-card-title" id="onboarding-title">Hold to puff</div>
+            <div class="onboarding-card-desc" id="onboarding-desc">Press and hold anywhere on the screen to take a drag.</div>
+          </div>
+        </div>
+        <div class="onboarding-footer">
+          <div class="onboarding-dots" id="onboarding-dots">
+            <div class="onboarding-dot active"></div>
+            <div class="onboarding-dot"></div>
+            <div class="onboarding-dot"></div>
+          </div>
+          <button class="onboarding-next" id="onboarding-next">Next</button>
+        </div>
+      </div>
+    </div>
+
     <!-- Idle Screen (between sessions) -->
     <div id="idle-screen" class="idle-screen">
       <div class="idle-money" id="idle-money">$0.00</div>
@@ -276,7 +297,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-    <script src="app.js?v=58"></script>
+    <script src="app.js?v=59"></script>
     <script>
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('/sw.js').catch(() => {});

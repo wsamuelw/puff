@@ -461,6 +461,133 @@ body.light .menu-greeting-sub {
   color: rgba(26,26,26,0.35);
 }
 
+/* ─── Onboarding Screen ─── */
+.onboarding-screen {
+  position: fixed;
+  inset: 0;
+  background: #1a1a1a;
+  z-index: 450;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+body.light .onboarding-screen {
+  background: #faf9f7;
+}
+
+.onboarding-screen.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.onboarding-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.onboarding-card-area {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+}
+
+.onboarding-card {
+  background: rgba(250,249,247,0.04);
+  border: 1px solid rgba(250,249,247,0.06);
+  border-radius: 20px;
+  padding: 32px 24px;
+  text-align: center;
+  width: 100%;
+  max-width: 280px;
+}
+
+body.light .onboarding-card {
+  background: rgba(0,0,0,0.03);
+  border-color: rgba(0,0,0,0.06);
+}
+
+.onboarding-card-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.onboarding-card-title {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 20px;
+  color: #faf9f7;
+  margin-bottom: 8px;
+}
+
+body.light .onboarding-card-title {
+  color: #1a1a1a;
+}
+
+.onboarding-card-desc {
+  font-size: 14px;
+  color: rgba(250,249,247,0.5);
+  line-height: 1.5;
+}
+
+body.light .onboarding-card-desc {
+  color: rgba(26,26,26,0.5);
+}
+
+.onboarding-footer {
+  padding: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.onboarding-dots {
+  display: flex;
+  gap: 6px;
+}
+
+.onboarding-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(250,249,247,0.15);
+  transition: all 0.2s ease;
+}
+
+body.light .onboarding-dot {
+  background: rgba(0,0,0,0.15);
+}
+
+.onboarding-dot.active {
+  background: #d4a574;
+  width: 18px;
+  border-radius: 3px;
+}
+
+.onboarding-next {
+  padding: 12px 32px;
+  background: #d4a574;
+  border: none;
+  border-radius: 10px;
+  color: #1a1a1a;
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.onboarding-next:hover {
+  background: #c49564;
+}
+
+.onboarding-next:active {
+  transform: scale(0.96);
+}
+
 /* ─── Trigger Analytics Screen ─── */
 .triggers-screen {
   position: fixed;

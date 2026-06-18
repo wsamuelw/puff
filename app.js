@@ -1141,6 +1141,50 @@
   const endDone = document.getElementById('end-done');
   const endAnother = document.getElementById('end-another');
 
+  // Onboarding
+  const onboardingScreen = document.getElementById('onboarding-screen');
+  const onboardingIcon = document.getElementById('onboarding-icon');
+  const onboardingTitle = document.getElementById('onboarding-title');
+  const onboardingDesc = document.getElementById('onboarding-desc');
+  const onboardingDots = document.getElementById('onboarding-dots');
+  const onboardingNext = document.getElementById('onboarding-next');
+  const ONBOARDING_STEPS = [
+    { icon: '👆', title: 'Hold to puff', desc: 'Press and hold anywhere on the screen to take a drag.' },
+    { icon: '🌬️', title: 'Blow to burn', desc: 'Blow into the mic to burn the cigarette faster.' },
+    { icon: '👆👆', title: 'Double-tap to flick', desc: 'Tap twice to flick the ash off.' },
+  ];
+  let onboardingStep = 0;
+
+  function showOnboarding() {
+    onboardingStep = 0;
+    updateOnboardingCard();
+    onboardingScreen.classList.add('visible');
+  }
+
+  function updateOnboardingCard() {
+    const step = ONBOARDING_STEPS[onboardingStep];
+    onboardingIcon.textContent = step.icon;
+    onboardingTitle.textContent = step.title;
+    onboardingDesc.textContent = step.desc;
+    // Update dots
+    const dots = onboardingDots.querySelectorAll('.onboarding-dot');
+    dots.forEach((dot, i) => dot.classList.toggle('active', i === onboardingStep));
+    // Update button text
+    onboardingNext.textContent = onboardingStep < ONBOARDING_STEPS.length - 1 ? 'Next' : 'Get started';
+  }
+
+  onboardingNext.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (onboardingStep < ONBOARDING_STEPS.length - 1) {
+      onboardingStep++;
+      updateOnboardingCard();
+    } else {
+      // Complete onboarding
+      onboardingScreen.classList.remove('visible');
+      safeSetItem('onboardingComplete', 'true');
+    }
+  });
+
   // Build trigger buttons
   TRIGGER_OPTIONS.forEach(trigger => {
     const btn = document.createElement('button');
@@ -1272,6 +1316,13 @@
 
   // Show idle screen
   function showIdleScreen() {
+    // Check if onboarding is complete
+    const onboardingComplete = safeGetItem('onboardingComplete', 'false');
+    if (onboardingComplete !== 'true') {
+      showOnboarding();
+      return;
+    }
+
     idleMoney.textContent = '$' + totalMoneySaved.toFixed(2);
 
     // Calculate streak
