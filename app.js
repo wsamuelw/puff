@@ -1218,9 +1218,10 @@
 
   // Ordinal suffix helper
   function ordinal(n) {
-    const s = ['th', 'st', 'nd', 'rd'];
     const v = n % 100;
-    return s[(v - 20) % 10] || s[v] || s[0];
+    if (v >= 11 && v <= 13) return 'th';
+    const s = ['th', 'st', 'nd', 'rd'];
+    return s[v % 10] || s[0];
   }
 
   // Show end screen
