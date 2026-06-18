@@ -1957,6 +1957,8 @@
       darkMode: isDark
     });
     settingsPriceDisplay.textContent = '$' + cigPrice.toFixed(2);
+    // Update menu greeting immediately
+    updateMenuUserInfo();
   }
 
   // Open edit modal
@@ -2162,8 +2164,10 @@
   // Update user info when menu opens
   function updateMenuUserInfo() {
     if (currentUser) {
-      const name = currentUser.displayName;
-      const firstName = name ? name.split(' ')[0] : '';
+      // Use manually set name from localStorage first, fall back to Google name
+      const manualName = safeGetItem('userName', '');
+      const googleName = currentUser.displayName || '';
+      const firstName = manualName || (googleName ? googleName.split(' ')[0] : '');
       const email = currentUser.email || '';
 
       if (firstName) {
