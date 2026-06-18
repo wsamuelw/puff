@@ -1551,10 +1551,10 @@ body.dark .settings-edit-cancel {
 .settings-toggle {
   position: relative;
   width: 48px;
-  height: 28px;
+  height: 44px;
   background: rgba(26, 26, 26, 0.1);
   border: none;
-  border-radius: 14px;
+  border-radius: 22px;
   cursor: pointer;
   transition: background 0.3s ease;
   flex-shrink: 0;
@@ -1577,8 +1577,8 @@ body.dark .settings-toggle.active {
   position: absolute;
   top: 4px;
   left: 4px;
-  width: 20px;
-  height: 20px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   background: #fff;
   box-shadow: 0 1px 3px rgba(0,0,0,0.15);
@@ -1590,7 +1590,7 @@ body.dark .settings-toggle::after {
 }
 
 .settings-toggle.active::after {
-  transform: translateX(20px);
+  transform: translateX(4px);
 }
 
 .settings-version {
