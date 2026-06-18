@@ -112,10 +112,51 @@
     currentUser = null;
   }
 
+  // Consent screen
+  const consentScreen = document.getElementById('consent-screen');
+  const consentAccept = document.getElementById('consent-accept');
+  const consentOffline = document.getElementById('consent-offline');
+
+  // Check if consent has been given
+  const consentGiven = safeGetItem('consentGiven', 'false');
+  const offlineMode = safeGetItem('offlineMode', 'false');
+
+  // Show consent screen if not given yet
+  if (consentGiven === 'false') {
+    consentScreen.classList.add('visible');
+  }
+
+  // Accept consent — show sign-in
+  consentAccept.addEventListener('click', (e) => {
+    e.stopPropagation();
+    safeSetItem('consentGiven', 'true');
+    safeSetItem('offlineMode', 'false');
+    consentScreen.classList.remove('visible');
+    signinScreen.classList.remove('hidden');
+  });
+
+  // Offline mode — skip sign-in, go straight to app
+  consentOffline.addEventListener('click', (e) => {
+    e.stopPropagation();
+    safeSetItem('consentGiven', 'true');
+    safeSetItem('offlineMode', 'true');
+    consentScreen.classList.remove('visible');
+    // Skip sign-in, show idle screen directly
+    checkSlipUp();
+  });
+
   // Listen for auth state changes
   auth.onAuthStateChanged((user) => {
     currentUser = user;
     const signinScreen = document.getElementById('signin-screen');
+    const offlineMode = safeGetItem('offlineMode', 'false');
+
+    // Skip auth if offline mode
+    if (offlineMode === 'true') {
+      signinScreen.classList.add('hidden');
+      return;
+    }
+
     if (user) {
       signinScreen.classList.add('hidden');
       resetSigninButton();
@@ -127,7 +168,10 @@
       }
       checkSlipUp();
     } else {
-      signinScreen.classList.remove('hidden');
+      // Only show sign-in if consent was given (not offline mode)
+      if (consentGiven === 'true') {
+        signinScreen.classList.remove('hidden');
+      }
       resetSigninButton();
     }
   });
@@ -139,7 +183,11 @@
       safeSetItem(key, typeof value === 'object' ? JSON.stringify(value) : String(value));
     });
 
-    if (!currentUser) return;
+    // Skip cloud save if no consent or offline mode
+    const consent = safeGetItem('consentGiven', 'false');
+    const offline = safeGetItem('offlineMode', 'false');
+    if (!currentUser || consent !== 'true' || offline === 'true') return;
+
     try {
       await db.collection('user_data').doc(currentUser.uid).set({
         data: data,
@@ -152,7 +200,10 @@
 
   // Event logging — track user actions in Firebase
   async function logEvent(eventName, props = {}) {
-    if (!currentUser) return;
+    // Skip logging if no consent or offline mode
+    const consent = safeGetItem('consentGiven', 'false');
+    const offline = safeGetItem('offlineMode', 'false');
+    if (!currentUser || consent !== 'true' || offline === 'true') return;
     try {
       await db.collection('events').add({
         uid: currentUser.uid,
@@ -2394,6 +2445,29 @@
     if (confirm('This will erase all your progress, streak, and data. Are you sure?')) {
       localStorage.clear();
       location.reload();
+    }
+  });
+
+  // Delete cloud data
+  const settingsDeleteCloud = document.getElementById('settings-delete-cloud');
+  settingsDeleteCloud.addEventListener('click', async (e) => {
+    e.stopPropagation();
+    if (!currentUser) {
+      alert('You need to be signed in to delete cloud data.');
+      return;
+    }
+    if (confirm('This will delete your data from Firebase. Local data will remain. Are you sure?')) {
+      try {
+        await db.collection('user_data').doc(currentUser.uid).delete();
+        // Also delete events
+        const eventsSnapshot = await db.collection('events').where('uid', '==', currentUser.uid).get();
+        const batch = db.batch();
+        eventsSnapshot.docs.forEach(doc => batch.delete(doc.ref));
+        await batch.commit();
+        alert('Cloud data deleted successfully.');
+      } catch (e) {
+        alert('Failed to delete cloud data: ' + e.message);
+      }
     }
   });
 

@@ -28,6 +28,33 @@
     </div>
     <canvas id="canvas" aria-label="Quit smoking simulation"></canvas>
 
+    <!-- Consent Screen -->
+    <div id="consent-screen" class="consent-screen">
+      <div class="consent-content">
+        <div class="consent-title">puff</div>
+        <div class="consent-sub">your quit companion</div>
+        <div class="consent-card">
+          <div class="consent-heading">Your privacy matters</div>
+          <div class="consent-text">
+            <p>We collect data to help you quit smoking:</p>
+            <ul>
+              <li>Smoking sessions and triggers</li>
+              <li>Money saved and progress</li>
+              <li>App usage patterns</li>
+            </ul>
+            <p>This data is stored securely in Firebase and synced across your devices. We never share it with third parties.</p>
+          </div>
+          <div class="consent-actions">
+            <button class="consent-accept" id="consent-accept">Accept & Sign In</button>
+            <button class="consent-offline" id="consent-offline">Use Offline Only</button>
+          </div>
+          <div class="consent-links">
+            <a href="#" class="consent-link">Privacy Policy</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Sign-in overlay -->
     <div id="signin-screen" class="signin-screen">
       <div class="signin-content">
@@ -279,6 +306,16 @@
             <div class="settings-stack-arrow">›</div>
           </button>
 
+          <!-- Delete cloud data -->
+          <button class="settings-stack-card settings-stack-danger" id="settings-delete-cloud">
+            <div class="settings-stack-icon" style="background:rgba(255,80,80,0.1)">☁️</div>
+            <div class="settings-stack-text">
+              <h3 style="color:rgba(255,80,80,0.7)">Delete cloud data</h3>
+              <p>Remove data from Firebase</p>
+            </div>
+            <div class="settings-stack-arrow">›</div>
+          </button>
+
           <!-- Sign out -->
           <button class="settings-stack-card settings-stack-danger" id="settings-signout">
             <div class="settings-stack-icon" style="background:rgba(255,80,80,0.1)">🚪</div>
@@ -316,7 +353,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-    <script src="app.js?v=65"></script>
+    <script src="app.js?v=66"></script>
     <script>
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('/sw.js').catch(() => {});
