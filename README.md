@@ -10,6 +10,7 @@ Built as a Progressive Web App (PWA) that runs entirely in the browser. Add it t
 
 ### Core Experience
 - **Hold + Blow mechanic** — hold anywhere on screen and blow into the mic to smoke
+- **Touch-only mode** — works without microphone (hold to burn at steady rate)
 - **Double-tap to flick ash** — shake off built-up ash with a double tap
 - **White noise smoking sound** — ambient audio feedback while smoking
 - **Background burn** — cigarette continues burning when you switch tabs
@@ -58,10 +59,11 @@ The cigarette renders on a Canvas 2D element with:
 ### Use it
 
 1. Open the app in Safari or Chrome on your phone
-2. Tap the screen to start
-3. Complete the 3-step onboarding tutorial
-4. Grant microphone access when prompted
-5. Select your trigger and hold the screen to smoke
+2. Tap "Get Started" on the welcome screen
+3. Accept privacy terms (or use offline only)
+4. Complete the 4-step onboarding tutorial
+5. Grant microphone access (or continue without mic)
+6. Select your trigger and hold the screen to smoke
 
 ### Run locally
 
@@ -95,11 +97,10 @@ Open `http://localhost:8000` in your browser.
 
 ```
 ├── index.html          # Main HTML with all screen overlays
-├── app.js              # Core application logic (~2800 lines)
-├── style.css           # All styling (~1700 lines)
+├── app.js              # Core application logic
+├── style.css           # All styling
 ├── sw.js               # Service worker for offline support
 ├── manifest.json       # PWA manifest
-├── mockups/            # Design mockups for features
 ├── screenshots/        # App screenshots
 ├── privacy.html        # Privacy policy
 └── terms.html          # Terms of service
