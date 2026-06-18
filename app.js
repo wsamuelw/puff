@@ -117,14 +117,27 @@
   const consentAccept = document.getElementById('consent-accept');
   const consentOffline = document.getElementById('consent-offline');
 
+  // Splash screen (value proposition)
+  const splashScreen = document.getElementById('splash-screen');
+  const splashStart = document.getElementById('splash-start');
+
   // Check if consent has been given
   const consentGiven = safeGetItem('consentGiven', 'false');
   const offlineMode = safeGetItem('offlineMode', 'false');
 
-  // Show consent screen if not given yet
+  // Show splash screen first if consent not given yet
   if (consentGiven === 'false') {
-    consentScreen.classList.add('visible');
+    splashScreen.classList.add('visible');
   }
+
+  // Splash "Get Started" → show consent
+  splashStart.addEventListener('click', (e) => {
+    e.stopPropagation();
+    splashScreen.classList.remove('visible');
+    setTimeout(() => {
+      consentScreen.classList.add('visible');
+    }, 300);
+  });
 
   // Accept consent — show sign-in
   consentAccept.addEventListener('click', (e) => {
@@ -255,6 +268,8 @@
   let W, H;
   let H_REF = 0; // fixed reference height for cigarette dimensions
   let micStarted = false;
+  let touchOnlyMode = false;
+  let reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   let micStream = null; // store stream for cleanup
   let audioCtx, analyser, dataArray, crackleGain, dragGain;
   let blowIntensity = 0;
@@ -631,17 +646,32 @@
       } catch (e) {}
       return true;
     } catch (err) {
-      promptEl.textContent = 'Microphone access denied. Tap to retry.';
+      // Show retry + skip options
+      promptEl.innerHTML = 'Microphone access denied.<br><span style="font-size:14px;opacity:0.7">Tap to retry · <span id="mic-skip" style="text-decoration:underline;cursor:pointer">Continue without mic</span></span>';
       promptEl.style.opacity = '1';
       promptEl.style.pointerEvents = 'auto';
       document.getElementById('overlay').style.pointerEvents = 'auto';
+      // Skip button handler
+      const skipBtn = document.getElementById('mic-skip');
+      if (skipBtn) {
+        skipBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          touchOnlyMode = true;
+          promptEl.style.opacity = '0';
+          promptEl.style.pointerEvents = 'none';
+          overlayEl.style.pointerEvents = 'none';
+          started = true;
+          gameStartTime = performance.now();
+          loopFrameId = requestAnimationFrame(loop);
+        });
+      }
       return false;
     }
   }
 
   // Retry mic on overlay tap
   overlayEl.addEventListener('click', async () => {
-    if (!micStarted) {
+    if (!micStarted && !touchOnlyMode) {
       // Hide the error message
       promptEl.style.opacity = '0';
       promptEl.style.pointerEvents = 'none';
@@ -715,7 +745,7 @@
     }
 
     // Trigger screen shake
-    shakeAmount = 6;
+    if (!reducedMotion) shakeAmount = 6;
 
     // After drop completes, reset ceiling to new ember position
     if (ashDropTimeout) clearTimeout(ashDropTimeout);
@@ -1333,6 +1363,7 @@
   const onboardingDots = document.getElementById('onboarding-dots');
   const onboardingNext = document.getElementById('onboarding-next');
   const ONBOARDING_STEPS = [
+    { icon: '🫁', title: 'Quit by simulating', desc: 'Each session you complete means a cigarette you didn\'t smoke in real life. Track your savings and understand your triggers.' },
     { icon: '👆', title: 'Hold to puff', desc: 'Press and hold anywhere on the screen to take a drag.' },
     { icon: '🌬️', title: 'Blow to burn', desc: 'Blow into the mic to burn the cigarette faster.' },
     { icon: '👆👆', title: 'Double-tap to flick', desc: 'Tap twice to flick the ash off.' },
@@ -2035,7 +2066,7 @@
     )) return;
 
     // Only start hold when game is running
-    if (started && !gameOver && micStarted) {
+    if (started && !gameOver && (micStarted || touchOnlyMode)) {
       holding = true;
       holdStartTime = performance.now();
       puffCompleting = false;
@@ -2905,6 +2936,7 @@
     if (gameOver) return; // Already ended
 
     gameOver = true;
+    touchOnlyMode = false;
     cleanupMic();
 
     // Calculate money based on how much was smoked

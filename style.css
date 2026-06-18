@@ -11,6 +11,21 @@
   user-select: none;
 }
 
+*:focus-visible {
+  outline: 2px solid #d4a574;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 html, body {
   width: 100%;
   height: 100%;
@@ -92,7 +107,8 @@ canvas {
 .menu-pill:hover,
 .menu-pill:focus {
   background: rgba(255,255,255,0.15);
-  outline: none;
+  outline: 2px solid #d4a574;
+  outline-offset: 2px;
 }
 
 .menu-pill:active {
@@ -183,6 +199,119 @@ body.light .fs-item span {
   opacity: 1;
   pointer-events: auto;
   transition: opacity 0.4s ease;
+}
+
+/* ─── Splash Screen ─── */
+.splash-screen {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 600;
+  background: #1a1a1a;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+body.light .splash-screen {
+  background: #faf9f7;
+}
+
+.splash-screen.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.splash-content {
+  text-align: center;
+  padding: 40px 32px;
+  max-width: 340px;
+}
+
+.splash-emoji {
+  font-size: 64px;
+  margin-bottom: 16px;
+}
+
+.splash-title {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 42px;
+  font-weight: 400;
+  font-style: italic;
+  color: #d4a574;
+  margin-bottom: 8px;
+}
+
+.splash-tagline {
+  font-size: 16px;
+  color: rgba(250,249,247,0.6);
+  margin-bottom: 40px;
+}
+
+body.light .splash-tagline {
+  color: rgba(26,26,26,0.5);
+}
+
+.splash-features {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 40px;
+  text-align: left;
+}
+
+.splash-feature {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.splash-feature-icon {
+  font-size: 24px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(212,165,116,0.15);
+  border-radius: 12px;
+  flex-shrink: 0;
+}
+
+.splash-feature-text {
+  font-size: 14px;
+  color: rgba(250,249,247,0.7);
+  line-height: 1.4;
+}
+
+body.light .splash-feature-text {
+  color: rgba(26,26,26,0.7);
+}
+
+.splash-start {
+  width: 100%;
+  padding: 18px;
+  min-height: 56px;
+  background: #d4a574;
+  border: none;
+  border-radius: 12px;
+  color: #1a1a1a;
+  font-family: 'Outfit', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.splash-start:hover {
+  background: #c49564;
+}
+
+.splash-start:active {
+  transform: scale(0.96);
 }
 
 /* ─── Consent Screen ─── */
@@ -296,7 +425,8 @@ body.light .consent-text {
 }
 
 .consent-accept {
-  padding: 14px;
+  padding: 16px;
+  min-height: 48px;
   background: #d4a574;
   border: none;
   border-radius: 12px;
@@ -318,7 +448,8 @@ body.light .consent-text {
 }
 
 .consent-offline {
-  padding: 14px;
+  padding: 16px;
+  min-height: 48px;
   background: transparent;
   border: 1px solid rgba(250,249,247,0.15);
   border-radius: 12px;
@@ -802,6 +933,7 @@ body.dark .triggers-screen {
   left: 0;
   width: 100%;
   padding: 16px 20px;
+  padding-top: calc(16px + env(safe-area-inset-top, 0px));
   min-height: 48px;
   display: flex;
   align-items: center;
@@ -1116,6 +1248,12 @@ body.dark .triggers-heatmap-insight {
   padding: 40px 24px;
 }
 
+@supports (padding-top: env(safe-area-inset-top)) {
+  .trigger-screen {
+    padding-top: calc(40px + env(safe-area-inset-top));
+  }
+}
+
 body.light .trigger-screen {
   background: rgba(250,249,247,0.95);
 }
@@ -1213,6 +1351,12 @@ body.light .trigger-done {
   pointer-events: none;
   transition: opacity 0.4s ease;
   padding: 40px 24px;
+}
+
+@supports (padding-top: env(safe-area-inset-top)) {
+  .idle-screen {
+    padding-top: calc(40px + env(safe-area-inset-top));
+  }
 }
 
 body.light .idle-screen {
@@ -1428,6 +1572,45 @@ body.light .idle-offline {
   color: rgba(26,26,26,0.7);
 }
 
+/* ─── Milestone Card Dark Mode ─── */
+body.dark .milestone-card {
+  background: #1e1e1e;
+}
+
+body.dark .milestone-title {
+  color: #f5f0eb;
+}
+
+body.dark .milestone-desc {
+  color: rgba(245,240,235,0.5);
+}
+
+body.dark .milestone-stat-num {
+  color: #f5f0eb;
+}
+
+body.dark .milestone-stat-label {
+  color: rgba(245,240,235,0.3);
+}
+
+body.dark .milestone-brand {
+  color: rgba(245,240,235,0.2);
+}
+
+body.dark .milestone-share {
+  color: #1a1a1a;
+}
+
+body.dark .milestone-close {
+  border-color: rgba(245,240,235,0.1);
+  color: rgba(245,240,235,0.5);
+}
+
+body.dark .milestone-close:hover {
+  border-color: rgba(245,240,235,0.2);
+  color: rgba(245,240,235,0.7);
+}
+
 /* ─── Badge Notification ─── */
 .badge-notification {
   position: fixed;
@@ -1494,7 +1677,8 @@ body.light .idle-offline {
 }
 
 .badge-notification-close {
-  padding: 12px 32px;
+  padding: 14px 32px;
+  min-height: 48px;
   background: #d4a574;
   border: none;
   border-radius: 12px;
@@ -1513,6 +1697,18 @@ body.light .idle-offline {
 
 .badge-notification-close:active {
   transform: scale(0.96);
+}
+
+body.light .badge-notification-content {
+  background: #fff;
+}
+
+body.light .badge-notification-title {
+  color: #1a1a1a;
+}
+
+body.light .badge-notification-name {
+  color: #b8875a;
 }
 
 /* ─── Badges Screen ─── */
@@ -1546,6 +1742,7 @@ body.dark .badges-screen {
   left: 0;
   width: 100%;
   padding: 16px 20px;
+  padding-top: calc(16px + env(safe-area-inset-top, 0px));
   min-height: 48px;
   display: flex;
   align-items: center;
@@ -1612,6 +1809,8 @@ body.dark .badges-sub {
 .badge-item {
   text-align: center;
   cursor: pointer;
+  min-height: 48px;
+  padding: 8px 4px;
 }
 
 .badge-item-icon {
@@ -1764,7 +1963,8 @@ body.light .badge-modal-status {
 
 .badge-modal-close {
   margin-top: 20px;
-  padding: 12px 32px;
+  padding: 14px 32px;
+  min-height: 48px;
   background: rgba(255,255,255,0.06);
   border: 1px solid rgba(255,255,255,0.1);
   border-radius: 12px;
@@ -1803,6 +2003,12 @@ body.light .badge-modal-close:hover {
   pointer-events: none;
   transition: opacity 0.4s ease;
   padding: 40px 24px;
+}
+
+@supports (padding-top: env(safe-area-inset-top)) {
+  .end-screen {
+    padding-top: calc(40px + env(safe-area-inset-top));
+  }
 }
 
 body.light .end-screen {
@@ -2235,7 +2441,8 @@ body.dark .slipup-btn {
 .slipup-btn:hover,
 .slipup-btn:focus {
   opacity: 0.8;
-  outline: none;
+  outline: 2px solid #d4a574;
+  outline-offset: 2px;
 }
 
 .slipup-secondary {
@@ -2261,7 +2468,8 @@ body.dark .slipup-secondary {
 .slipup-secondary:hover,
 .slipup-secondary:focus {
   color: rgba(26,26,26,0.7);
-  outline: none;
+  outline: 2px solid #d4a574;
+  outline-offset: 2px;
 }
 
 body.dark .slipup-secondary:hover,
@@ -2300,6 +2508,7 @@ body.dark .settings-screen {
   left: 0;
   width: 100%;
   padding: 16px 20px;
+  padding-top: calc(16px + env(safe-area-inset-top, 0px));
   min-height: 48px;
   display: flex;
   align-items: center;
@@ -2513,6 +2722,7 @@ body.dark .settings-edit-title {
   color: #1a1a1a;
   outline: none;
   margin-bottom: 16px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 body.dark .settings-edit-input {
@@ -2523,6 +2733,7 @@ body.dark .settings-edit-input {
 
 .settings-edit-input:focus {
   border-color: #d4a574;
+  box-shadow: 0 0 0 3px rgba(212,165,116,0.2);
 }
 
 .settings-edit-actions {
@@ -2532,7 +2743,8 @@ body.dark .settings-edit-input {
 
 .settings-edit-cancel {
   flex: 1;
-  padding: 12px;
+  padding: 14px;
+  min-height: 48px;
   border: 1px solid rgba(0,0,0,0.08);
   border-radius: 12px;
   background: transparent;
@@ -2549,7 +2761,8 @@ body.dark .settings-edit-cancel {
 
 .settings-edit-save {
   flex: 1;
-  padding: 12px;
+  padding: 14px;
+  min-height: 48px;
   border: none;
   border-radius: 12px;
   background: #d4a574;
@@ -2563,11 +2776,11 @@ body.dark .settings-edit-cancel {
 /* Toggle switch */
 .settings-toggle {
   position: relative;
-  width: 48px;
-  height: 44px;
+  width: 51px;
+  height: 31px;
   background: rgba(26, 26, 26, 0.1);
   border: none;
-  border-radius: 22px;
+  border-radius: 15.5px;
   cursor: pointer;
   transition: background 0.3s ease;
   flex-shrink: 0;
@@ -2588,10 +2801,10 @@ body.dark .settings-toggle.active {
 .settings-toggle::after {
   content: '';
   position: absolute;
-  top: 4px;
-  left: 4px;
-  width: 36px;
-  height: 36px;
+  top: 2px;
+  left: 2px;
+  width: 27px;
+  height: 27px;
   border-radius: 50%;
   background: #fff;
   box-shadow: 0 1px 3px rgba(0,0,0,0.15);
@@ -2603,7 +2816,7 @@ body.dark .settings-toggle::after {
 }
 
 .settings-toggle.active::after {
-  transform: translateX(4px);
+  transform: translateX(20px);
 }
 
 .settings-version {

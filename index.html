@@ -28,6 +28,30 @@
     </div>
     <canvas id="canvas" aria-label="Quit smoking simulation"></canvas>
 
+    <!-- Splash Screen (Value Proposition) -->
+    <div id="splash-screen" class="splash-screen">
+      <div class="splash-content">
+        <div class="splash-emoji">🫁</div>
+        <div class="splash-title">puff</div>
+        <div class="splash-tagline">simulate smoking to quit smoking</div>
+        <div class="splash-features">
+          <div class="splash-feature">
+            <span class="splash-feature-icon">🚬</span>
+            <span class="splash-feature-text">Hold & blow to simulate a cigarette</span>
+          </div>
+          <div class="splash-feature">
+            <span class="splash-feature-icon">💰</span>
+            <span class="splash-feature-text">Track money saved with every session</span>
+          </div>
+          <div class="splash-feature">
+            <span class="splash-feature-icon">📊</span>
+            <span class="splash-feature-text">Understand your craving triggers</span>
+          </div>
+        </div>
+        <button class="splash-start" id="splash-start">Get Started</button>
+      </div>
+    </div>
+
     <!-- Consent Screen -->
     <div id="consent-screen" class="consent-screen">
       <div class="consent-content">
@@ -80,6 +104,7 @@
         <div class="onboarding-footer">
           <div class="onboarding-dots" id="onboarding-dots">
             <div class="onboarding-dot active"></div>
+            <div class="onboarding-dot"></div>
             <div class="onboarding-dot"></div>
             <div class="onboarding-dot"></div>
           </div>
@@ -419,7 +444,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-    <script src="app.js?v=70"></script>
+    <script src="app.js?v=71"></script>
     <script>
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('/sw.js').catch(() => {});
