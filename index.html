@@ -185,6 +185,18 @@
       </div>
     </div>
 
+    <!-- Badges Screen -->
+    <div id="badges-screen" class="badges-screen" role="dialog" aria-label="Badges">
+      <button id="badges-back" class="badges-back" aria-label="Back">← Back</button>
+      <div class="badges-content">
+        <h2 class="badges-title">Badges</h2>
+        <p class="badges-sub" id="badges-sub">Your collection</p>
+        <div class="badges-grid" id="badges-grid">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </div>
+
     <!-- Menu Overlay -->
     <div id="menu-overlay" class="menu-overlay" role="dialog" aria-label="Menu">
       <div class="menu-content">
@@ -308,6 +320,16 @@
             <div class="settings-stack-value" id="settings-price-display">$1.00</div>
           </button>
 
+          <!-- Badges -->
+          <button class="settings-stack-card" id="settings-badges-card">
+            <div class="settings-stack-icon">🏆</div>
+            <div class="settings-stack-text">
+              <h3>Badges</h3>
+              <p>Your achievements</p>
+            </div>
+            <div class="settings-stack-value" id="settings-badges-count">0/24</div>
+          </button>
+
           <!-- Dark mode -->
           <div class="settings-stack-card" id="settings-dark-card">
             <div class="settings-stack-icon">🌙</div>
@@ -375,7 +397,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-    <script src="app.js?v=68"></script>
+    <script src="app.js?v=69"></script>
     <script>
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('/sw.js').catch(() => {});

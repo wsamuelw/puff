@@ -1189,6 +1189,119 @@
   let selectedTrigger = null;
   let triggerSubmitted = false;
 
+  // Badge definitions
+  const BADGES = [
+    // Streak
+    { id: 'first_step', emoji: '🌱', name: 'First Step', desc: 'Complete your first session', category: 'streak', check: () => sessionCount >= 1 },
+    { id: '3_day', emoji: '🔥', name: '3-Day Streak', desc: 'Stay smoke-free for 3 days', category: 'streak', check: () => getDaysSinceLastSession() >= 3 },
+    { id: '1_week', emoji: '💪', name: 'One Week', desc: '7 days smoke-free', category: 'streak', check: () => getDaysSinceLastSession() >= 7 },
+    { id: '2_weeks', emoji: '🏆', name: 'Two Weeks', desc: '14 days smoke-free', category: 'streak', check: () => getDaysSinceLastSession() >= 14 },
+    { id: '1_month', emoji: '👑', name: 'One Month', desc: '30 days smoke-free', category: 'streak', check: () => getDaysSinceLastSession() >= 30 },
+    { id: '3_months', emoji: '💎', name: '3 Months', desc: '90 days smoke-free', category: 'streak', check: () => getDaysSinceLastSession() >= 90 },
+    { id: '6_months', emoji: '🌟', name: '6 Months', desc: '180 days smoke-free', category: 'streak', check: () => getDaysSinceLastSession() >= 180 },
+    { id: '1_year', emoji: '🧠', name: '1 Year', desc: '365 days smoke-free', category: 'streak', check: () => getDaysSinceLastSession() >= 365 },
+    // Savings
+    { id: 'save_10', emoji: '💰', name: '$10 Saved', desc: 'Save $10 in total', category: 'savings', check: () => totalMoneySaved >= 10 },
+    { id: 'save_50', emoji: '💵', name: '$50 Saved', desc: 'Save $50 in total', category: 'savings', check: () => totalMoneySaved >= 50 },
+    { id: 'save_100', emoji: '💳', name: '$100 Saved', desc: 'Save $100 in total', category: 'savings', check: () => totalMoneySaved >= 100 },
+    { id: 'save_500', emoji: '🏦', name: '$500 Saved', desc: 'Save $500 in total', category: 'savings', check: () => totalMoneySaved >= 500 },
+    // Cigarettes avoided
+    { id: 'cig_10', emoji: '🚭', name: '10 Cigarettes', desc: 'Avoid 10 cigarettes', category: 'cigarettes', check: () => totalCigarettesAvoided >= 10 },
+    { id: 'cig_50', emoji: '🚭', name: '50 Cigarettes', desc: 'Avoid 50 cigarettes', category: 'cigarettes', check: () => totalCigarettesAvoided >= 50 },
+    { id: 'cig_100', emoji: '🚭', name: '100 Cigarettes', desc: 'Avoid 100 cigarettes', category: 'cigarettes', check: () => totalCigarettesAvoided >= 100 },
+    { id: 'cig_500', emoji: '🚭', name: '500 Cigarettes', desc: 'Avoid 500 cigarettes', category: 'cigarettes', check: () => totalCigarettesAvoided >= 500 },
+    // Sessions
+    { id: 'sess_10', emoji: '🎯', name: '10 Sessions', desc: 'Complete 10 sessions', category: 'sessions', check: () => sessionCount >= 10 },
+    { id: 'sess_50', emoji: '🎯', name: '50 Sessions', desc: 'Complete 50 sessions', category: 'sessions', check: () => sessionCount >= 50 },
+    { id: 'sess_100', emoji: '🎯', name: '100 Sessions', desc: 'Complete 100 sessions', category: 'sessions', check: () => sessionCount >= 100 },
+    { id: 'sess_500', emoji: '🎯', name: '500 Sessions', desc: 'Complete 500 sessions', category: 'sessions', check: () => sessionCount >= 500 },
+    // Special
+    { id: 'calm', emoji: '🧘', name: 'Calm', desc: '5 sessions without stress trigger', category: 'special', check: () => getNonStressSessions() >= 5 },
+    { id: 'early_bird', emoji: '🌅', name: 'Early Bird', desc: '5 sessions before 9am', category: 'special', check: () => getEarlySessions() >= 5 },
+    { id: 'night_owl', emoji: '🦉', name: 'Night Owl', desc: '5 sessions after 10pm', category: 'special', check: () => getLateSessions() >= 5 },
+    { id: 'weekend', emoji: '⚔️', name: 'Weekend Warrior', desc: '7 sessions on weekends', category: 'special', check: () => getWeekendSessions() >= 7 },
+  ];
+
+  // Badge helper functions
+  function getDaysSinceLastSession() {
+    const lastSession = parseInt(safeGetItem('lastSessionDate', '0'));
+    if (!lastSession) return 0;
+    return Math.floor((Date.now() - lastSession) / (24 * 60 * 60 * 1000));
+  }
+
+  function getNonStressSessions() {
+    const logs = JSON.parse(safeGetItem('cravingLogs', '[]'));
+    return logs.filter(l => l.trigger && l.trigger !== 'stress').length;
+  }
+
+  function getEarlySessions() {
+    const logs = JSON.parse(safeGetItem('cravingLogs', '[]'));
+    return logs.filter(l => {
+      const hour = new Date(l.time).getHours();
+      return hour < 9;
+    }).length;
+  }
+
+  function getLateSessions() {
+    const logs = JSON.parse(safeGetItem('cravingLogs', '[]'));
+    return logs.filter(l => {
+      const hour = new Date(l.time).getHours();
+      return hour >= 22;
+    }).length;
+  }
+
+  function getWeekendSessions() {
+    const logs = JSON.parse(safeGetItem('cravingLogs', '[]'));
+    return logs.filter(l => {
+      const day = new Date(l.time).getDay();
+      return day === 0 || day === 6;
+    }).length;
+  }
+
+  // Check for new badges after session
+  function checkBadges() {
+    const earned = JSON.parse(safeGetItem('earnedBadges', '[]'));
+    const newBadges = [];
+
+    BADGES.forEach(badge => {
+      if (!earned.includes(badge.id) && badge.check()) {
+        earned.push(badge.id);
+        newBadges.push(badge);
+      }
+    });
+
+    if (newBadges.length > 0) {
+      safeSetItem('earnedBadges', JSON.stringify(earned));
+      // Show notification for first new badge
+      showBadgeNotification(newBadges[0]);
+    }
+  }
+
+  // Show badge notification
+  function showBadgeNotification(badge) {
+    const notification = document.createElement('div');
+    notification.className = 'badge-notification';
+    notification.innerHTML = `
+      <div class="badge-notification-content">
+        <div class="badge-notification-icon">🎉</div>
+        <div class="badge-notification-title">Badge Earned!</div>
+        <div class="badge-notification-badge">
+          <span class="badge-notification-emoji">${badge.emoji}</span>
+          <span class="badge-notification-name">${badge.name}</span>
+        </div>
+        <button class="badge-notification-close" onclick="this.parentElement.parentElement.remove()">Nice!</button>
+      </div>
+    `;
+    document.body.appendChild(notification);
+
+    // Auto-remove after 5 seconds
+    setTimeout(() => {
+      if (notification.parentElement) {
+        notification.remove();
+      }
+    }, 5000);
+  }
+
   // HTML trigger screen elements
   const triggerScreen = document.getElementById('trigger-screen');
   const triggerGrid = document.getElementById('trigger-grid');
@@ -2249,7 +2362,14 @@
   const settingsTotalSaved = document.getElementById('settings-total-saved');
   const settingsPriceDisplay = document.getElementById('settings-price-display');
   const settingsNameDisplay = document.getElementById('settings-name-display');
+  const settingsBadgesCount = document.getElementById('settings-badges-count');
   const menuSettings = document.getElementById('menu-settings');
+
+  // Badges screen elements
+  const badgesScreen = document.getElementById('badges-screen');
+  const badgesBack = document.getElementById('badges-back');
+  const badgesGrid = document.getElementById('badges-grid');
+  const badgesSub = document.getElementById('badges-sub');
 
   // Edit modal elements
   const settingsEditModal = document.getElementById('settings-edit-modal');
@@ -2270,6 +2390,10 @@
     // Update name display
     const userName = safeGetItem('userName', '');
     settingsNameDisplay.textContent = userName || 'Set name';
+
+    // Update badges count
+    const earned = JSON.parse(safeGetItem('earnedBadges', '[]'));
+    settingsBadgesCount.textContent = earned.length + '/' + BADGES.length;
   }
 
   // Save settings to cloud + localStorage
@@ -2357,6 +2481,87 @@
   document.getElementById('settings-price-card').addEventListener('click', (e) => {
     e.stopPropagation();
     openEditModal('price');
+  });
+
+  // Open badges from settings
+  document.getElementById('settings-badges-card').addEventListener('click', (e) => {
+    e.stopPropagation();
+    closeMenu();
+    buildBadgesGrid();
+    history.pushState({screen:'badges'}, '');
+    badgesScreen.classList.add('visible');
+  });
+
+  // Build badges grid
+  function buildBadgesGrid() {
+    const earned = JSON.parse(safeGetItem('earnedBadges', '[]'));
+    badgesSub.textContent = earned.length + ' of ' + BADGES.length + ' earned';
+
+    badgesGrid.innerHTML = '';
+    const categories = ['streak', 'savings', 'cigarettes', 'sessions', 'special'];
+    const categoryLabels = { streak: 'Streak', savings: 'Savings', cigarettes: 'Cigarettes Avoided', sessions: 'Sessions', special: 'Special' };
+
+    categories.forEach(category => {
+      const categoryBadges = BADGES.filter(b => b.category === category);
+      if (categoryBadges.length === 0) return;
+
+      const section = document.createElement('div');
+      section.className = 'badges-section';
+
+      const title = document.createElement('div');
+      title.className = 'badges-section-title';
+      title.textContent = categoryLabels[category];
+      section.appendChild(title);
+
+      const grid = document.createElement('div');
+      grid.className = 'badges-grid';
+
+      categoryBadges.forEach(badge => {
+        const isEarned = earned.includes(badge.id);
+        const item = document.createElement('div');
+        item.className = 'badge-item';
+        item.innerHTML = `
+          <div class="badge-item-icon ${isEarned ? 'earned' : ''}">${badge.emoji}</div>
+          <div class="badge-item-name ${isEarned ? 'earned' : ''}">${badge.name}</div>
+        `;
+        item.addEventListener('click', () => {
+          showBadgeDetail(badge, isEarned);
+        });
+        grid.appendChild(item);
+      });
+
+      section.appendChild(grid);
+      badgesGrid.appendChild(section);
+    });
+  }
+
+  // Show badge detail modal
+  function showBadgeDetail(badge, isEarned) {
+    const modal = document.createElement('div');
+    modal.className = 'badge-modal visible';
+    modal.innerHTML = `
+      <div class="badge-modal-content">
+        <div class="badge-modal-icon">${badge.emoji}</div>
+        <div class="badge-modal-name">${badge.name}</div>
+        <div class="badge-modal-desc">${badge.desc}</div>
+        <div class="badge-modal-status ${isEarned ? 'earned' : ''}">${isEarned ? '✓ Earned' : '🔒 Locked'}</div>
+        <button class="badge-modal-close">Close</button>
+      </div>
+    `;
+    document.body.appendChild(modal);
+
+    modal.querySelector('.badge-modal-close').addEventListener('click', () => {
+      modal.remove();
+    });
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) modal.remove();
+    });
+  }
+
+  // Back button for badges screen
+  badgesBack.addEventListener('click', (e) => {
+    e.stopPropagation();
+    badgesScreen.classList.remove('visible');
   });
 
   // Open settings from menu
@@ -2673,8 +2878,12 @@
       moneySaved: totalMoneySaved,
       cigarettesAvoided: totalCigarettesAvoided,
       quitStartDate: quitStartDate,
-      lastSessionDate: Date.now()
+      lastSessionDate: Date.now(),
+      earnedBadges: JSON.parse(safeGetItem('earnedBadges', '[]'))
     });
+
+    // Check for new badges
+    checkBadges();
   }
 
   function savePartialProgress() {
