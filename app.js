@@ -2033,21 +2033,38 @@
     const sorted = Object.entries(triggerCounts).sort((a, b) => b[1] - a[1]);
     const maxCount = sorted[0][1];
 
-    // Trigger icons mapping
+    // Trigger icons mapping (by ID)
     const triggerIcons = {
-      'Stress': '😰',
-      'Drinking': '🍺',
-      'Coffee': '☕',
-      'After meals': '🍽️',
-      'Boredom': '😑',
-      'Driving': '🚗',
-      'After sex': '❤️',
-      'Work break': '💼',
-      'Scrolling': '📱',
-      'Walking': '🚶',
-      'Social pressure': '🍻',
-      'Morning routine': '🌅',
-      'Unknown': '❓'
+      'stress': '😰',
+      'drinking': '🍺',
+      'coffee': '☕',
+      'meals': '🍽️',
+      'boredom': '😑',
+      'driving': '🚗',
+      'aftersex': '❤️',
+      'workbreak': '💼',
+      'scrolling': '📱',
+      'walking': '🚶',
+      'social': '🍻',
+      'morning': '🌅',
+      'other': '💭'
+    };
+
+    // Trigger labels mapping (by ID)
+    const triggerLabels = {
+      'stress': 'Stress',
+      'drinking': 'Drinking',
+      'coffee': 'Coffee',
+      'meals': 'After meals',
+      'boredom': 'Boredom',
+      'driving': 'Driving',
+      'aftersex': 'After sex',
+      'workbreak': 'Work break',
+      'scrolling': 'Scrolling',
+      'walking': 'Walking',
+      'social': 'Social pressure',
+      'morning': 'Morning routine',
+      'other': 'Other'
     };
 
     // Bar colors
@@ -2058,13 +2075,14 @@
     sorted.forEach(([trigger, count], i) => {
       const pct = (count / maxCount) * 100;
       const icon = triggerIcons[trigger] || '📊';
+      const label = triggerLabels[trigger] || trigger;
       const color = barColors[i] || 'gray';
 
       const group = document.createElement('div');
       group.className = 'trigger-bar-group';
       group.innerHTML = `
         <div class="trigger-bar-header">
-          <div class="trigger-bar-name"><span class="trigger-bar-icon">${icon}</span>${trigger}</div>
+          <div class="trigger-bar-name"><span class="trigger-bar-icon">${icon}</span>${label}</div>
           <div class="trigger-bar-count">${count}</div>
         </div>
         <div class="trigger-bar-track">
