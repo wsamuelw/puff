@@ -1246,6 +1246,125 @@ body.light .idle-offline {
   transform: scale(0.96);
 }
 
+/* ─── Milestone Card ─── */
+.milestone-card-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 500;
+  padding: 24px;
+}
+
+.milestone-card {
+  background: #fff;
+  border-radius: 20px;
+  padding: 40px 32px;
+  text-align: center;
+  max-width: 320px;
+  width: 100%;
+}
+
+.milestone-emoji {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.milestone-title {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 24px;
+  color: #1a1a1a;
+  margin-bottom: 4px;
+}
+
+.milestone-desc {
+  font-size: 14px;
+  color: rgba(26,26,26,0.5);
+  margin-bottom: 24px;
+}
+
+.milestone-stats {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.milestone-stat {
+  text-align: center;
+}
+
+.milestone-stat-num {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 28px;
+  color: #1a1a1a;
+}
+
+.milestone-stat-label {
+  font-size: 11px;
+  color: rgba(26,26,26,0.3);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 4px;
+}
+
+.milestone-brand {
+  font-size: 11px;
+  color: rgba(26,26,26,0.2);
+  margin-bottom: 24px;
+}
+
+.milestone-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.milestone-share {
+  flex: 1;
+  padding: 14px;
+  background: #d4a574;
+  border: none;
+  border-radius: 12px;
+  color: #1a1a1a;
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.milestone-share:hover {
+  background: #c49564;
+}
+
+.milestone-share:active {
+  transform: scale(0.96);
+}
+
+.milestone-close {
+  flex: 1;
+  padding: 14px;
+  background: transparent;
+  border: 1px solid rgba(0,0,0,0.1);
+  border-radius: 12px;
+  color: rgba(26,26,26,0.5);
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.milestone-close:hover {
+  border-color: rgba(0,0,0,0.2);
+  color: rgba(26,26,26,0.7);
+}
+
 /* ─── End Screen ─── */
 .end-screen {
   position: fixed;

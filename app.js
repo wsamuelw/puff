@@ -1387,8 +1387,96 @@
     // Build trigger bars
     buildEndTriggerBars();
 
+    // Check for milestones
+    checkMilestones(daysSinceStart);
+
     endScreen.classList.add('visible');
     gameState = 'end';
+  }
+
+  // Milestone definitions
+  const MILESTONES = [
+    { days: 1, title: '1 Day Smoke-Free!', desc: 'The hardest day is behind you.' },
+    { days: 3, title: '3 Days Smoke-Free!', desc: 'Nicotine is leaving your body.' },
+    { days: 7, title: '1 Week Smoke-Free!', desc: 'Your lungs are starting to heal.' },
+    { days: 14, title: '2 Weeks Smoke-Free!', desc: 'Circulation improving.' },
+    { days: 30, title: '1 Month Smoke-Free!', desc: 'Lung function increasing.' },
+    { days: 90, title: '3 Months Smoke-Free!', desc: 'Heart disease risk dropping.' },
+    { days: 365, title: '1 Year Smoke-Free!', desc: 'Heart disease risk halved.' },
+  ];
+
+  // Check and show milestones
+  function checkMilestones(daysSinceStart) {
+    const milestone = MILESTONES.find(m => m.days === daysSinceStart);
+    if (!milestone) return;
+
+    // Check if already shown
+    const shown = safeGetItem('milestonesShown', '[]');
+    const shownList = JSON.parse(shown);
+    if (shownList.includes(milestone.days)) return;
+
+    // Mark as shown
+    shownList.push(milestone.days);
+    safeSetItem('milestonesShown', JSON.stringify(shownList));
+
+    // Show share card
+    showMilestoneCard(milestone);
+  }
+
+  // Show milestone share card
+  function showMilestoneCard(milestone) {
+    const card = document.createElement('div');
+    card.className = 'milestone-card-overlay';
+    card.innerHTML = `
+      <div class="milestone-card">
+        <div class="milestone-emoji">🎉</div>
+        <div class="milestone-title">${milestone.title}</div>
+        <div class="milestone-desc">${milestone.desc}</div>
+        <div class="milestone-stats">
+          <div class="milestone-stat">
+            <div class="milestone-stat-num">$${Math.floor(totalMoneySaved)}</div>
+            <div class="milestone-stat-label">Saved</div>
+          </div>
+          <div class="milestone-stat">
+            <div class="milestone-stat-num">${totalCigarettesAvoided}</div>
+            <div class="milestone-stat-label">Cigarettes</div>
+          </div>
+        </div>
+        <div class="milestone-brand">puff — your quit companion</div>
+        <div class="milestone-actions">
+          <button class="milestone-share" id="milestone-share">Share</button>
+          <button class="milestone-close" id="milestone-close">Close</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(card);
+
+    // Share button
+    document.getElementById('milestone-share').addEventListener('click', async () => {
+      try {
+        // Generate share text
+        const shareText = `${milestone.title}\n\n💰 $${Math.floor(totalMoneySaved)} saved\n🚬 ${totalCigarettesAvoided} cigarettes avoided\n\npuff — your quit companion`;
+
+        // Use Web Share API if available
+        if (navigator.share) {
+          await navigator.share({
+            title: milestone.title,
+            text: shareText,
+          });
+        } else {
+          // Fallback: copy to clipboard
+          await navigator.clipboard.writeText(shareText);
+          alert('Copied to clipboard!');
+        }
+      } catch (e) {
+        // User cancelled share
+      }
+    });
+
+    // Close button
+    document.getElementById('milestone-close').addEventListener('click', () => {
+      card.remove();
+    });
   }
 
   // Build trigger bars for end screen
