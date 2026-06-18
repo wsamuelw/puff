@@ -160,6 +160,28 @@
         <div class="triggers-bars" id="triggers-bars">
           <!-- Populated by JS -->
         </div>
+
+        <!-- Time-of-day heatmap -->
+        <div class="triggers-heatmap-section">
+          <div class="triggers-heatmap-title">When you smoke</div>
+          <div class="triggers-heatmap-wrap">
+            <div class="triggers-heatmap-hours">
+              <span>12a</span><span>3a</span><span>6a</span><span>9a</span><span>12p</span><span>3p</span><span>6p</span><span>9p</span>
+            </div>
+            <div class="triggers-heatmap-grid" id="triggers-heatmap-grid">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+          <div class="triggers-heatmap-legend">
+            <span>Less</span>
+            <div class="triggers-heatmap-cell"></div>
+            <div class="triggers-heatmap-cell l1"></div>
+            <div class="triggers-heatmap-cell l2"></div>
+            <div class="triggers-heatmap-cell l3"></div>
+            <span>More</span>
+          </div>
+          <div class="triggers-heatmap-insight" id="triggers-heatmap-insight"></div>
+        </div>
       </div>
     </div>
 
@@ -353,7 +375,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-    <script src="app.js?v=66"></script>
+    <script src="app.js?v=67"></script>
     <script>
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('/sw.js').catch(() => {});

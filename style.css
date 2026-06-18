@@ -938,6 +938,103 @@ body.dark .triggers-empty {
   color: rgba(250,249,247,0.5);
 }
 
+/* Time-of-day heatmap */
+.triggers-heatmap-section {
+  margin-top: 32px;
+}
+
+.triggers-heatmap-title {
+  font-size: 12px;
+  color: rgba(26,26,26,0.3);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 12px;
+}
+
+body.dark .triggers-heatmap-title {
+  color: rgba(250,249,247,0.3);
+}
+
+.triggers-heatmap-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.triggers-heatmap-hours {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+  padding: 0 2px;
+}
+
+.triggers-heatmap-hours span {
+  font-size: 9px;
+  color: rgba(26,26,26,0.3);
+  width: 26px;
+  text-align: center;
+}
+
+body.dark .triggers-heatmap-hours span {
+  color: rgba(250,249,247,0.3);
+}
+
+.triggers-heatmap-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.triggers-heatmap-row {
+  display: flex;
+  gap: 2px;
+}
+
+.triggers-heatmap-cell {
+  width: 13px;
+  height: 13px;
+  border-radius: 2px;
+  background: rgba(0,0,0,0.04);
+}
+
+body.dark .triggers-heatmap-cell {
+  background: rgba(250,249,247,0.04);
+}
+
+.triggers-heatmap-cell.l1 { background: rgba(184,135,90,0.25); }
+.triggers-heatmap-cell.l2 { background: rgba(184,135,90,0.45); }
+.triggers-heatmap-cell.l3 { background: rgba(184,135,90,0.65); }
+.triggers-heatmap-cell.l4 { background: rgba(184,135,90,0.85); }
+
+.triggers-heatmap-legend {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 8px;
+  justify-content: flex-end;
+  font-size: 10px;
+  color: rgba(26,26,26,0.3);
+}
+
+body.dark .triggers-heatmap-legend {
+  color: rgba(250,249,247,0.3);
+}
+
+.triggers-heatmap-legend .triggers-heatmap-cell {
+  width: 10px;
+  height: 10px;
+}
+
+.triggers-heatmap-insight {
+  font-size: 13px;
+  color: rgba(26,26,26,0.5);
+  margin-top: 12px;
+  font-style: italic;
+}
+
+body.dark .triggers-heatmap-insight {
+  color: rgba(250,249,247,0.5);
+}
+
 /* ─── Trigger Selection Screen ─── */
 .trigger-screen {
   position: fixed;

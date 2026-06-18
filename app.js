@@ -2369,6 +2369,67 @@
         });
       });
     });
+
+    // Build time-of-day heatmap
+    buildTimeHeatmap(logs);
+  }
+
+  // Build time-of-day heatmap
+  function buildTimeHeatmap(logs) {
+    const heatmapGrid = document.getElementById('triggers-heatmap-grid');
+    const heatmapInsight = document.getElementById('triggers-heatmap-insight');
+
+    // Count sessions by day of week (0=Sun) and hour (0-23)
+    const counts = Array.from({ length: 7 }, () => new Array(24).fill(0));
+    let peakDay = 0;
+    let peakHour = 0;
+    let peakCount = 0;
+
+    logs.forEach(log => {
+      const date = new Date(log.time);
+      const day = date.getDay();
+      const hour = date.getHours();
+      counts[day][hour]++;
+      if (counts[day][hour] > peakCount) {
+        peakCount = counts[day][hour];
+        peakDay = day;
+        peakHour = hour;
+      }
+    });
+
+    // Find max count for scaling
+    const maxCount = Math.max(...counts.flat(), 1);
+
+    // Day labels
+    const dayLabels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+    // Build heatmap grid
+    heatmapGrid.innerHTML = '';
+    for (let d = 0; d < 7; d++) {
+      const row = document.createElement('div');
+      row.className = 'triggers-heatmap-row';
+      for (let h = 0; h < 24; h++) {
+        const cell = document.createElement('div');
+        cell.className = 'triggers-heatmap-cell';
+        const count = counts[d][h];
+        if (count > 0) {
+          const level = Math.min(4, Math.ceil((count / maxCount) * 4));
+          cell.classList.add('l' + level);
+        }
+        cell.title = `${dayLabels[d]} ${h}:00 - ${count} session${count !== 1 ? 's' : ''}`;
+        row.appendChild(cell);
+      }
+      heatmapGrid.appendChild(row);
+    }
+
+    // Build insight message
+    if (peakCount > 0) {
+      const dayName = dayLabels[peakDay];
+      const hourStr = peakHour === 0 ? '12am' : peakHour < 12 ? peakHour + 'am' : peakHour === 12 ? '12pm' : (peakHour - 12) + 'pm';
+      heatmapInsight.textContent = `Your peak time: ${dayName} ${hourStr}`;
+    } else {
+      heatmapInsight.textContent = '';
+    }
   }
 
   // Open triggers from menu
