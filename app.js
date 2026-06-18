@@ -21,6 +21,7 @@
   const canvas = document.getElementById('canvas');
   const ctx = canvas.getContext('2d');
   const promptEl = document.getElementById('prompt');
+  const overlayEl = document.getElementById('overlay');
 
   // --- Safe localStorage helpers ---
   function safeGetItem(key, fallback) {
@@ -553,9 +554,29 @@
       return true;
     } catch (err) {
       promptEl.textContent = 'Microphone access denied. Tap to retry.';
+      promptEl.style.opacity = '1';
+      promptEl.style.pointerEvents = 'auto';
+      document.getElementById('overlay').style.pointerEvents = 'auto';
       return false;
     }
   }
+
+  // Retry mic on overlay tap
+  overlayEl.addEventListener('click', async () => {
+    if (!micStarted) {
+      // Hide the error message
+      promptEl.style.opacity = '0';
+      promptEl.style.pointerEvents = 'none';
+      overlayEl.style.pointerEvents = 'none';
+      // Retry mic
+      const ok = await startMic();
+      if (ok) {
+        started = true;
+        gameStartTime = performance.now();
+        loopFrameId = requestAnimationFrame(loop);
+      }
+    }
+  });
 
   // Cleanup mic and audio when game ends or page unloads
   function cleanupMic() {
