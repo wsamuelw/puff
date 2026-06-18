@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Settings Name Display — Puff</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    :root { --amber: #d4a574; --serif: 'Libre Baskerville', serif; --sans: 'Outfit', sans-serif; }
+    body { font-family: var(--sans); background: #111; color: #fff; padding: 40px 20px; min-height: 100vh; }
+    h1 { font-family: var(--serif); font-size: 32px; font-style: italic; text-align: center; margin-bottom: 8px; }
+    .subtitle { text-align: center; color: rgba(255,255,255,0.4); font-size: 14px; margin-bottom: 48px; }
+    .section-label { font-family: var(--serif); font-size: 20px; font-style: italic; color: var(--amber); margin-bottom: 24px; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.06); max-width: 400px; margin-left: auto; margin-right: auto; }
+    .phone { width: 100%; max-width: 375px; margin: 0 auto 48px; background: #1a1a1a; border-radius: 16px; overflow: hidden; border: 1px solid rgba(255,255,255,0.06); }
+    .screen { padding: 32px 24px; }
+    .title { font-family: var(--serif); font-size: 24px; color: #fff; margin-bottom: 4px; }
+    .sub { font-size: 13px; color: rgba(255,255,255,0.35); margin-bottom: 24px; }
+    .stack { display: flex; flex-direction: column; gap: 10px; }
+    .stack-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; padding: 20px; display: flex; align-items: center; gap: 16px; cursor: pointer; transition: all 0.2s ease; }
+    .stack-card:hover { background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.1); }
+    .stack-icon { width: 44px; height: 44px; border-radius: 12px; background: rgba(212,165,116,0.15); display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+    .stack-text { flex: 1; }
+    .stack-text h3 { font-size: 15px; font-weight: 500; color: #fff; margin-bottom: 2px; }
+    .stack-text p { font-size: 12px; color: rgba(255,255,255,0.3); }
+    .stack-arrow { color: rgba(255,255,255,0.15); font-size: 16px; }
+    .stack-value { font-family: var(--serif); font-size: 14px; color: var(--amber); }
+
+    /* Name display variations */
+    .name-badge { display: flex; align-items: center; gap: 8px; background: rgba(212,165,116,0.1); border: 1px solid rgba(212,165,116,0.2); border-radius: 20px; padding: 6px 14px 6px 8px; }
+    .name-avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--amber); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #1a1a1a; }
+    .name-text { font-size: 14px; font-weight: 500; color: #fff; }
+    .name-greeting { font-size: 14px; color: rgba(255,255,255,0.5); }
+    .name-greeting span { color: #fff; font-weight: 500; }
+
+    .theme-toggle { position: fixed; top: 20px; right: 20px; z-index: 100; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 8px 14px; color: #fff; font-family: var(--sans); font-size: 13px; cursor: pointer; }
+    @media (max-width: 480px) { .phone { max-width: 100%; } h1 { font-size: 24px; } }
+  </style>
+</head>
+<body>
+  <button class="theme-toggle" onclick="document.body.classList.toggle('light')">Toggle theme</button>
+
+  <h1>Settings Name Display</h1>
+  <p class="subtitle">How to show the user's name</p>
+
+  <!-- Option A: Name badge -->
+  <div class="section-label">A — Name Badge</div>
+  <div class="phone">
+    <div class="screen">
+      <div class="title">Settings</div>
+      <div class="sub">Preferences</div>
+      <div class="stack">
+        <div class="stack-card">
+          <div class="stack-icon">💰</div>
+          <div class="stack-text">
+            <h3>Total saved</h3>
+            <p>Your progress</p>
+          </div>
+          <div class="stack-value">$12.40</div>
+        </div>
+        <div class="stack-card">
+          <div class="stack-icon">👤</div>
+          <div class="stack-text">
+            <h3>Name</h3>
+            <p>How we greet you</p>
+          </div>
+          <div class="name-badge">
+            <div class="name-avatar">S</div>
+            <div class="name-text">Sam</div>
+          </div>
+        </div>
+        <div class="stack-card">
+          <div class="stack-icon">💵</div>
+          <div class="stack-text">
+            <h3>Cigarette price</h3>
+            <p>Per cigarette</p>
+          </div>
+          <div class="stack-value">$1.00</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Option B: Inline name -->
+  <div class="section-label">B — Inline Name</div>
+  <div class="phone">
+    <div class="screen">
+      <div class="title">Settings</div>
+      <div class="sub">Preferences</div>
+      <div class="stack">
+        <div class="stack-card">
+          <div class="stack-icon">💰</div>
+          <div class="stack-text">
+            <h3>Total saved</h3>
+            <p>Your progress</p>
+          </div>
+          <div class="stack-value">$12.40</div>
+        </div>
+        <div class="stack-card">
+          <div class="stack-icon">👤</div>
+          <div class="stack-text">
+            <h3>Name</h3>
+            <p>How we greet you</p>
+          </div>
+          <div class="stack-value">Sam</div>
+        </div>
+        <div class="stack-card">
+          <div class="stack-icon">💵</div>
+          <div class="stack-text">
+            <h3>Cigarette price</h3>
+            <p>Per cigarette</p>
+          </div>
+          <div class="stack-value">$1.00</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Option C: Greeting header -->
+  <div class="section-label">C — Greeting Header</div>
+  <div class="phone">
+    <div class="screen">
+      <div class="title">Settings</div>
+      <div class="name-greeting">Hi, <span>Sam</span> 👋</div>
+      <div class="stack" style="margin-top: 20px;">
+        <div class="stack-card">
+          <div class="stack-icon">💰</div>
+          <div class="stack-text">
+            <h3>Total saved</h3>
+            <p>Your progress</p>
+          </div>
+          <div class="stack-value">$12.40</div>
+        </div>
+        <div class="stack-card">
+          <div class="stack-icon">💵</div>
+          <div class="stack-text">
+            <h3>Cigarette price</h3>
+            <p>Per cigarette</p>
+          </div>
+          <div class="stack-value">$1.00</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Option D: Avatar circle -->
+  <div class="section-label">D — Avatar Circle</div>
+  <div class="phone">
+    <div class="screen">
+      <div class="title">Settings</div>
+      <div class="sub">Preferences</div>
+      <div style="text-align: center; margin-bottom: 24px;">
+        <div style="width: 64px; height: 64px; border-radius: 50%; background: var(--amber); display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 700; color: #1a1a1a; margin: 0 auto 8px;">S</div>
+        <div style="font-size: 16px; font-weight: 500; color: #fff;">Sam</div>
+      </div>
+      <div class="stack">
+        <div class="stack-card">
+          <div class="stack-icon">💰</div>
+          <div class="stack-text">
+            <h3>Total saved</h3>
+            <p>Your progress</p>
+          </div>
+          <div class="stack-value">$12.40</div>
+        </div>
+        <div class="stack-card">
+          <div class="stack-icon">💵</div>
+          <div class="stack-text">
+            <h3>Cigarette price</h3>
+            <p>Per cigarette</p>
+          </div>
+          <div class="stack-value">$1.00</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Option E: Name in title -->
+  <div class="section-label">E — Name in Title</div>
+  <div class="phone">
+    <div class="screen">
+      <div class="title">Sam's Settings</div>
+      <div class="sub">Preferences</div>
+      <div class="stack">
+        <div class="stack-card">
+          <div class="stack-icon">💰</div>
+          <div class="stack-text">
+            <h3>Total saved</h3>
+            <p>Your progress</p>
+          </div>
+          <div class="stack-value">$12.40</div>
+        </div>
+        <div class="stack-card">
+          <div class="stack-icon">💵</div>
+          <div class="stack-text">
+            <h3>Cigarette price</h3>
+            <p>Per cigarette</p>
+          </div>
+          <div class="stack-value">$1.00</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
