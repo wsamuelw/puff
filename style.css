@@ -1420,36 +1420,53 @@ body.light .idle-label {
   color: rgba(26,26,26,0.4);
 }
 
-.idle-cigs {
-  font-size: 14px;
-  color: rgba(250,249,247,0.5);
-  margin-top: 8px;
-}
-
-body.light .idle-cigs {
-  color: rgba(26,26,26,0.5);
-}
-
-.idle-streak {
-  font-family: 'Libre Baskerville', serif;
-  font-size: 18px;
-  color: rgba(250,249,247,0.6);
+.idle-card {
+  background: rgba(250,249,247,0.04);
+  border: 1px solid rgba(250,249,247,0.06);
+  border-radius: 16px;
+  padding: 20px;
   margin-top: 24px;
+  width: 100%;
+  max-width: 300px;
 }
 
-body.light .idle-streak {
-  color: rgba(26,26,26,0.6);
+body.light .idle-card {
+  background: rgba(0,0,0,0.03);
+  border-color: rgba(0,0,0,0.06);
 }
 
-.idle-message {
-  font-size: 14px;
-  color: rgba(250,249,247,0.5);
-  margin-top: 8px;
-  font-style: italic;
+.idle-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
 }
 
-body.light .idle-message {
-  color: rgba(26,26,26,0.35);
+.idle-row + .idle-row {
+  border-top: 1px solid rgba(250,249,247,0.04);
+}
+
+body.light .idle-row + .idle-row {
+  border-top-color: rgba(0,0,0,0.04);
+}
+
+.idle-row-label {
+  font-size: 13px;
+  color: rgba(250,249,247,0.4);
+}
+
+body.light .idle-row-label {
+  color: rgba(26,26,26,0.4);
+}
+
+.idle-row-value {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 16px;
+  color: rgba(250,249,247,0.8);
+}
+
+body.light .idle-row-value {
+  color: rgba(26,26,26,0.8);
 }
 
 .idle-offline {

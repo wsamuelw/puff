@@ -1734,42 +1734,28 @@
 
     idleMoney.textContent = '$' + totalMoneySaved.toFixed(2);
 
-    // Show cigarettes avoided
+    // Update card stats
     const idleCigs = document.getElementById('idle-cigs');
-    if (totalCigarettesAvoided > 0) {
-      idleCigs.textContent = totalCigarettesAvoided + ' real cigarette' + (totalCigarettesAvoided !== 1 ? 's' : '') + ' avoided';
-    } else {
-      idleCigs.textContent = '';
-    }
+    const idleStreak = document.getElementById('idle-streak');
+    const idleSessions = document.getElementById('idle-sessions');
+    idleCigs.textContent = totalCigarettesAvoided;
 
-    // Calculate days since last session (smoke-free streak)
+    // Days since last session
     const lastSession = parseInt(safeGetItem('lastSessionDate', '0'));
     if (lastSession) {
       const daysSinceLastSession = Math.floor((Date.now() - lastSession) / (24 * 60 * 60 * 1000));
       if (daysSinceLastSession === 0) {
         idleStreak.textContent = 'Today';
       } else if (daysSinceLastSession === 1) {
-        idleStreak.textContent = '1 day smoke-free';
+        idleStreak.textContent = '1 day';
       } else {
-        idleStreak.textContent = daysSinceLastSession + ' days smoke-free';
+        idleStreak.textContent = daysSinceLastSession + ' days';
       }
     } else {
-      idleStreak.textContent = '';
+      idleStreak.textContent = '0 days';
     }
 
-    // Different messages for new vs returning users
-    if (totalMoneySaved === 0) {
-      idleMessage.textContent = 'Your journey starts here';
-    } else {
-      const messages = [
-        "You're doing great",
-        "Keep going",
-        "Every cigarette counts",
-        "Stay strong",
-        "You've got this",
-      ];
-      idleMessage.textContent = messages[Math.floor(Math.random() * messages.length)];
-    }
+    idleSessions.textContent = sessionCount;
 
     // Show offline indicator if needed
     idleOffline.classList.toggle('visible', !navigator.onLine);
