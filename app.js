@@ -2420,7 +2420,6 @@
   const settingsTotalSaved = document.getElementById('settings-total-saved');
   const settingsPriceDisplay = document.getElementById('settings-price-display');
   const settingsNameDisplay = document.getElementById('settings-name-display');
-  const settingsBadgesCount = document.getElementById('settings-badges-count');
   const menuSettings = document.getElementById('menu-settings');
 
   // Badges screen elements
@@ -2449,9 +2448,6 @@
     const userName = safeGetItem('userName', '');
     settingsNameDisplay.textContent = userName || 'Set name';
 
-    // Update badges count
-    const earned = JSON.parse(safeGetItem('earnedBadges', '[]'));
-    settingsBadgesCount.textContent = earned.length + '/' + BADGES.length;
   }
 
   // Save settings to cloud + localStorage
@@ -2539,15 +2535,6 @@
   document.getElementById('settings-price-card').addEventListener('click', (e) => {
     e.stopPropagation();
     openEditModal('price');
-  });
-
-  // Open badges from settings
-  document.getElementById('settings-badges-card').addEventListener('click', (e) => {
-    e.stopPropagation();
-    closeMenu();
-    buildBadgesGrid();
-    history.pushState({screen:'badges'}, '');
-    badgesScreen.classList.add('visible');
   });
 
   // Build badges grid
