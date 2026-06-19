@@ -824,7 +824,8 @@
 
   // --- Helpers ---
   // Filter stays fixed, paper burns from the top down
-  const FILTER_Y = () => H_REF * 0.617; // fixed filter position (uses reference height)
+  // Use H (current viewport) for position, H_REF only for dimensions
+  const FILTER_Y = () => H * 0.617;
   function getCigTopY() {
     const burnHeight = CIG.bodyLength * (1 - burnProgress);
     return FILTER_Y() - burnHeight;
