@@ -1237,10 +1237,10 @@
     { id: 'save_100', emoji: '💳', name: '$100 Saved', desc: 'Save $100 in total', category: 'savings', check: () => totalMoneySaved >= 100 },
     { id: 'save_500', emoji: '🏦', name: '$500 Saved', desc: 'Save $500 in total', category: 'savings', check: () => totalMoneySaved >= 500 },
     // Cigarettes avoided
-    { id: 'cig_10', emoji: '🚭', name: '10 Cigarettes', desc: 'Avoid 10 cigarettes', category: 'cigarettes', check: () => totalCigarettesAvoided >= 10 },
-    { id: 'cig_50', emoji: '🚭', name: '50 Cigarettes', desc: 'Avoid 50 cigarettes', category: 'cigarettes', check: () => totalCigarettesAvoided >= 50 },
-    { id: 'cig_100', emoji: '🚭', name: '100 Cigarettes', desc: 'Avoid 100 cigarettes', category: 'cigarettes', check: () => totalCigarettesAvoided >= 100 },
-    { id: 'cig_500', emoji: '🚭', name: '500 Cigarettes', desc: 'Avoid 500 cigarettes', category: 'cigarettes', check: () => totalCigarettesAvoided >= 500 },
+    { id: 'cig_10', emoji: '🚭', name: '10 Real Cigs', desc: 'Avoid 10 real cigarettes', category: 'cigarettes', check: () => totalCigarettesAvoided >= 10 },
+    { id: 'cig_50', emoji: '🚭', name: '50 Real Cigs', desc: 'Avoid 50 real cigarettes', category: 'cigarettes', check: () => totalCigarettesAvoided >= 50 },
+    { id: 'cig_100', emoji: '🚭', name: '100 Real Cigs', desc: 'Avoid 100 real cigarettes', category: 'cigarettes', check: () => totalCigarettesAvoided >= 100 },
+    { id: 'cig_500', emoji: '🚭', name: '500 Real Cigs', desc: 'Avoid 500 real cigarettes', category: 'cigarettes', check: () => totalCigarettesAvoided >= 500 },
     // Sessions
     { id: 'sess_10', emoji: '🎯', name: '10 Sessions', desc: 'Complete 10 sessions', category: 'sessions', check: () => sessionCount >= 10 },
     { id: 'sess_50', emoji: '🎯', name: '50 Sessions', desc: 'Complete 50 sessions', category: 'sessions', check: () => sessionCount >= 50 },
@@ -1598,7 +1598,7 @@
           </div>
           <div class="milestone-stat">
             <div class="milestone-stat-num">${totalCigarettesAvoided}</div>
-            <div class="milestone-stat-label">Cigarettes</div>
+            <div class="milestone-stat-label">Real Cigs</div>
           </div>
         </div>
         <div class="milestone-brand">puff — your quit companion</div>
@@ -1614,7 +1614,7 @@
     document.getElementById('milestone-share').addEventListener('click', async () => {
       try {
         // Generate share text
-        const shareText = `${milestone.title}\n\n💰 $${Math.floor(totalMoneySaved)} saved\n🚬 ${totalCigarettesAvoided} cigarettes avoided\n\npuff — your quit companion`;
+        const shareText = `${milestone.title}\n\n💰 $${Math.floor(totalMoneySaved)} saved\n🚬 ${totalCigarettesAvoided} real cigarettes avoided\n\npuff — your quit companion`;
 
         // Use Web Share API if available
         if (navigator.share) {
@@ -1737,7 +1737,7 @@
     // Show cigarettes avoided
     const idleCigs = document.getElementById('idle-cigs');
     if (totalCigarettesAvoided > 0) {
-      idleCigs.textContent = totalCigarettesAvoided + ' cigarette' + (totalCigarettesAvoided !== 1 ? 's' : '') + ' avoided';
+      idleCigs.textContent = totalCigarettesAvoided + ' real cigarette' + (totalCigarettesAvoided !== 1 ? 's' : '') + ' avoided';
     } else {
       idleCigs.textContent = '';
     }
