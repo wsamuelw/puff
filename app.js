@@ -1867,9 +1867,12 @@
           puffing = false;
         }
 
-        // Auto-burn + blow boost (delta-time based)
-        const burnRate = BASE_BURN_RATE + (puffing ? BLOW_BOOST * blowIntensity : 0);
-        burnProgress = Math.min(1, burnProgress + burnRate * dt);
+        // Auto-burn + blow boost (delta-time based) — pause when menu is open
+        const menuOpen = menuOverlay.classList.contains('active');
+        if (!menuOpen) {
+          const burnRate = BASE_BURN_RATE + (puffing ? BLOW_BOOST * blowIntensity : 0);
+          burnProgress = Math.min(1, burnProgress + burnRate * dt);
+        }
 
         // Set fixed ceiling when cigarette starts burning
         if (!ashCeilingSet && burnProgress > 0) {
