@@ -1326,13 +1326,9 @@
 
   // HTML end screen elements
   const endScreen = document.getElementById('end-screen');
-  const endSession = document.getElementById('end-session');
   const endTotalStat = document.getElementById('end-total-stat');
   const endCigsStat = document.getElementById('end-cigs-stat');
-  const endDaysStat = document.getElementById('end-days-stat');
-  const endDurationStat = document.getElementById('end-duration-stat');
-  const endTriggersBars = document.getElementById('end-triggers-bars');
-  const endDone = document.getElementById('end-done');
+  const endTriggerList = document.getElementById('end-trigger-list');
   const endAnother = document.getElementById('end-another');
 
   // Onboarding
@@ -1500,25 +1496,15 @@
       lastSessionDate: Date.now()
     });
 
-    // Update end screen content
-    endSession.textContent = '$' + sessionMoneySaved.toFixed(2);
+    // Update end screen stats
     endTotalStat.textContent = '$' + Math.floor(totalMoneySaved);
     endCigsStat.textContent = totalCigarettesAvoided;
 
-    // Calculate days since quit start
-    const daysSinceStart = quitStartDate ? Math.floor((Date.now() - quitStartDate) / (24 * 60 * 60 * 1000)) : 0;
-    endDaysStat.textContent = daysSinceStart;
-
-    // Session duration
-    const sessionDuration = gameStartTime ? Math.round((performance.now() - gameStartTime) / 1000) : 0;
-    const durationMin = Math.floor(sessionDuration / 60);
-    const durationSec = sessionDuration % 60;
-    endDurationStat.textContent = durationMin > 0 ? durationMin + 'm ' + durationSec + 's' : durationSec + 's';
-
-    // Build trigger bars
-    buildEndTriggerBars();
+    // Build trigger list with time context
+    buildEndTriggerList();
 
     // Check for milestones
+    const daysSinceStart = quitStartDate ? Math.floor((Date.now() - quitStartDate) / (24 * 60 * 60 * 1000)) : 0;
     checkMilestones(daysSinceStart);
 
     endScreen.classList.add('visible');
@@ -1610,94 +1596,71 @@
     });
   }
 
-  // Build trigger bars for end screen
-  function buildEndTriggerBars() {
+  // Build trigger list with time context for end screen
+  function buildEndTriggerList() {
     const logs = JSON.parse(safeGetItem('cravingLogs', '[]'));
 
-    // Count triggers
-    const triggerCounts = {};
+    // Count triggers and track time patterns
+    const triggerData = {};
     logs.forEach(log => {
-      const trigger = log.trigger || 'Unknown';
-      triggerCounts[trigger] = (triggerCounts[trigger] || 0) + 1;
+      const trigger = log.trigger || 'unknown';
+      if (!triggerData[trigger]) {
+        triggerData[trigger] = { count: 0, hours: [] };
+      }
+      triggerData[trigger].count++;
+      if (log.time) {
+        const hour = new Date(log.time).getHours();
+        triggerData[trigger].hours.push(hour);
+      }
     });
 
     // Sort by count descending
-    const sorted = Object.entries(triggerCounts).sort((a, b) => b[1] - a[1]).slice(0, 5);
-    const maxCount = sorted.length > 0 ? sorted[0][1] : 1;
+    const sorted = Object.entries(triggerData).sort((a, b) => b[1].count - a[1].count).slice(0, 5);
 
-    // Trigger icons mapping
+    // Trigger icons/labels
     const triggerIcons = {
-      'stress': '😰',
-      'anxiety': '😬',
-      'drinking': '🍺',
-      'coffee': '☕',
-      'meals': '🍽️',
-      'boredom': '😑',
-      'aftersex': '❤️',
-      'workbreak': '💼',
-      'phonecall': '📞',
-      'waiting': '⏳',
-      'scrolling': '📱',
-      'walking': '🚶',
-      'social': '🍻',
-      'morning': '🌅',
-      'latenight': '🌙',
-      'unknown': '🤷',
-      'other': '💭'
+      'stress': '😰', 'anxiety': '😬', 'drinking': '🍺', 'coffee': '☕',
+      'meals': '🍽️', 'boredom': '😑', 'aftersex': '❤️', 'workbreak': '💼',
+      'phonecall': '📞', 'waiting': '⏳', 'scrolling': '📱', 'walking': '🚶',
+      'social': '🍻', 'morning': '🌅', 'latenight': '🌙', 'unknown': '🤷', 'other': '💭'
     };
-
-    // Trigger labels mapping
     const triggerLabels = {
-      'stress': 'Stress',
-      'anxiety': 'Anxiety',
-      'drinking': 'Drinking',
-      'coffee': 'Coffee',
-      'meals': 'After meals',
-      'boredom': 'Boredom',
-      'aftersex': 'After sex',
-      'workbreak': 'Work break',
-      'phonecall': 'Phone call',
-      'waiting': 'Waiting',
-      'scrolling': 'Scrolling',
-      'walking': 'Walking',
-      'social': 'Social pressure',
-      'morning': 'Morning routine',
-      'latenight': 'Late night',
-      'unknown': 'Not sure',
-      'other': 'Other'
+      'stress': 'Stress', 'anxiety': 'Anxiety', 'drinking': 'Drinking', 'coffee': 'Coffee',
+      'meals': 'After meals', 'boredom': 'Boredom', 'aftersex': 'After sex', 'workbreak': 'Work break',
+      'phonecall': 'Phone call', 'waiting': 'Waiting', 'scrolling': 'Scrolling', 'walking': 'Walking',
+      'social': 'Social pressure', 'morning': 'Morning routine', 'latenight': 'Late night',
+      'unknown': 'Not sure', 'other': 'Other'
     };
 
-    // Bar colors
-    const barColors = ['amber', 'blue', 'green', 'pink', 'gray'];
+    // Get time context from hour array
+    function getTimeContext(hours) {
+      if (!hours.length) return '';
+      const avg = hours.reduce((a, b) => a + b, 0) / hours.length;
+      if (avg >= 5 && avg < 9) return 'Early morning';
+      if (avg >= 9 && avg < 12) return 'Mornings';
+      if (avg >= 12 && avg < 14) return 'Lunch';
+      if (avg >= 14 && avg < 18) return 'Afternoons';
+      if (avg >= 18 && avg < 21) return 'Evenings';
+      if (avg >= 21 || avg < 2) return 'Late night';
+      return 'Nights';
+    }
 
-    // Build bars
-    endTriggersBars.innerHTML = '';
-    sorted.forEach(([trigger, count], i) => {
-      const pct = (count / maxCount) * 100;
+    // Build trigger rows
+    endTriggerList.innerHTML = '';
+    sorted.forEach(([trigger, data]) => {
       const icon = triggerIcons[trigger] || '📊';
       const label = triggerLabels[trigger] || trigger;
-      const color = barColors[i] || 'gray';
+      const time = getTimeContext(data.hours);
 
-      const bar = document.createElement('div');
-      bar.className = 'end-trigger-bar';
-      bar.innerHTML = `
-        <div class="end-trigger-bar-icon">${icon}</div>
-        <div class="end-trigger-bar-info">
-          <div class="end-trigger-bar-name">${label}</div>
-          <div class="end-trigger-bar-track">
-            <div class="end-trigger-bar-fill ${color}" style="width:0%"></div>
-          </div>
-        </div>
-        <div class="end-trigger-bar-count">${count}</div>
+      const row = document.createElement('div');
+      row.className = 'end-trigger-row';
+      row.innerHTML = `
+        <span class="end-trigger-icon">${icon}</span>
+        <span class="end-trigger-name">${label}</span>
+        <span class="end-trigger-count">${data.count}</span>
+        <span class="end-trigger-time">${time}</span>
       `;
-      endTriggersBars.appendChild(bar);
-
-      // Animate bar fill
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          bar.querySelector('.end-trigger-bar-fill').style.width = pct + '%';
-        });
-      });
+      endTriggerList.appendChild(row);
     });
   }
 
@@ -1712,34 +1675,12 @@
     gameState = 'idle';
   }
 
-  // End screen buttons
-  endDone.addEventListener('click', (e) => {
-    e.stopPropagation();
-    logEvent('done_tapped', { trigger: currentTriggerId, sessionMoney: sessionMoneySaved });
-    endScreen.classList.remove('visible');
-    showIdleScreen();
-  });
-
+  // End screen button — go to trigger selection
   endAnother.addEventListener('click', (e) => {
     e.stopPropagation();
     logEvent('smoke_another_tapped', { trigger: currentTriggerId, sessionMoney: sessionMoneySaved });
-    // Show cooldown
-    endAnother.style.display = 'none';
-    const endCooldown = document.getElementById('end-cooldown');
-    const endCooldownTimer = document.getElementById('end-cooldown-timer');
-    endCooldown.classList.add('visible');
-    let cooldownLeft = 30;
-    endCooldownTimer.textContent = '0:30';
-    const cooldownInterval = setInterval(() => {
-      cooldownLeft--;
-      endCooldownTimer.textContent = '0:' + String(cooldownLeft).padStart(2, '0');
-      if (cooldownLeft <= 0) {
-        clearInterval(cooldownInterval);
-        endCooldown.classList.remove('visible');
-        endScreen.classList.remove('visible');
-        showTriggerScreen();
-      }
-    }, 1000);
+    endScreen.classList.remove('visible');
+    showTriggerScreen();
   });
 
   // Helper: format elapsed time for health timeline

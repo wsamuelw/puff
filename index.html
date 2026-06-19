@@ -137,43 +137,37 @@
       <div class="trigger-grid" id="trigger-grid"></div>
     </div>
 
-    <!-- End Screen (after smoking) -->
+    <!-- End Screen (after smoking) — Sticky Note -->
     <div id="end-screen" class="end-screen">
-      <div class="end-header">
-        <div class="end-session" id="end-session">$0.00</div>
-        <div class="end-session-label">saved this session</div>
-      </div>
-      <div class="end-stats-row">
-        <div class="end-stat">
-          <div class="end-stat-num" id="end-total-stat">$0</div>
-          <div class="end-stat-lbl">Total</div>
+      <div class="end-card">
+        <div class="end-tape"></div>
+        <div class="end-header">
+          <div class="end-emoji">🎉</div>
+          <div class="end-title">Nice work</div>
+          <div class="end-sub">You just avoided a real cigarette</div>
         </div>
-        <div class="end-stat">
-          <div class="end-stat-num" id="end-cigs-stat">0</div>
-          <div class="end-stat-lbl">Real Cigs</div>
+        <div class="end-stats">
+          <div class="end-stat">
+            <div class="end-stat-num" id="end-total-stat">$0</div>
+            <div class="end-stat-lbl">Total saved</div>
+          </div>
+          <div class="end-stat">
+            <div class="end-stat-num" id="end-cigs-stat">0</div>
+            <div class="end-stat-lbl">Real cigs avoided</div>
+          </div>
         </div>
-        <div class="end-stat">
-          <div class="end-stat-num" id="end-days-stat">0</div>
-          <div class="end-stat-lbl">Days</div>
+        <div class="end-triggers">
+          <div class="end-triggers-title"><span>Your triggers</span><span class="end-see-all" id="end-see-all">See all</span></div>
+          <div class="end-trigger-list" id="end-trigger-list">
+            <!-- Populated by JS -->
+          </div>
         </div>
-        <div class="end-stat">
-          <div class="end-stat-num" id="end-duration-stat">0m</div>
-          <div class="end-stat-lbl">Duration</div>
+        <button class="end-another" id="end-another">Next puff</button>
+        <div class="end-note">Close the app when you're ready</div>
+        <div class="end-cooldown" id="end-cooldown">
+          <div class="end-cooldown-text">Take a moment</div>
+          <div class="end-cooldown-timer" id="end-cooldown-timer"></div>
         </div>
-      </div>
-      <div class="end-triggers-section">
-        <div class="end-triggers-header">Your triggers</div>
-        <div class="end-triggers-bars" id="end-triggers-bars">
-          <!-- Populated by JS -->
-        </div>
-      </div>
-      <div class="end-actions">
-        <button class="end-done" id="end-done">I'm done</button>
-        <button class="end-another" id="end-another">Smoke another</button>
-      </div>
-      <div class="end-cooldown" id="end-cooldown">
-        <div class="end-cooldown-text">Take a moment before your next session</div>
-        <div class="end-cooldown-timer" id="end-cooldown-timer"></div>
       </div>
     </div>
 
@@ -409,7 +403,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-    <script src="app.js?v=95"></script>
+    <script src="app.js?v=96"></script>
     <script>
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('/sw.js').catch(() => {});
