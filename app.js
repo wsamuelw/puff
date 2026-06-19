@@ -1868,7 +1868,7 @@
         }
 
         // Auto-burn + blow boost (delta-time based) — pause when menu is open
-        const menuOpen = menuOverlay.classList.contains('active');
+        const menuOpen = document.getElementById('menu-overlay').classList.contains('active');
         if (!menuOpen) {
           const burnRate = BASE_BURN_RATE + (puffing ? BLOW_BOOST * blowIntensity : 0);
           burnProgress = Math.min(1, burnProgress + burnRate * dt);
