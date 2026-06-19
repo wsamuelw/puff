@@ -591,31 +591,21 @@ body.light .signin-sub {
 
 .signin-start {
   margin-top: 16px;
-  padding: 14px 24px;
-  background: transparent;
-  border: 1px solid rgba(250,249,247,0.15);
+  padding: 14px 48px;
+  background: #d4a574;
+  border: none;
   border-radius: 8px;
   font-family: 'Outfit', sans-serif;
   font-size: 14px;
-  color: rgba(250,249,247,0.5);
+  font-weight: 600;
+  color: #1a1a1a;
   cursor: pointer;
   transition: all 0.2s ease;
   -webkit-tap-highlight-color: transparent;
 }
 
-body.light .signin-start {
-  border-color: rgba(0,0,0,0.1);
-  color: rgba(26,26,26,0.5);
-}
-
 .signin-start:hover {
-  border-color: rgba(250,249,247,0.3);
-  color: rgba(250,249,247,0.7);
-}
-
-body.light .signin-start:hover {
-  border-color: rgba(0,0,0,0.2);
-  color: rgba(26,26,26,0.7);
+  background: #c49564;
 }
 
 .signin-start:active {

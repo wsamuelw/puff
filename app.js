@@ -2315,12 +2315,13 @@
   });
   signinBtn.addEventListener('touchstart', (e) => e.stopPropagation(), { passive: true });
 
-  // Start without account button
+  // Start button — go directly to trigger selection
   const signinStart = document.getElementById('signin-start');
   signinStart.addEventListener('click', (e) => {
     e.stopPropagation();
     safeSetItem('offlineMode', 'true');
     document.getElementById('signin-screen').classList.add('hidden');
+    showTriggerScreen();
   });
   signinStart.addEventListener('touchstart', (e) => e.stopPropagation(), { passive: true });
 
