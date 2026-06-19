@@ -2569,41 +2569,24 @@
     badgesSub.textContent = earned.length + ' of ' + BADGES.length + ' earned';
 
     badgesGrid.innerHTML = '';
-    const categories = ['streak', 'savings', 'cigarettes', 'sessions', 'special'];
-    const categoryLabels = { streak: 'Streak', savings: 'Savings', cigarettes: 'Cigarettes Avoided', sessions: 'Sessions', special: 'Special' };
+    const grid = document.createElement('div');
+    grid.className = 'badges-grid';
 
-    categories.forEach(category => {
-      const categoryBadges = BADGES.filter(b => b.category === category);
-      if (categoryBadges.length === 0) return;
-
-      const section = document.createElement('div');
-      section.className = 'badges-section';
-
-      const title = document.createElement('div');
-      title.className = 'badges-section-title';
-      title.textContent = categoryLabels[category];
-      section.appendChild(title);
-
-      const grid = document.createElement('div');
-      grid.className = 'badges-grid';
-
-      categoryBadges.forEach(badge => {
-        const isEarned = earned.includes(badge.id);
-        const item = document.createElement('div');
-        item.className = 'badge-item';
-        item.innerHTML = `
-          <div class="badge-item-icon ${isEarned ? 'earned' : ''}">${badge.emoji}</div>
-          <div class="badge-item-name ${isEarned ? 'earned' : ''}">${badge.name}</div>
-        `;
-        item.addEventListener('click', () => {
-          showBadgeDetail(badge, isEarned);
-        });
-        grid.appendChild(item);
+    BADGES.forEach(badge => {
+      const isEarned = earned.includes(badge.id);
+      const item = document.createElement('div');
+      item.className = 'badge-item';
+      item.innerHTML = `
+        <div class="badge-item-icon ${isEarned ? 'earned' : ''}">${badge.emoji}</div>
+        <div class="badge-item-name ${isEarned ? 'earned' : ''}">${badge.name}</div>
+      `;
+      item.addEventListener('click', () => {
+        showBadgeDetail(badge, isEarned);
       });
-
-      section.appendChild(grid);
-      badgesGrid.appendChild(section);
+      grid.appendChild(item);
     });
+
+    badgesGrid.appendChild(grid);
   }
 
   // Show badge detail modal
