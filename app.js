@@ -2606,67 +2606,9 @@
   const triggersBack = document.getElementById('triggers-back');
 
   // Build weekly summary card
-  function buildWeeklySummary(logs) {
-    const summaryCard = document.getElementById('triggers-summary-card');
-    const summaryTrend = document.getElementById('triggers-summary-trend');
-    const summarySessions = document.getElementById('triggers-summary-sessions');
-    const summarySaved = document.getElementById('triggers-summary-saved');
-    const summaryPerDay = document.getElementById('triggers-summary-perday');
-
-    if (!logs.length) {
-      summaryCard.style.display = 'none';
-      return;
-    }
-
-    summaryCard.style.display = 'block';
-
-    // Calculate this week and last week
-    const now = Date.now();
-    const oneWeek = 7 * 24 * 60 * 60 * 1000;
-    const thisWeekLogs = logs.filter(l => (now - l.time) < oneWeek);
-    const lastWeekLogs = logs.filter(l => (now - l.time) >= oneWeek && (now - l.time) < 2 * oneWeek);
-
-    const thisWeekCount = thisWeekLogs.length;
-    const lastWeekCount = lastWeekLogs.length;
-
-    // Calculate savings (use actual saved amount from logs)
-    const thisWeekSaved = thisWeekLogs.reduce((sum, l) => sum + (l.money || 0), 0);
-
-    // Calculate per day (based on this week's logs)
-    const daysInWeek = thisWeekLogs.length > 0 ? Math.min(7, Math.ceil((now - Math.min(...thisWeekLogs.map(l => l.time))) / (24 * 60 * 60 * 1000))) : 1;
-    const perDay = (thisWeekCount / daysInWeek).toFixed(1);
-
-    // Update summary
-    summarySessions.textContent = thisWeekCount;
-    summarySaved.textContent = '$' + Math.floor(thisWeekSaved);
-    summaryPerDay.textContent = perDay;
-
-    // Calculate trend
-    if (lastWeekCount > 0) {
-      const change = ((thisWeekCount - lastWeekCount) / lastWeekCount * 100).toFixed(0);
-      if (thisWeekCount < lastWeekCount) {
-        summaryTrend.textContent = '↓ ' + Math.abs(change) + '% from last week';
-        summaryTrend.className = 'triggers-summary-trend';
-      } else if (thisWeekCount > lastWeekCount) {
-        summaryTrend.textContent = '↑ ' + change + '% from last week';
-        summaryTrend.className = 'triggers-summary-trend down';
-      } else {
-        summaryTrend.textContent = 'Same as last week';
-        summaryTrend.className = 'triggers-summary-trend';
-      }
-    } else {
-      summaryTrend.textContent = 'Your first week';
-      summaryTrend.className = 'triggers-summary-trend';
-    }
-  }
-
   function buildTriggerHeatmap() {
     const triggersBars = document.getElementById('triggers-bars');
     const logs = JSON.parse(safeGetItem('cravingLogs', '[]'));
-
-    // Build weekly summary and heatmap (always)
-    buildWeeklySummary(logs);
-    buildTimeHeatmap(logs);
 
     if (!logs.length) {
       triggersBars.innerHTML = '<div class="triggers-empty">No data yet. Complete a session to see patterns.</div>';
@@ -2684,46 +2626,21 @@
     const sorted = Object.entries(triggerCounts).sort((a, b) => b[1] - a[1]);
     const maxCount = sorted[0][1];
 
-    // Trigger icons mapping (by ID)
+    // Trigger icons mapping
     const triggerIcons = {
-      'stress': '😰',
-      'anxiety': '😬',
-      'drinking': '🍺',
-      'coffee': '☕',
-      'meals': '🍽️',
-      'boredom': '😑',
-      'aftersex': '❤️',
-      'workbreak': '💼',
-      'phonecall': '📞',
-      'waiting': '⏳',
-      'scrolling': '📱',
-      'walking': '🚶',
-      'social': '🍻',
-      'morning': '🌅',
-      'latenight': '🌙',
-      'unknown': '🤷',
-      'other': '💭'
+      'stress': '😰', 'anxiety': '😬', 'drinking': '🍺', 'coffee': '☕',
+      'meals': '🍽️', 'boredom': '😑', 'aftersex': '❤️', 'workbreak': '💼',
+      'phonecall': '📞', 'waiting': '⏳', 'scrolling': '📱', 'walking': '🚶',
+      'social': '🍻', 'morning': '🌅', 'latenight': '🌙', 'unknown': '🤷', 'other': '💭'
     };
 
-    // Trigger labels mapping (by ID)
+    // Trigger labels mapping
     const triggerLabels = {
-      'stress': 'Stress',
-      'anxiety': 'Anxiety',
-      'drinking': 'Drinking',
-      'coffee': 'Coffee',
-      'meals': 'After meals',
-      'boredom': 'Boredom',
-      'aftersex': 'After sex',
-      'workbreak': 'Work break',
-      'phonecall': 'Phone call',
-      'waiting': 'Waiting',
-      'scrolling': 'Scrolling',
-      'walking': 'Walking',
-      'social': 'Social pressure',
-      'morning': 'Morning routine',
-      'latenight': 'Late night',
-      'unknown': 'Not sure',
-      'other': 'Other'
+      'stress': 'Stress', 'anxiety': 'Anxiety', 'drinking': 'Drinking', 'coffee': 'Coffee',
+      'meals': 'After meals', 'boredom': 'Boredom', 'aftersex': 'After sex', 'workbreak': 'Work break',
+      'phonecall': 'Phone call', 'waiting': 'Waiting', 'scrolling': 'Scrolling', 'walking': 'Walking',
+      'social': 'Social pressure', 'morning': 'Morning routine', 'latenight': 'Late night',
+      'unknown': 'Not sure', 'other': 'Other'
     };
 
     // Bar colors
@@ -2757,64 +2674,6 @@
         });
       });
     });
-  }
-
-  // Build time-of-day heatmap
-  function buildTimeHeatmap(logs) {
-    const heatmapGrid = document.getElementById('triggers-heatmap-grid');
-    const heatmapInsight = document.getElementById('triggers-heatmap-insight');
-
-    // Count sessions by day of week (0=Sun) and hour (0-23)
-    const counts = Array.from({ length: 7 }, () => new Array(24).fill(0));
-    let peakDay = 0;
-    let peakHour = 0;
-    let peakCount = 0;
-
-    logs.forEach(log => {
-      const date = new Date(log.time);
-      const day = date.getDay();
-      const hour = date.getHours();
-      counts[day][hour]++;
-      if (counts[day][hour] > peakCount) {
-        peakCount = counts[day][hour];
-        peakDay = day;
-        peakHour = hour;
-      }
-    });
-
-    // Find max count for scaling
-    const maxCount = Math.max(...counts.flat(), 1);
-
-    // Day labels
-    const dayLabels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-
-    // Build heatmap grid
-    heatmapGrid.innerHTML = '';
-    for (let d = 0; d < 7; d++) {
-      const row = document.createElement('div');
-      row.className = 'triggers-heatmap-row';
-      for (let h = 0; h < 24; h++) {
-        const cell = document.createElement('div');
-        cell.className = 'triggers-heatmap-cell';
-        const count = counts[d][h];
-        if (count > 0) {
-          const level = Math.min(4, Math.ceil((count / maxCount) * 4));
-          cell.classList.add('l' + level);
-        }
-        cell.title = `${dayLabels[d]} ${h}:00 - ${count} session${count !== 1 ? 's' : ''}`;
-        row.appendChild(cell);
-      }
-      heatmapGrid.appendChild(row);
-    }
-
-    // Build insight message
-    if (peakCount > 0) {
-      const dayName = dayLabels[peakDay];
-      const hourStr = peakHour === 0 ? '12am' : peakHour < 12 ? peakHour + 'am' : peakHour === 12 ? '12pm' : (peakHour - 12) + 'pm';
-      heatmapInsight.textContent = `Your peak time: ${dayName} ${hourStr}`;
-    } else {
-      heatmapInsight.textContent = '';
-    }
   }
 
   // Open triggers from menu
