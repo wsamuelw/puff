@@ -2315,6 +2315,15 @@
   });
   signinBtn.addEventListener('touchstart', (e) => e.stopPropagation(), { passive: true });
 
+  // Start without account button
+  const signinStart = document.getElementById('signin-start');
+  signinStart.addEventListener('click', (e) => {
+    e.stopPropagation();
+    safeSetItem('offlineMode', 'true');
+    document.getElementById('signin-screen').classList.add('hidden');
+  });
+  signinStart.addEventListener('touchstart', (e) => e.stopPropagation(), { passive: true });
+
 
   // --- Menu ---
   const menuOverlay = document.getElementById('menu-overlay');
