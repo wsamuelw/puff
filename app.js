@@ -1505,9 +1505,9 @@
 
   // Show end screen
   function showEndScreen() {
-    // Save trigger to logs
+    // Save trigger to logs with money saved
     const logs = JSON.parse(safeGetItem('cravingLogs', '[]'));
-    logs.push({ time: Date.now(), trigger: currentTriggerId });
+    logs.push({ time: Date.now(), trigger: currentTriggerId, money: sessionMoneySaved });
     safeSetItem('cravingLogs', JSON.stringify(logs));
 
     // Sync craving logs to cloud
@@ -2656,13 +2656,12 @@
     const thisWeekCount = thisWeekLogs.length;
     const lastWeekCount = lastWeekLogs.length;
 
-    // Calculate savings (assume $1 per session as default)
-    const cigPrice = parseFloat(safeGetItem('cigPrice', '1'));
-    const thisWeekSaved = thisWeekCount * cigPrice;
+    // Calculate savings (use actual saved amount from logs)
+    const thisWeekSaved = thisWeekLogs.reduce((sum, l) => sum + (l.money || 0), 0);
 
-    // Calculate per day
-    const daysInWeek = Math.min(7, Math.ceil((now - Math.min(...logs.map(l => l.time))) / (24 * 60 * 60 * 1000)));
-    const perDay = daysInWeek > 0 ? (thisWeekCount / daysInWeek).toFixed(1) : '0';
+    // Calculate per day (based on this week's logs)
+    const daysInWeek = thisWeekLogs.length > 0 ? Math.min(7, Math.ceil((now - Math.min(...thisWeekLogs.map(l => l.time))) / (24 * 60 * 60 * 1000))) : 1;
+    const perDay = (thisWeekCount / daysInWeek).toFixed(1);
 
     // Update summary
     summarySessions.textContent = thisWeekCount;
@@ -2692,8 +2691,9 @@
     const triggersBars = document.getElementById('triggers-bars');
     const logs = JSON.parse(safeGetItem('cravingLogs', '[]'));
 
-    // Build weekly summary
+    // Build weekly summary and heatmap (always)
     buildWeeklySummary(logs);
+    buildTimeHeatmap(logs);
 
     if (!logs.length) {
       triggersBars.innerHTML = '<div class="triggers-empty">No data yet. Complete a session to see patterns.</div>';
@@ -2784,9 +2784,6 @@
         });
       });
     });
-
-    // Build time-of-day heatmap
-    buildTimeHeatmap(logs);
   }
 
   // Build time-of-day heatmap
