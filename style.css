@@ -1414,30 +1414,6 @@ body.light .trigger-btn.selected {
   opacity: 1;
 }
 
-.trigger-done {
-  display: none;
-  padding: 16px 48px;
-  background: #faf9f7;
-  border: none;
-  border-radius: 12px;
-  color: #1a1a1a;
-  font-family: 'Outfit', sans-serif;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  -webkit-tap-highlight-color: transparent;
-}
-
-body.light .trigger-done {
-  background: #1a1a1a;
-  color: #faf9f7;
-}
-
-.trigger-done.visible {
-  display: block;
-}
-
-/* ─── Idle Screen ─── */
 /* ─── Milestone Card ─── */
 .milestone-card-overlay {
   position: fixed;

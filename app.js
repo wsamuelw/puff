@@ -1327,7 +1327,6 @@
   // HTML trigger screen elements
   const triggerScreen = document.getElementById('trigger-screen');
   const triggerGrid = document.getElementById('trigger-grid');
-  const triggerDone = document.getElementById('trigger-done');
 
   // HTML idle screen elements
 
@@ -1396,11 +1395,7 @@
     btn.textContent = trigger.emoji + ' ' + trigger.label;
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
-      selectedTrigger = trigger.id;
-      // Update selected state
-      triggerGrid.querySelectorAll('.trigger-btn').forEach(b => b.classList.remove('selected'));
-      btn.classList.add('selected');
-      triggerDone.classList.add('visible');
+      startSessionWithTrigger(trigger.id);
     });
     triggerGrid.appendChild(btn);
   });
@@ -1412,33 +1407,24 @@
   skipBtn.textContent = '🤷 Not sure';
   skipBtn.addEventListener('click', (e) => {
     e.stopPropagation();
-    selectedTrigger = 'unknown';
-    triggerGrid.querySelectorAll('.trigger-btn').forEach(b => b.classList.remove('selected'));
-    skipBtn.classList.add('selected');
-    triggerDone.classList.add('visible');
+    startSessionWithTrigger('unknown');
   });
   triggerGrid.appendChild(skipBtn);
 
-  // Done button handler (now "Continue" — starts smoking session)
-  triggerDone.addEventListener('click', (e) => {
-    e.stopPropagation();
-    if (!selectedTrigger) return;
-    // Save trigger to temp variable (will be saved to logs after session)
-    currentTriggerId = selectedTrigger;
-    logEvent('trigger_selected', { trigger: selectedTrigger });
-    // Hide trigger screen and start smoking
+  // Start session with selected trigger
+  function startSessionWithTrigger(triggerId) {
+    currentTriggerId = triggerId;
+    logEvent('trigger_selected', { trigger: triggerId });
     triggerScreen.classList.remove('visible');
     gameState = 'smoking';
-    // Start mic and loop
     startSmokingSession();
-  });
+  }
 
   // Show trigger selection screen (before smoking)
   function showTriggerScreen() {
     selectedTrigger = null;
     currentTriggerId = null;
     triggerGrid.querySelectorAll('.trigger-btn').forEach(b => b.classList.remove('selected'));
-    triggerDone.classList.remove('visible');
     triggerScreen.classList.add('visible');
     gameState = 'trigger-select';
   }
