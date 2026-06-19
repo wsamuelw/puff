@@ -1336,12 +1336,6 @@
   const triggerDone = document.getElementById('trigger-done');
 
   // HTML idle screen elements
-  const idleScreen = document.getElementById('idle-screen');
-  const idleMoney = document.getElementById('idle-money');
-  const idleStreak = document.getElementById('idle-streak');
-  const idleMessage = document.getElementById('idle-message');
-  const idleStart = document.getElementById('idle-start');
-  const idleOffline = document.getElementById('idle-offline');
 
   // HTML end screen elements
   const endScreen = document.getElementById('end-screen');
@@ -1736,52 +1730,15 @@
   }
 
   // Show idle screen
+  // Idle screen removed — go directly to trigger selection
   function showIdleScreen() {
-    // Check if onboarding is complete
     const onboardingComplete = safeGetItem('onboardingComplete', 'false');
     if (onboardingComplete !== 'true') {
       showOnboarding();
       return;
     }
-
-    idleMoney.textContent = '$' + totalMoneySaved.toFixed(2);
-
-    // Update card stats
-    const idleCigs = document.getElementById('idle-cigs');
-    const idleStreak = document.getElementById('idle-streak');
-    const idleSessions = document.getElementById('idle-sessions');
-    idleCigs.textContent = totalCigarettesAvoided;
-
-    // Days since last session
-    const lastSession = parseInt(safeGetItem('lastSessionDate', '0'));
-    if (lastSession) {
-      const daysSinceLastSession = Math.floor((Date.now() - lastSession) / (24 * 60 * 60 * 1000));
-      if (daysSinceLastSession === 0) {
-        idleStreak.textContent = 'Today';
-      } else if (daysSinceLastSession === 1) {
-        idleStreak.textContent = '1 day';
-      } else {
-        idleStreak.textContent = daysSinceLastSession + ' days';
-      }
-    } else {
-      idleStreak.textContent = '0 days';
-    }
-
-    idleSessions.textContent = sessionCount;
-
-    // Show offline indicator if needed
-    idleOffline.classList.toggle('visible', !navigator.onLine);
-
-    idleScreen.classList.add('visible');
     gameState = 'idle';
   }
-
-  // Idle screen start button
-  idleStart.addEventListener('click', (e) => {
-    e.stopPropagation();
-    idleScreen.classList.remove('visible');
-    showTriggerScreen();
-  });
 
   // End screen buttons
   endDone.addEventListener('click', (e) => {
@@ -2063,10 +2020,15 @@
         e.target.closest('.filter-stats') ||
         e.target.closest('.menu-pill') ||
         e.target.closest('.signin-screen') ||
-        e.target.closest('.idle-screen') ||
         e.target.closest('.end-screen') ||
         e.target.closest('.trigger-screen')
       )) return;
+
+      // Idle state — tap to start session
+      if (gameState === 'idle' && !started) {
+        showTriggerScreen();
+        return;
+      }
 
       // Game over — end screen handles the flow
       if (gameOver) return;
@@ -2098,7 +2060,6 @@
       e.target.closest('.slipup-screen') ||
       e.target.closest('.settings-screen') ||
       e.target.closest('.triggers-screen') ||
-      e.target.closest('.idle-screen') ||
       e.target.closest('.end-screen') ||
       e.target.closest('.trigger-screen')
     )) return;
