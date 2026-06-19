@@ -167,8 +167,8 @@
     const signinScreen = document.getElementById('signin-screen');
 
     if (user) {
-      // Signed in — load data but still show signin page
-      resetSigninButton();
+      // Already signed in — show confirmed state
+      markSignedIn();
       loadFromCloud();
       if (!safeGetItem('userName', '') && user.displayName) {
         const firstName = user.displayName.split(' ')[0];
@@ -2306,18 +2306,23 @@
     if (errorDiv) errorDiv.remove();
     signInWithGoogle().then(() => {
       // Success — show confirmed state
-      signinBtn.innerHTML = '✓ Signed in';
-      signinBtn.style.background = 'rgba(52,168,83,0.1)';
-      signinBtn.style.color = '#34A853';
-      signinBtn.style.borderColor = 'rgba(52,168,83,0.2)';
-      // Hide signin screen after brief delay
-      setTimeout(() => {
-        document.getElementById('signin-screen').classList.add('hidden');
-      }, 800);
+      markSignedIn();
     }).catch(() => {
       resetSigninButton();
     });
   });
+
+  // Mark Google button as signed in
+  function markSignedIn() {
+    const signinBtn = document.getElementById('signin-google');
+    if (signinBtn) {
+      signinBtn.innerHTML = '✓ Signed in with Google';
+      signinBtn.disabled = true;
+      signinBtn.style.background = 'rgba(52,168,83,0.1)';
+      signinBtn.style.color = '#34A853';
+      signinBtn.style.borderColor = 'rgba(52,168,83,0.2)';
+    }
+  }
   signinBtn.addEventListener('touchstart', (e) => e.stopPropagation(), { passive: true });
 
   // Start button — hide signin and show trigger selection
