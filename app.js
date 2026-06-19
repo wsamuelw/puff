@@ -2421,6 +2421,32 @@
         dot.classList.toggle('active', i === activeIndex);
       });
     }, { passive: true });
+
+    // Mouse drag to scroll on desktop
+    let isDragging = false;
+    let startX = 0;
+    let scrollStart = 0;
+    menuScrollWrap.addEventListener('mousedown', (e) => {
+      isDragging = true;
+      startX = e.pageX;
+      scrollStart = menuScrollWrap.scrollLeft;
+      menuScrollWrap.style.cursor = 'grabbing';
+    });
+    menuScrollWrap.addEventListener('mousemove', (e) => {
+      if (!isDragging) return;
+      e.preventDefault();
+      const dx = e.pageX - startX;
+      menuScrollWrap.scrollLeft = scrollStart - dx;
+    });
+    menuScrollWrap.addEventListener('mouseup', () => {
+      isDragging = false;
+      menuScrollWrap.style.cursor = 'grab';
+    });
+    menuScrollWrap.addEventListener('mouseleave', () => {
+      isDragging = false;
+      menuScrollWrap.style.cursor = 'grab';
+    });
+    menuScrollWrap.style.cursor = 'grab';
   }
 
   // --- Settings Screen ---
