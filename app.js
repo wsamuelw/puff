@@ -164,24 +164,22 @@
     const signinScreen = document.getElementById('signin-screen');
     const offlineMode = safeGetItem('offlineMode', 'false');
 
-    // Skip auth if offline mode
-    if (offlineMode === 'true') {
-      signinScreen.classList.add('hidden');
-      return;
-    }
-
     if (user) {
+      // Signed in — hide signin, load data, go to app
       signinScreen.classList.add('hidden');
       resetSigninButton();
       loadFromCloud();
-      // Auto-populate name from Google if not set
       if (!safeGetItem('userName', '') && user.displayName) {
         const firstName = user.displayName.split(' ')[0];
         safeSetItem('userName', firstName);
       }
       checkSlipUp();
+    } else if (offlineMode === 'true') {
+      // Offline mode — show signin page so user can choose Start
+      signinScreen.classList.remove('hidden');
+      resetSigninButton();
     } else {
-      // Only show sign-in if consent was given (not offline mode)
+      // Not signed in, not offline — show signin page
       if (consentGiven === 'true') {
         signinScreen.classList.remove('hidden');
       }

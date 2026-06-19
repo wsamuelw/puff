@@ -591,12 +591,13 @@ body.light .signin-sub {
 
 .signin-start {
   margin-top: 16px;
-  padding: 14px 48px;
+  padding: 16px;
+  width: 100%;
   background: #d4a574;
   border: none;
-  border-radius: 8px;
+  border-radius: 12px;
   font-family: 'Outfit', sans-serif;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 600;
   color: #1a1a1a;
   cursor: pointer;
@@ -609,7 +610,7 @@ body.light .signin-sub {
 }
 
 .signin-start:active {
-  transform: scale(0.98);
+  transform: scale(0.96);
 }
 
 .signin-error {
