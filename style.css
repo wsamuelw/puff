@@ -208,17 +208,26 @@ body.light .fs-item span {
 }
 
 /* ─── Sign-in Screen ─── */
+/* ─── Sign-in Screen (Sticky Note) ─── */
 .signin-screen {
   position: fixed;
   inset: 0;
   display: flex;
-  flex-direction: column;
   align-items: center;
+  justify-content: center;
   z-index: 400;
-  background: linear-gradient(180deg, #1a1208 0%, #111 50%);
+  background: #f5f0e8;
   opacity: 1;
   pointer-events: auto;
   transition: opacity 0.4s ease;
+}
+
+.signin-screen::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(0deg, transparent, transparent 27px, rgba(0,0,0,0.02) 27px, rgba(0,0,0,0.02) 28px);
+  pointer-events: none;
 }
 
 .signin-screen.hidden {
@@ -226,372 +235,61 @@ body.light .fs-item span {
   pointer-events: none;
 }
 
-.signin-hero {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding-top: 60px;
-  gap: 8px;
-  width: 100%;
-  max-width: 400px;
+body.dark .signin-screen {
+  background: #1a1a1a;
 }
 
-.signin-emoji {
-  font-size: 36px;
-  margin-bottom: 8px;
+body.dark .signin-screen::before {
+  background: repeating-linear-gradient(0deg, transparent, transparent 27px, rgba(250,249,247,0.02) 27px, rgba(250,249,247,0.02) 28px);
+}
+
+.signin-card {
+  background: #fff;
+  padding: 32px 28px;
+  border-radius: 4px;
+  box-shadow: 2px 4px 20px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.02);
+  transform: rotate(-1deg);
+  width: 100%;
+  max-width: 300px;
+  position: relative;
+  text-align: center;
+}
+
+body.dark .signin-card {
+  background: #222;
+  box-shadow: 2px 4px 20px rgba(0,0,0,0.3), 0 0 0 1px rgba(250,249,247,0.05);
+}
+
+.signin-tape {
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%) rotate(2deg);
+  width: 60px;
+  height: 16px;
+  background: rgba(212,165,116,0.3);
+  border-radius: 2px;
 }
 
 .signin-title {
   font-family: 'Libre Baskerville', serif;
-  font-size: 44px;
-  font-style: italic;
-  color: #d4a574;
-}
-
-.signin-tagline {
-  font-size: 14px;
-  color: rgba(250,249,247,0.3);
-}
-
-.signin-sheet {
-  background: #161616;
-  border-radius: 24px 24px 0 0;
-  padding: 20px 28px 40px;
-  width: 100%;
-  max-width: 400px;
-}
-
-.signin-handle {
-  width: 36px;
-  height: 4px;
-  background: rgba(250,249,247,0.06);
-  border-radius: 2px;
-  margin: 0 auto 24px;
-}
-
-/* ─── Splash Screen ─── */
-.splash-screen {
-  position: fixed;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 600;
-  background: #1a1a1a;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.4s ease;
-}
-
-body.light .splash-screen {
-  background: #faf9f7;
-}
-
-.splash-screen.visible {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.splash-content {
-  text-align: center;
-  padding: 40px 32px;
-  max-width: 340px;
-}
-
-.splash-emoji {
-  font-size: 64px;
-  margin-bottom: 16px;
-}
-
-.splash-title {
-  font-family: 'Libre Baskerville', serif;
-  font-size: 42px;
-  font-weight: 400;
-  font-style: italic;
-  color: #d4a574;
-  margin-bottom: 8px;
-}
-
-.splash-tagline {
-  font-size: 16px;
-  color: rgba(250,249,247,0.6);
-  margin-bottom: 40px;
-}
-
-body.light .splash-tagline {
-  color: rgba(26,26,26,0.5);
-}
-
-.splash-features {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  margin-bottom: 40px;
-  text-align: left;
-}
-
-.splash-feature {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.splash-feature-icon {
-  font-size: 24px;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(212,165,116,0.15);
-  border-radius: 12px;
-  flex-shrink: 0;
-}
-
-.splash-feature-text {
-  font-size: 14px;
-  color: rgba(250,249,247,0.7);
-  line-height: 1.4;
-}
-
-body.light .splash-feature-text {
-  color: rgba(26,26,26,0.7);
-}
-
-.splash-start {
-  width: 100%;
-  padding: 18px;
-  min-height: 56px;
-  background: #d4a574;
-  border: none;
-  border-radius: 12px;
+  font-size: 32px;
   color: #1a1a1a;
-  font-family: 'Outfit', sans-serif;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.splash-start:hover {
-  background: #c49564;
-}
-
-.splash-start:active {
-  transform: scale(0.96);
-}
-
-/* ─── Consent Screen ─── */
-.consent-screen {
-  position: fixed;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 500;
-  background: #1a1a1a;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.4s ease;
-}
-
-.consent-screen.visible {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-body.light .consent-screen {
-  background: #faf9f7;
-}
-
-.consent-content {
-  text-align: center;
-  padding: 40px 24px;
-  max-width: 360px;
-  width: 100%;
-}
-
-.consent-title {
-  font-family: 'Libre Baskerville', serif;
-  font-size: 42px;
-  font-style: italic;
-  color: #faf9f7;
-  letter-spacing: -1px;
-}
-
-body.light .consent-title {
-  color: #1a1a1a;
-}
-
-.consent-sub {
-  font-size: 12px;
-  color: rgba(250,249,247,0.4);
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  margin-top: 8px;
-  margin-bottom: 32px;
-}
-
-body.light .consent-sub {
-  color: rgba(26,26,26,0.4);
-}
-
-.consent-card {
-  background: rgba(250,249,247,0.04);
-  border: 1px solid rgba(250,249,247,0.08);
-  border-radius: 16px;
-  padding: 24px;
-  text-align: left;
-}
-
-body.light .consent-card {
-  background: rgba(0,0,0,0.03);
-  border-color: rgba(0,0,0,0.06);
-}
-
-.consent-heading {
-  font-family: 'Libre Baskerville', serif;
-  font-size: 18px;
-  color: #faf9f7;
-  margin-bottom: 16px;
-}
-
-body.light .consent-heading {
-  color: #1a1a1a;
-}
-
-.consent-text {
-  font-size: 14px;
-  color: rgba(250,249,247,0.6);
-  line-height: 1.6;
-  margin-bottom: 20px;
-}
-
-body.light .consent-text {
-  color: rgba(26,26,26,0.6);
-}
-
-.consent-text p {
-  margin-bottom: 12px;
-}
-
-.consent-text ul {
-  margin: 8px 0 12px 20px;
-  padding: 0;
-}
-
-.consent-text li {
   margin-bottom: 4px;
 }
 
-.consent-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-bottom: 16px;
+body.dark .signin-title {
+  color: #f5f0eb;
 }
 
-.consent-accept {
-  padding: 16px;
-  min-height: 48px;
-  background: #d4a574;
-  border: none;
-  border-radius: 12px;
-  color: #1a1a1a;
-  font-family: 'Outfit', sans-serif;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  -webkit-tap-highlight-color: transparent;
+.signin-sub {
+  font-size: 13px;
+  color: rgba(26,26,26,0.35);
+  margin-bottom: 24px;
 }
 
-.consent-accept:hover {
-  background: #c49564;
-}
-
-.consent-accept:active {
-  transform: scale(0.96);
-}
-
-.consent-offline {
-  padding: 16px;
-  min-height: 48px;
-  background: transparent;
-  border: 1px solid rgba(250,249,247,0.15);
-  border-radius: 12px;
-  color: rgba(250,249,247,0.5);
-  font-family: 'Outfit', sans-serif;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  -webkit-tap-highlight-color: transparent;
-}
-
-body.light .consent-offline {
-  border-color: rgba(0,0,0,0.1);
-  color: rgba(26,26,26,0.5);
-}
-
-.consent-offline:hover {
-  border-color: rgba(250,249,247,0.3);
-  color: rgba(250,249,247,0.7);
-}
-
-body.light .consent-offline:hover {
-  border-color: rgba(0,0,0,0.2);
-  color: rgba(26,26,26,0.7);
-}
-
-.consent-links {
-  text-align: center;
-}
-
-.consent-link {
-  font-size: 12px;
-  color: rgba(250,249,247,0.3);
-  text-decoration: none;
-  transition: color 0.2s ease;
-}
-
-.consent-link:hover {
-  color: rgba(250,249,247,0.5);
-}
-
-body.light .consent-link {
-  color: rgba(26,26,26,0.3);
-}
-
-body.light .consent-link:hover {
-  color: rgba(26,26,26,0.5);
-}
-
-.signin-screen.hidden {
-  opacity: 0;
-  pointer-events: none;
-}
-
-body.light .signin-screen {
-  background: linear-gradient(180deg, #f5efe6 0%, #faf9f7 50%);
-}
-
-body.light .signin-sheet {
-  background: #f0efe9;
-}
-
-body.light .signin-tagline {
-  color: rgba(26,26,26,0.3);
-}
-
-body.light .signin-handle {
-  background: rgba(26,26,26,0.06);
-}
-
-body.light .signin-terms {
-  color: rgba(26,26,26,0.15);
+body.dark .signin-sub {
+  color: rgba(245,240,235,0.35);
 }
 
 .signin-btn {
@@ -599,22 +297,32 @@ body.light .signin-terms {
   align-items: center;
   gap: 10px;
   padding: 16px 24px;
-  background: #fff;
+  background: #1a1a1a;
   border: none;
   border-radius: 12px;
   font-family: 'Outfit', sans-serif;
   font-size: 15px;
   font-weight: 500;
-  color: #1a1a1a;
+  color: #fff;
   cursor: pointer;
   width: 100%;
   justify-content: center;
   transition: all 0.2s ease;
   -webkit-tap-highlight-color: transparent;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+body.dark .signin-btn {
+  background: #fff;
+  color: #1a1a1a;
 }
 
 .signin-btn:hover {
-  background: #f5f5f5;
+  background: #333;
+}
+
+body.dark .signin-btn:hover {
+  background: #f0f0f0;
 }
 
 .signin-btn:active {
@@ -640,6 +348,7 @@ body.light .signin-terms {
   cursor: pointer;
   transition: all 0.2s ease;
   -webkit-tap-highlight-color: transparent;
+  box-shadow: 0 2px 8px rgba(212,165,116,0.2);
 }
 
 .signin-start:hover {
@@ -650,11 +359,15 @@ body.light .signin-terms {
   transform: scale(0.96);
 }
 
-.signin-terms {
-  font-size: 11px;
-  color: rgba(250,249,247,0.12);
-  text-align: center;
+.signin-note {
   margin-top: 16px;
+  font-size: 12px;
+  color: rgba(26,26,26,0.25);
+  font-style: italic;
+}
+
+body.dark .signin-note {
+  color: rgba(245,240,235,0.2);
 }
 
 .signin-error {
