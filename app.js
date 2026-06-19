@@ -158,32 +158,26 @@
     checkSlipUp();
   });
 
-  // Listen for auth state changes
+  // Listen for auth state changes — always show signin page
   auth.onAuthStateChanged((user) => {
     currentUser = user;
     const signinScreen = document.getElementById('signin-screen');
-    const offlineMode = safeGetItem('offlineMode', 'false');
 
     if (user) {
-      // Signed in — hide signin, load data, go to app
-      signinScreen.classList.add('hidden');
+      // Signed in — load data but still show signin page
       resetSigninButton();
       loadFromCloud();
       if (!safeGetItem('userName', '') && user.displayName) {
         const firstName = user.displayName.split(' ')[0];
         safeSetItem('userName', firstName);
       }
-      checkSlipUp();
-    } else if (offlineMode === 'true') {
-      // Offline mode — show signin page so user can choose Start
-      signinScreen.classList.remove('hidden');
-      resetSigninButton();
     } else {
-      // Not signed in, not offline — show signin page
-      if (consentGiven === 'true') {
-        signinScreen.classList.remove('hidden');
-      }
       resetSigninButton();
+    }
+
+    // Always show signin page — user must click Start
+    if (consentGiven === 'true') {
+      signinScreen.classList.remove('hidden');
     }
   });
 
@@ -2313,11 +2307,10 @@
   });
   signinBtn.addEventListener('touchstart', (e) => e.stopPropagation(), { passive: true });
 
-  // Start button — go directly to trigger selection
+  // Start button — hide signin and show trigger selection
   const signinStart = document.getElementById('signin-start');
   signinStart.addEventListener('click', (e) => {
     e.stopPropagation();
-    safeSetItem('offlineMode', 'true');
     document.getElementById('signin-screen').classList.add('hidden');
     showTriggerScreen();
   });
