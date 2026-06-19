@@ -1648,21 +1648,10 @@ body.dark .end-stat-lbl {
   text-transform: uppercase;
   letter-spacing: 1px;
   margin-bottom: 8px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
 }
 
 body.dark .end-triggers-title {
   color: rgba(245,240,235,0.3);
-}
-
-.end-see-all {
-  font-size: 11px;
-  color: #d4a574;
-  cursor: pointer;
-  text-transform: none;
-  letter-spacing: 0;
 }
 
 .end-trigger-list {
