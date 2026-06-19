@@ -1205,6 +1205,7 @@
   // Trigger categories for end-of-session screen
   const TRIGGER_OPTIONS = [
     { id: 'stress', emoji: '😰', label: 'Stress' },
+    { id: 'anxiety', emoji: '😬', label: 'Anxiety' },
     { id: 'drinking', emoji: '🍺', label: 'Drinking' },
     { id: 'coffee', emoji: '☕', label: 'Coffee' },
     { id: 'meals', emoji: '🍽️', label: 'After meals' },
@@ -1212,10 +1213,13 @@
     { id: 'driving', emoji: '🚗', label: 'Driving' },
     { id: 'aftersex', emoji: '❤️', label: 'After sex' },
     { id: 'workbreak', emoji: '💼', label: 'Work break' },
+    { id: 'phonecall', emoji: '📞', label: 'Phone call' },
+    { id: 'waiting', emoji: '⏳', label: 'Waiting' },
     { id: 'scrolling', emoji: '📱', label: 'Scrolling' },
     { id: 'walking', emoji: '🚶', label: 'Walking' },
     { id: 'social', emoji: '🍻', label: 'Social pressure' },
     { id: 'morning', emoji: '🌅', label: 'Morning routine' },
+    { id: 'latenight', emoji: '🌙', label: 'Late night' },
   ];
   let selectedTrigger = null;
   let triggerSubmitted = false;
@@ -1656,6 +1660,7 @@
     // Trigger icons mapping
     const triggerIcons = {
       'stress': '😰',
+      'anxiety': '😬',
       'drinking': '🍺',
       'coffee': '☕',
       'meals': '🍽️',
@@ -1663,10 +1668,13 @@
       'driving': '🚗',
       'aftersex': '❤️',
       'workbreak': '💼',
+      'phonecall': '📞',
+      'waiting': '⏳',
       'scrolling': '📱',
       'walking': '🚶',
       'social': '🍻',
       'morning': '🌅',
+      'latenight': '🌙',
       'unknown': '🤷',
       'other': '💭'
     };
@@ -1674,6 +1682,7 @@
     // Trigger labels mapping
     const triggerLabels = {
       'stress': 'Stress',
+      'anxiety': 'Anxiety',
       'drinking': 'Drinking',
       'coffee': 'Coffee',
       'meals': 'After meals',
@@ -1681,10 +1690,13 @@
       'driving': 'Driving',
       'aftersex': 'After sex',
       'workbreak': 'Work break',
+      'phonecall': 'Phone call',
+      'waiting': 'Waiting',
       'scrolling': 'Scrolling',
       'walking': 'Walking',
       'social': 'Social pressure',
       'morning': 'Morning routine',
+      'latenight': 'Late night',
       'unknown': 'Not sure',
       'other': 'Other'
     };
@@ -2725,6 +2737,7 @@
     // Trigger icons mapping (by ID)
     const triggerIcons = {
       'stress': '😰',
+      'anxiety': '😬',
       'drinking': '🍺',
       'coffee': '☕',
       'meals': '🍽️',
@@ -2732,10 +2745,13 @@
       'driving': '🚗',
       'aftersex': '❤️',
       'workbreak': '💼',
+      'phonecall': '📞',
+      'waiting': '⏳',
       'scrolling': '📱',
       'walking': '🚶',
       'social': '🍻',
       'morning': '🌅',
+      'latenight': '🌙',
       'unknown': '🤷',
       'other': '💭'
     };
@@ -2743,6 +2759,7 @@
     // Trigger labels mapping (by ID)
     const triggerLabels = {
       'stress': 'Stress',
+      'anxiety': 'Anxiety',
       'drinking': 'Drinking',
       'coffee': 'Coffee',
       'meals': 'After meals',
@@ -2750,10 +2767,13 @@
       'driving': 'Driving',
       'aftersex': 'After sex',
       'workbreak': 'Work break',
+      'phonecall': 'Phone call',
+      'waiting': 'Waiting',
       'scrolling': 'Scrolling',
       'walking': 'Walking',
       'social': 'Social pressure',
       'morning': 'Morning routine',
+      'latenight': 'Late night',
       'unknown': 'Not sure',
       'other': 'Other'
     };
