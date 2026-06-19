@@ -2038,6 +2038,7 @@ body.light .badge-modal-close:hover {
   inset: 0;
   display: flex;
   flex-direction: column;
+  align-items: center;
   background: rgba(26,26,26,0.95);
   z-index: 350;
   opacity: 0;
@@ -2045,6 +2046,17 @@ body.light .badge-modal-close:hover {
   transition: opacity 0.35s ease, transform 0.35s ease;
   transform: scale(0.96);
   padding: 40px 24px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.end-header,
+.end-stats-row,
+.end-triggers-section,
+.end-actions,
+.end-cooldown {
+  width: 100%;
+  max-width: 400px;
 }
 
 @supports (padding-top: env(safe-area-inset-top)) {

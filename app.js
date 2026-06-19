@@ -1666,6 +1666,7 @@
       'walking': '🚶',
       'social': '🍻',
       'morning': '🌅',
+      'unknown': '🤷',
       'other': '💭'
     };
 
@@ -1683,6 +1684,7 @@
       'walking': 'Walking',
       'social': 'Social pressure',
       'morning': 'Morning routine',
+      'unknown': 'Not sure',
       'other': 'Other'
     };
 
@@ -2738,6 +2740,7 @@
       'walking': '🚶',
       'social': '🍻',
       'morning': '🌅',
+      'unknown': '🤷',
       'other': '💭'
     };
 
@@ -2755,6 +2758,7 @@
       'walking': 'Walking',
       'social': 'Social pressure',
       'morning': 'Morning routine',
+      'unknown': 'Not sure',
       'other': 'Other'
     };
 
