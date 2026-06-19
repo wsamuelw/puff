@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign-in Bottom Sheet Designs</title>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Outfit', sans-serif; background: #0a0a0a; color: #faf9f7; padding: 40px 20px; }
+    h1 { text-align: center; font-family: 'Libre Baskerville', serif; font-size: 28px; margin-bottom: 8px; }
+    .subtitle { text-align: center; font-size: 14px; color: rgba(250,249,247,0.4); margin-bottom: 40px; }
+    .designs { display: flex; flex-wrap: wrap; gap: 32px; justify-content: center; max-width: 1200px; margin: 0 auto; }
+    .design { width: 340px; }
+    .design-label { font-size: 13px; color: rgba(250,249,247,0.3); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 12px; }
+    .design-name { font-family: 'Libre Baskerville', serif; font-size: 18px; margin-bottom: 16px; color: #d4a574; }
+    .phone { width: 340px; height: 680px; border-radius: 40px; border: 3px solid #333; overflow: hidden; position: relative; }
+    .phone::before { content: ''; position: absolute; top: 8px; left: 50%; transform: translateX(-50%); width: 100px; height: 28px; background: #333; border-radius: 14px; z-index: 10; }
+
+    /* ═══════════════════════════════════════
+       A — GLOW SHEET
+       ═══════════════════════════════════════ */
+    .a { background: #111; display: flex; flex-direction: column; }
+    .a-spacer { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+    .a-spacer::before { content: ''; position: absolute; width: 200px; height: 200px; background: radial-gradient(circle, rgba(212,165,116,0.12) 0%, transparent 70%); border-radius: 50%; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+    .a-logo { font-family: 'Libre Baskerville', serif; font-size: 52px; font-style: italic; color: #d4a574; position: relative; z-index: 1; text-shadow: 0 0 40px rgba(212,165,116,0.15); }
+    .a-sheet { background: #1a1a1a; border-radius: 28px 28px 0 0; padding: 12px 28px 40px; position: relative; }
+    .a-sheet::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(212,165,116,0.2), transparent); }
+    .a-handle { width: 36px; height: 4px; background: rgba(250,249,247,0.08); border-radius: 2px; margin: 0 auto 20px; }
+    .a-heading { font-family: 'Libre Baskerville', serif; font-size: 20px; color: #faf9f7; margin-bottom: 4px; text-align: center; }
+    .a-sub { font-size: 13px; color: rgba(250,249,247,0.35); text-align: center; margin-bottom: 24px; }
+    .a-google { display: flex; align-items: center; gap: 10px; padding: 14px 24px; background: #fff; border: none; border-radius: 12px; font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 500; color: #1a1a1a; cursor: pointer; width: 100%; justify-content: center; margin-bottom: 10px; }
+    .a-start { padding: 16px; width: 100%; background: #d4a574; border: none; border-radius: 12px; font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 600; color: #1a1a1a; cursor: pointer; }
+
+    /* ═══════════════════════════════════════
+       B — DARK SHEET WITH CIGARETTE
+       ═══════════════════════════════════════ */
+    .b { background: #111; display: flex; flex-direction: column; }
+    .b-spacer { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; }
+    .b-cig { font-size: 80px; filter: grayscale(0.3) drop-shadow(0 8px 24px rgba(0,0,0,0.4)); }
+    .b-sheet { background: #181818; border-radius: 24px 24px 0 0; padding: 12px 28px 40px; border-top: 1px solid rgba(250,249,247,0.04); }
+    .b-handle { width: 36px; height: 4px; background: rgba(250,249,247,0.06); border-radius: 2px; margin: 0 auto 20px; }
+    .b-title { font-family: 'Libre Baskerville', serif; font-size: 32px; font-style: italic; color: #d4a574; text-align: center; margin-bottom: 4px; }
+    .b-sub { font-size: 13px; color: rgba(250,249,247,0.3); text-align: center; margin-bottom: 24px; }
+    .b-google { display: flex; align-items: center; gap: 10px; padding: 14px 24px; background: #fff; border: none; border-radius: 12px; font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 500; color: #1a1a1a; cursor: pointer; width: 100%; justify-content: center; margin-bottom: 10px; }
+    .b-start { padding: 16px; width: 100%; background: #d4a574; border: none; border-radius: 12px; font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 600; color: #1a1a1a; cursor: pointer; }
+
+    /* ═══════════════════════════════════════
+       C — GRADIENT SHEET
+       ═══════════════════════════════════════ */
+    .c { background: linear-gradient(180deg, #1a1208 0%, #111 50%); display: flex; flex-direction: column; }
+    .c-spacer { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding-top: 60px; gap: 8px; }
+    .c-emoji { font-size: 36px; margin-bottom: 8px; }
+    .c-title { font-family: 'Libre Baskerville', serif; font-size: 44px; font-style: italic; color: #d4a574; }
+    .c-tagline { font-size: 14px; color: rgba(250,249,247,0.3); }
+    .c-sheet { background: #161616; border-radius: 24px 24px 0 0; padding: 20px 28px 40px; }
+    .c-handle { width: 36px; height: 4px; background: rgba(250,249,247,0.06); border-radius: 2px; margin: 0 auto 24px; }
+    .c-google { display: flex; align-items: center; gap: 10px; padding: 16px 24px; background: #fff; border: none; border-radius: 12px; font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 500; color: #1a1a1a; cursor: pointer; width: 100%; justify-content: center; margin-bottom: 10px; }
+    .c-start { padding: 16px; width: 100%; background: #d4a574; border: none; border-radius: 12px; font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 600; color: #1a1a1a; cursor: pointer; }
+    .c-terms { font-size: 11px; color: rgba(250,249,247,0.12); text-align: center; margin-top: 16px; }
+
+    /* ═══════════════════════════════════════
+       D — FLAT SHEET (MINIMAL)
+       ═══════════════════════════════════════ */
+    .d { background: #1a1a1a; display: flex; flex-direction: column; }
+    .d-spacer { flex: 1; display: flex; align-items: center; justify-content: center; }
+    .d-logo-wrap { text-align: center; }
+    .d-logo { font-family: 'Libre Baskerville', serif; font-size: 48px; font-style: italic; color: #d4a574; }
+    .d-logo-sub { font-size: 12px; color: rgba(250,249,247,0.2); text-transform: uppercase; letter-spacing: 3px; margin-top: 4px; }
+    .d-sheet { background: #141414; border-radius: 20px 20px 0 0; padding: 24px 28px 40px; }
+    .d-divider { width: 40px; height: 1px; background: rgba(250,249,247,0.06); margin: 0 auto 20px; }
+    .d-msg { font-size: 14px; color: rgba(250,249,247,0.4); text-align: center; margin-bottom: 24px; line-height: 1.5; }
+    .d-google { display: flex; align-items: center; gap: 10px; padding: 14px 24px; background: #fff; border: none; border-radius: 10px; font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 500; color: #1a1a1a; cursor: pointer; width: 100%; justify-content: center; margin-bottom: 10px; }
+    .d-start { padding: 16px; width: 100%; background: #d4a574; border: none; border-radius: 10px; font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 600; color: #1a1a1a; cursor: pointer; }
+
+    /* ═══════════════════════════════════════
+       E — EMOJI HERO SHEET
+       ═══════════════════════════════════════ */
+    .e { background: #111; display: flex; flex-direction: column; }
+    .e-spacer { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding-top: 60px; }
+    .e-emoji { font-size: 72px; margin-bottom: 16px; filter: drop-shadow(0 4px 16px rgba(212,165,116,0.1)); }
+    .e-title { font-family: 'Libre Baskerville', serif; font-size: 40px; font-style: italic; color: #d4a574; }
+    .e-sheet { background: #1a1a1a; border-radius: 24px 24px 0 0; padding: 16px 28px 40px; position: relative; }
+    .e-sheet::before { content: ''; position: absolute; top: 0; left: 28px; right: 28px; height: 1px; background: linear-gradient(90deg, transparent, rgba(212,165,116,0.15), transparent); }
+    .e-handle { width: 36px; height: 4px; background: rgba(250,249,247,0.06); border-radius: 2px; margin: 0 auto 16px; }
+    .e-sub { font-size: 14px; color: rgba(250,249,247,0.35); text-align: center; margin-bottom: 24px; }
+    .e-google { display: flex; align-items: center; gap: 10px; padding: 14px 24px; background: #fff; border: none; border-radius: 12px; font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 500; color: #1a1a1a; cursor: pointer; width: 100%; justify-content: center; margin-bottom: 10px; }
+    .e-start { padding: 16px; width: 100%; background: #d4a574; border: none; border-radius: 12px; font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 600; color: #1a1a1a; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <h1>Sign-in Bottom Sheet Designs</h1>
+  <p class="subtitle">5 variations of the bottom sheet concept</p>
+
+  <div class="designs">
+
+    <!-- A — Glow Sheet -->
+    <div class="design">
+      <div class="design-label">Option A</div>
+      <div class="design-name">Glow Sheet</div>
+      <div class="phone a">
+        <div class="a-spacer">
+          <div class="a-logo">puff</div>
+        </div>
+        <div class="a-sheet">
+          <div class="a-handle"></div>
+          <div class="a-heading">Ready to quit?</div>
+          <div class="a-sub">Simulate smoking to quit smoking</div>
+          <button class="a-google">
+            <svg width="18" height="18" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+            Sign in with Google
+          </button>
+          <button class="a-start">Start</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- B — Dark Sheet with Cigarette -->
+    <div class="design">
+      <div class="design-label">Option B</div>
+      <div class="design-name">Dark Sheet + Cigarette</div>
+      <div class="phone b">
+        <div class="b-spacer">
+          <div class="b-cig">🚬</div>
+        </div>
+        <div class="b-sheet">
+          <div class="b-handle"></div>
+          <div class="b-title">puff</div>
+          <div class="b-sub">your quit companion</div>
+          <button class="b-google">
+            <svg width="18" height="18" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+            Sign in with Google
+          </button>
+          <button class="b-start">Start</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- C — Gradient Sheet -->
+    <div class="design">
+      <div class="design-label">Option C</div>
+      <div class="design-name">Gradient Sheet</div>
+      <div class="phone c">
+        <div class="c-spacer">
+          <div class="c-emoji">🫁</div>
+          <div class="c-title">puff</div>
+          <div class="c-tagline">simulate smoking to quit</div>
+        </div>
+        <div class="c-sheet">
+          <div class="c-handle"></div>
+          <button class="c-google">
+            <svg width="18" height="18" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+            Sign in with Google
+          </button>
+          <button class="c-start">Start</button>
+          <div class="c-terms">Your data stays private · Never shared</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- D — Flat Sheet (Minimal) -->
+    <div class="design">
+      <div class="design-label">Option D</div>
+      <div class="design-name">Flat Minimal</div>
+      <div class="phone d">
+        <div class="d-spacer">
+          <div class="d-logo-wrap">
+            <div class="d-logo">puff</div>
+            <div class="d-logo-sub">quit companion</div>
+          </div>
+        </div>
+        <div class="d-sheet">
+          <div class="d-divider"></div>
+          <div class="d-msg">Hold and blow to simulate smoking. Track your triggers. Save money.</div>
+          <button class="d-google">
+            <svg width="18" height="18" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+            Sign in with Google
+          </button>
+          <button class="d-start">Start</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- E — Emoji Hero Sheet -->
+    <div class="design">
+      <div class="design-label">Option E</div>
+      <div class="design-name">Emoji Hero Sheet</div>
+      <div class="phone e">
+        <div class="e-spacer">
+          <div class="e-emoji">🫁</div>
+          <div class="e-title">puff</div>
+        </div>
+        <div class="e-sheet">
+          <div class="e-handle"></div>
+          <div class="e-sub">Simulate smoking to quit smoking</div>
+          <button class="e-google">
+            <svg width="18" height="18" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+            Sign in with Google
+          </button>
+          <button class="e-start">Start</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>
