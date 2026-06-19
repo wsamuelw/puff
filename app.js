@@ -2444,10 +2444,12 @@
     settingsTotalSaved.textContent = '$' + totalMoneySaved.toFixed(2);
     settingsPriceDisplay.textContent = '$' + cigPrice.toFixed(2);
 
-    // Update name display
-    const userName = safeGetItem('userName', '');
+    // Update name display — check localStorage first, then Google account
+    let userName = safeGetItem('userName', '');
+    if (!userName && currentUser && currentUser.displayName) {
+      userName = currentUser.displayName.split(' ')[0];
+    }
     settingsNameDisplay.textContent = userName || 'Set name';
-
   }
 
   // Save settings to cloud + localStorage
@@ -2460,7 +2462,9 @@
       darkMode: isDark
     });
     settingsPriceDisplay.textContent = '$' + cigPrice.toFixed(2);
-    settingsNameDisplay.textContent = userName || 'Set name';
+    // Show name or Google name or fallback
+    const displayName = userName || (currentUser ? currentUser.displayName?.split(' ')[0] : '') || 'Set name';
+    settingsNameDisplay.textContent = displayName;
     // Update menu greeting immediately
     updateMenuUserInfo();
   }
