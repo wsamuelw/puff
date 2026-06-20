@@ -39,7 +39,7 @@ Built as a Progressive Web App (PWA) that runs entirely in the browser. Add it t
 - **Offline support** — full functionality without internet, syncs when reconnected
 
 ### Customisation
-- **12 trigger options** — stress, drinking, coffee, meals, boredom, driving, after sex, work break, scrolling, walking, social, morning
+- **16 trigger options** — stress, anxiety, sadness, anger, tired, drinking, coffee, meals, social drinking, work break, toilet, after sex, seeing others smoke, boredom, morning routine, late night
 - **Editable profile** — customise your name and cigarette price
 - **Dark & light mode** — toggle in settings
 - **Reset data** — clear all local and cloud data

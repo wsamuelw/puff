@@ -1195,17 +1195,18 @@
   const TRIGGER_OPTIONS = [
     { id: 'stress', emoji: '😰', label: 'Stress' },
     { id: 'anxiety', emoji: '😬', label: 'Anxiety' },
+    { id: 'sadness', emoji: '😔', label: 'Sadness' },
+    { id: 'anger', emoji: '😤', label: 'Anger' },
+    { id: 'tired', emoji: '😴', label: 'Tired' },
     { id: 'drinking', emoji: '🍺', label: 'Drinking' },
     { id: 'coffee', emoji: '☕', label: 'Coffee' },
     { id: 'meals', emoji: '🍽️', label: 'After meals' },
-    { id: 'boredom', emoji: '😑', label: 'Boredom' },
-    { id: 'aftersex', emoji: '❤️', label: 'After sex' },
+    { id: 'social', emoji: '🍻', label: 'Social drinking' },
     { id: 'workbreak', emoji: '💼', label: 'Work break' },
-    { id: 'phonecall', emoji: '📞', label: 'Phone call' },
-    { id: 'waiting', emoji: '⏳', label: 'Waiting' },
-    { id: 'scrolling', emoji: '📱', label: 'Scrolling' },
-    { id: 'walking', emoji: '🚶', label: 'Walking' },
-    { id: 'social', emoji: '🍻', label: 'Social pressure' },
+    { id: 'toilet', emoji: '🚽', label: 'Toilet' },
+    { id: 'aftersex', emoji: '❤️', label: 'After sex' },
+    { id: 'seeing-smoke', emoji: '👀', label: 'Seeing others smoke' },
+    { id: 'boredom', emoji: '😑', label: 'Boredom' },
     { id: 'morning', emoji: '🌅', label: 'Morning routine' },
     { id: 'latenight', emoji: '🌙', label: 'Late night' },
   ];
@@ -1619,16 +1620,16 @@
 
     // Trigger icons/labels
     const triggerIcons = {
-      'stress': '😰', 'anxiety': '😬', 'drinking': '🍺', 'coffee': '☕',
-      'meals': '🍽️', 'boredom': '😑', 'aftersex': '❤️', 'workbreak': '💼',
-      'phonecall': '📞', 'waiting': '⏳', 'scrolling': '📱', 'walking': '🚶',
-      'social': '🍻', 'morning': '🌅', 'latenight': '🌙', 'unknown': '🤷', 'other': '💭'
+      'stress': '😰', 'anxiety': '😬', 'sadness': '😔', 'anger': '😤', 'tired': '😴',
+      'drinking': '🍺', 'coffee': '☕', 'meals': '🍽️', 'social': '🍻', 'workbreak': '💼',
+      'toilet': '🚽', 'aftersex': '❤️', 'seeing-smoke': '👀', 'boredom': '😑',
+      'morning': '🌅', 'latenight': '🌙', 'unknown': '🤷', 'other': '💭'
     };
     const triggerLabels = {
-      'stress': 'Stress', 'anxiety': 'Anxiety', 'drinking': 'Drinking', 'coffee': 'Coffee',
-      'meals': 'After meals', 'boredom': 'Boredom', 'aftersex': 'After sex', 'workbreak': 'Work break',
-      'phonecall': 'Phone call', 'waiting': 'Waiting', 'scrolling': 'Scrolling', 'walking': 'Walking',
-      'social': 'Social pressure', 'morning': 'Morning routine', 'latenight': 'Late night',
+      'stress': 'Stress', 'anxiety': 'Anxiety', 'sadness': 'Sadness', 'anger': 'Anger', 'tired': 'Tired',
+      'drinking': 'Drinking', 'coffee': 'Coffee', 'meals': 'After meals', 'social': 'Social drinking',
+      'workbreak': 'Work break', 'toilet': 'Toilet', 'aftersex': 'After sex', 'seeing-smoke': 'Seeing others smoke',
+      'boredom': 'Boredom', 'morning': 'Morning routine', 'latenight': 'Late night',
       'unknown': 'Not sure', 'other': 'Other'
     };
 
@@ -2570,18 +2571,18 @@
 
     // Trigger icons mapping
     const triggerIcons = {
-      'stress': '😰', 'anxiety': '😬', 'drinking': '🍺', 'coffee': '☕',
-      'meals': '🍽️', 'boredom': '😑', 'aftersex': '❤️', 'workbreak': '💼',
-      'phonecall': '📞', 'waiting': '⏳', 'scrolling': '📱', 'walking': '🚶',
-      'social': '🍻', 'morning': '🌅', 'latenight': '🌙', 'unknown': '🤷', 'other': '💭'
+      'stress': '😰', 'anxiety': '😬', 'sadness': '😔', 'anger': '😤', 'tired': '😴',
+      'drinking': '🍺', 'coffee': '☕', 'meals': '🍽️', 'social': '🍻', 'workbreak': '💼',
+      'toilet': '🚽', 'aftersex': '❤️', 'seeing-smoke': '👀', 'boredom': '😑',
+      'morning': '🌅', 'latenight': '🌙', 'unknown': '🤷', 'other': '💭'
     };
 
     // Trigger labels mapping
     const triggerLabels = {
-      'stress': 'Stress', 'anxiety': 'Anxiety', 'drinking': 'Drinking', 'coffee': 'Coffee',
-      'meals': 'After meals', 'boredom': 'Boredom', 'aftersex': 'After sex', 'workbreak': 'Work break',
-      'phonecall': 'Phone call', 'waiting': 'Waiting', 'scrolling': 'Scrolling', 'walking': 'Walking',
-      'social': 'Social pressure', 'morning': 'Morning routine', 'latenight': 'Late night',
+      'stress': 'Stress', 'anxiety': 'Anxiety', 'sadness': 'Sadness', 'anger': 'Anger', 'tired': 'Tired',
+      'drinking': 'Drinking', 'coffee': 'Coffee', 'meals': 'After meals', 'social': 'Social drinking',
+      'workbreak': 'Work break', 'toilet': 'Toilet', 'aftersex': 'After sex', 'seeing-smoke': 'Seeing others smoke',
+      'boredom': 'Boredom', 'morning': 'Morning routine', 'latenight': 'Late night',
       'unknown': 'Not sure', 'other': 'Other'
     };
 
