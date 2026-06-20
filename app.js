@@ -2355,7 +2355,6 @@
   const settingsPrice = document.getElementById('settings-price');
   const settingsReset = document.getElementById('settings-reset');
   const settingsSignout = document.getElementById('settings-signout');
-  const settingsTotalSaved = document.getElementById('settings-total-saved');
   const settingsPriceDisplay = document.getElementById('settings-price-display');
   const settingsNameDisplay = document.getElementById('settings-name-display');
   const menuSettings = document.getElementById('menu-settings');
@@ -2379,7 +2378,6 @@
     settingsName.value = safeGetItem('userName', '');
     settingsPrice.value = cigPrice;
     settingsDarkMode.classList.toggle('active', isDark);
-    settingsTotalSaved.textContent = '$' + totalMoneySaved.toFixed(2);
     settingsPriceDisplay.textContent = '$' + cigPrice.toFixed(2);
 
     // Update name display — check localStorage first, then Google account
