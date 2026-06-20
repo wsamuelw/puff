@@ -56,7 +56,7 @@ canvas {
 /* Theme transition for child elements */
 .menu-content, .settings-stack-card, .slipup-screen, .menu-card,
 .slipup-btn, .slipup-stat, .slipup-quote-card, .slipup-progress-item,
-.consent-card, .onboarding-card, .trigger-btn, .end-stat,
+.onboarding-card, .trigger-btn, .end-stat,
 .triggers-back, .badges-back, .settings-back,
 .end-session-label {
   transition: background-color 0.4s, color 0.4s, border-color 0.4s;
@@ -294,130 +294,6 @@ body.light .splash-feature-text {
   min-height: 48px;
 }
 
-/* ─── Consent Screen ─── */
-.consent-screen {
-  position: fixed;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 490;
-  background: #1a1a1a;
-  opacity: 0;
-  transition: opacity 0.4s ease;
-  pointer-events: none;
-  padding: calc(24px + env(safe-area-inset-top, 0px)) 24px calc(24px + env(safe-area-inset-bottom, 0px));
-}
-.consent-screen.visible {
-  opacity: 1;
-  pointer-events: auto;
-}
-body.light .consent-screen {
-  background: #f5f0e8;
-}
-.consent-content {
-  text-align: center;
-  max-width: 340px;
-  width: 100%;
-}
-.consent-title {
-  font-size: 28px;
-  font-weight: 700;
-  color: #faf9f7;
-  margin-bottom: 4px;
-}
-body.light .consent-title {
-  color: #1a1a1a;
-}
-.consent-sub {
-  font-size: 13px;
-  color: rgba(250,249,247,0.4);
-  margin-bottom: 24px;
-}
-body.light .consent-sub {
-  color: rgba(26,26,26,0.4);
-}
-.consent-card {
-  background: rgba(250,249,247,0.04);
-  border: 1px solid rgba(250,249,247,0.06);
-  border-radius: 12px;
-  padding: 24px 20px;
-  text-align: left;
-}
-body.light .consent-card {
-  background: rgba(26,26,26,0.03);
-  border-color: rgba(26,26,26,0.08);
-}
-.consent-heading {
-  font-size: 16px;
-  font-weight: 600;
-  color: #faf9f7;
-  margin-bottom: 12px;
-}
-body.light .consent-heading {
-  color: #1a1a1a;
-}
-.consent-text {
-  font-size: 13px;
-  color: rgba(250,249,247,0.6);
-  line-height: 1.6;
-  margin-bottom: 20px;
-}
-body.light .consent-text {
-  color: rgba(26,26,26,0.6);
-}
-.consent-text ul {
-  margin: 8px 0;
-  padding-left: 20px;
-}
-.consent-text li {
-  margin-bottom: 4px;
-}
-.consent-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-bottom: 16px;
-}
-.consent-accept {
-  width: 100%;
-  padding: 14px;
-  background: #d4a574;
-  color: #1a1a1a;
-  border: none;
-  border-radius: 10px;
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
-  min-height: 48px;
-}
-.consent-offline {
-  width: 100%;
-  padding: 14px;
-  background: transparent;
-  color: rgba(250,249,247,0.5);
-  border: 1px solid rgba(250,249,247,0.1);
-  border-radius: 10px;
-  font-size: 14px;
-  cursor: pointer;
-  min-height: 48px;
-}
-body.light .consent-offline {
-  color: rgba(26,26,26,0.5);
-  border-color: rgba(26,26,26,0.15);
-}
-.consent-links {
-  text-align: center;
-}
-.consent-link {
-  font-size: 12px;
-  color: rgba(250,249,247,0.3);
-  text-decoration: underline;
-}
-body.light .consent-link {
-  color: rgba(26,26,26,0.3);
-}
-
 /* ─── Sign-in Screen ─── */
 /* ─── Sign-in Screen (Sticky Note) ─── */
 .signin-screen {
@@ -583,6 +459,31 @@ body.dark .signin-btn:hover {
 
 body.dark .signin-note {
   color: rgba(26,26,26,0.25);
+}
+
+.signin-consent {
+  margin-bottom: 16px;
+  padding: 12px 14px;
+  background: rgba(26,26,26,0.03);
+  border-radius: 8px;
+  text-align: left;
+}
+
+body.dark .signin-consent {
+  background: rgba(26,26,26,0.03);
+}
+
+.signin-consent-heading {
+  font-size: 12px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 6px;
+}
+
+.signin-consent-text {
+  font-size: 11px;
+  color: rgba(26,26,26,0.5);
+  line-height: 1.5;
 }
 
 .signin-error {

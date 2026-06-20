@@ -119,56 +119,31 @@
     currentUser = null;
   }
 
-  // Consent screen
-  const consentScreen = document.getElementById('consent-screen');
-  const consentAccept = document.getElementById('consent-accept');
-  const consentOffline = document.getElementById('consent-offline');
-
   // Splash screen (value proposition)
   const splashScreen = document.getElementById('splash-screen');
   const splashStart = document.getElementById('splash-start');
 
-  // Check if consent has been given
+  // Check if onboarding and consent are complete
+  const onboardingDone = safeGetItem('onboardingComplete', 'false');
   const consentGiven = safeGetItem('consentGiven', 'false');
-  const offlineMode = safeGetItem('offlineMode', 'false');
 
-  // Show splash screen first if consent not given yet
-  if (consentGiven === 'false') {
+  // Show splash screen first for new users
+  if (onboardingDone === 'false' || consentGiven === 'false') {
     splashScreen.classList.add('visible');
   }
 
-  // Splash "Get Started" → show consent
+  // Splash "Get Started" → show onboarding
   splashStart.addEventListener('click', (e) => {
     e.stopPropagation();
     splashScreen.classList.remove('visible');
     setTimeout(() => {
-      consentScreen.classList.add('visible');
+      showOnboarding();
     }, 300);
   });
 
-  // Accept consent — show sign-in
-  consentAccept.addEventListener('click', (e) => {
-    e.stopPropagation();
-    safeSetItem('consentGiven', 'true');
-    safeSetItem('offlineMode', 'false');
-    consentScreen.classList.remove('visible');
-    signinScreen.classList.remove('hidden');
-  });
-
-  // Offline mode — skip sign-in, go straight to app
-  consentOffline.addEventListener('click', (e) => {
-    e.stopPropagation();
-    safeSetItem('consentGiven', 'true');
-    safeSetItem('offlineMode', 'true');
-    consentScreen.classList.remove('visible');
-    // Skip sign-in, show idle screen directly
-    checkSlipUp();
-  });
-
-  // Listen for auth state changes — always show signin page
+  // Listen for auth state changes
   auth.onAuthStateChanged((user) => {
     currentUser = user;
-    const signinScreen = document.getElementById('signin-screen');
 
     if (user) {
       // Already signed in — show confirmed state
@@ -182,9 +157,9 @@
       resetSigninButton();
     }
 
-    // Always show signin page — user must click Start
-    if (consentGiven === 'true') {
-      signinScreen.classList.remove('hidden');
+    // If consent given and onboarding done, go to trigger selection
+    if (consentGiven === 'true' && onboardingDone === 'true') {
+      checkSlipUp();
     }
   });
 
@@ -198,10 +173,9 @@
       safeSetItem(key, typeof value === 'object' ? JSON.stringify(value) : String(value));
     });
 
-    // Skip cloud save if no consent or offline mode
+    // Skip cloud save if no consent or no user
     const consent = safeGetItem('consentGiven', 'false');
-    const offline = safeGetItem('offlineMode', 'false');
-    if (!currentUser || consent !== 'true' || offline === 'true') return;
+    if (!currentUser || consent !== 'true') return;
 
     try {
       // Use dot notation to merge nested fields without replacing the whole data object
@@ -217,10 +191,9 @@
 
   // Event logging — track user actions in Firebase
   async function logEvent(eventName, props = {}) {
-    // Skip logging if no consent or offline mode
+    // Skip logging if no consent or no user
     const consent = safeGetItem('consentGiven', 'false');
-    const offline = safeGetItem('offlineMode', 'false');
-    if (!currentUser || consent !== 'true' || offline === 'true') return;
+    if (!currentUser || consent !== 'true') return;
     try {
       await db.collection('events').add({
         uid: currentUser.uid,
@@ -1370,7 +1343,7 @@
     const dots = onboardingDots.querySelectorAll('.onboarding-dot');
     dots.forEach((dot, i) => dot.classList.toggle('active', i === onboardingStep));
     // Update button text
-    onboardingNext.textContent = onboardingStep < ONBOARDING_STEPS.length - 1 ? 'Next' : 'Get started';
+    onboardingNext.textContent = onboardingStep < ONBOARDING_STEPS.length - 1 ? 'Next' : 'Continue';
   }
 
   let onboardingDebounce = false;
@@ -1384,10 +1357,13 @@
       onboardingStep++;
       updateOnboardingCard();
     } else {
-      // Complete onboarding
+      // Onboarding done — show consent + signin
       onboardingScreen.classList.remove('visible');
       safeSetItem('onboardingComplete', 'true');
       logEvent('onboarding_completed');
+      setTimeout(() => {
+        signinScreen.classList.remove('hidden');
+      }, 300);
     }
   });
 
@@ -2298,8 +2274,13 @@
     const errorDiv = document.querySelector('.signin-error');
     if (errorDiv) errorDiv.remove();
     signInWithGoogle().then(() => {
-      // Success — show confirmed state
+      // Success — mark consent, hide signin, go to trigger selection
+      safeSetItem('consentGiven', 'true');
       markSignedIn();
+      setTimeout(() => {
+        signinScreen.classList.add('hidden');
+        showTriggerScreen();
+      }, 800);
     }).catch(() => {
       // Error already displayed by showSigninError() — don't overwrite it
     });
@@ -2318,14 +2299,6 @@
   }
   signinBtn.addEventListener('touchstart', (e) => e.stopPropagation(), { passive: true });
 
-  // Start button — hide signin and show trigger selection
-  const signinStart = document.getElementById('signin-start');
-  signinStart.addEventListener('click', (e) => {
-    e.stopPropagation();
-    document.getElementById('signin-screen').classList.add('hidden');
-    showTriggerScreen();
-  });
-  signinStart.addEventListener('touchstart', (e) => e.stopPropagation(), { passive: true });
 
 
   // --- Menu ---
