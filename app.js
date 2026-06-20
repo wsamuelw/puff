@@ -33,11 +33,15 @@
     }
   }
 
+  let storageWarningShown = false;
   function safeSetItem(key, value) {
     try {
       localStorage.setItem(key, value);
     } catch (e) {
-      // Storage full or disabled — silently fail
+      if (!storageWarningShown && e.name === 'QuotaExceededError') {
+        storageWarningShown = true;
+        console.warn('Storage full — some data may not be saved. Try clearing old data in Settings.');
+      }
     }
   }
 
@@ -1366,8 +1370,13 @@
     onboardingNext.textContent = onboardingStep < ONBOARDING_STEPS.length - 1 ? 'Next' : 'Get started';
   }
 
+  let onboardingDebounce = false;
   onboardingNext.addEventListener('click', (e) => {
     e.stopPropagation();
+    if (onboardingDebounce) return;
+    onboardingDebounce = true;
+    setTimeout(() => { onboardingDebounce = false; }, 400);
+
     if (onboardingStep < ONBOARDING_STEPS.length - 1) {
       onboardingStep++;
       updateOnboardingCard();
@@ -1510,10 +1519,12 @@
     if (endScreenShown) return; // Prevent duplicate calls
     endScreenShown = true;
 
-    // Save trigger to logs with money saved
+    // Save trigger to logs with money saved, prune entries older than 90 days
     const logs = JSON.parse(safeGetItem('cravingLogs', '[]'));
     logs.push({ time: Date.now(), trigger: currentTriggerId, money: sessionMoneySaved });
-    safeSetItem('cravingLogs', JSON.stringify(logs));
+    const ninetyDaysAgo = Date.now() - (90 * 24 * 60 * 60 * 1000);
+    const pruned = logs.filter(log => log.time > ninetyDaysAgo);
+    safeSetItem('cravingLogs', JSON.stringify(pruned));
 
     // Sync craving logs to cloud
     saveToCloud({
@@ -1791,11 +1802,19 @@
   let loopFrameId = null;
   let ashDropTimeout = null;
   let _lastAutoSave = 0;
+  let _frameSkip = 0;
   function loop() {
     try {
       const now = performance.now();
       const dt = lastFrameTime ? (now - lastFrameTime) / 1000 : 1/60; // delta time in seconds
       lastFrameTime = now;
+
+      // Throttle to 60fps on 120Hz+ displays when idle (not puffing)
+      _frameSkip++;
+      if (!holding && !ashDropping && _frameSkip % 2 !== 0) {
+        if (loopRunning) loopFrameId = requestAnimationFrame(loop);
+        return;
+      }
 
       // Clean gradient cache periodically
       _maybeCleanGradCache();
@@ -2279,7 +2298,7 @@
       // Success — show confirmed state
       markSignedIn();
     }).catch(() => {
-      resetSigninButton();
+      // Error already displayed by showSigninError() — don't overwrite it
     });
   });
 
@@ -2757,7 +2776,11 @@
           console.warn('Failed to delete cloud data:', err.message);
         }
       }
-      localStorage.clear();
+      // Clear app data keys only (preserve Firebase auth token)
+      const appKeys = ['moneySaved', 'cigarettesAvoided', 'quitStreak', 'quitStartDate',
+        'cravingLogs', 'earnedBadges', 'lastSessionDate', 'userName', 'cigPrice',
+        'darkMode', 'onboardingComplete', 'consentGiven', 'offlineMode', 'lastAppOpen'];
+      appKeys.forEach(key => localStorage.removeItem(key));
       location.reload();
     }
   });
@@ -2838,8 +2861,8 @@
     const isFullSession = burnProgress >= 1;
     if (sessionMoneySaved > 0) {
       totalMoneySaved += sessionMoneySaved;
-      totalCigarettesAvoided++;
       sessionCount++;
+      if (isFullSession) totalCigarettesAvoided++;
     }
 
     // Set quit start date if not already set
@@ -2923,6 +2946,11 @@
       if (backgroundInterval) {
         clearInterval(backgroundInterval);
         backgroundInterval = null;
+      }
+
+      // Resume AudioContext if suspended (iOS backgrounding)
+      if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume();
       }
 
       if (!gameOver && started) {
