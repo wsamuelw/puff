@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Get Help Card — Menu Mockup</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #1a1a1a;
+    color: #faf9f7;
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    padding: 40px 20px;
+    min-height: 100vh;
+    flex-wrap: wrap;
+  }
+
+  .mockup {
+    width: 375px;
+    min-height: 700px;
+    background: #1a1a1a;
+    border: 1px solid rgba(250,249,247,0.1);
+    border-radius: 24px;
+    padding: 60px 20px 40px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .mockup-label {
+    position: absolute;
+    top: 16px;
+    left: 20px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: rgba(250,249,247,0.3);
+  }
+
+  /* Menu overlay */
+  .menu-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    align-items: flex-end;
+  }
+
+  .menu-content {
+    width: 100%;
+    background: #222;
+    border-radius: 20px 20px 0 0;
+    padding: 16px 20px 40px;
+  }
+
+  .menu-drag-handle {
+    width: 36px;
+    height: 4px;
+    background: rgba(250,249,247,0.15);
+    border-radius: 2px;
+    margin: 0 auto 16px;
+  }
+
+  .menu-greeting {
+    font-size: 16px;
+    color: rgba(250,249,247,0.5);
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  .menu-scroll {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .menu-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px;
+    background: rgba(250,249,247,0.04);
+    border: 1px solid rgba(250,249,247,0.06);
+    border-radius: 12px;
+    cursor: pointer;
+    text-align: left;
+    width: 100%;
+    color: #faf9f7;
+    font-family: inherit;
+    transition: background 0.15s;
+  }
+
+  .menu-card:hover {
+    background: rgba(250,249,247,0.07);
+  }
+
+  .menu-card-icon {
+    font-size: 24px;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(250,249,247,0.05);
+    border-radius: 10px;
+    flex-shrink: 0;
+  }
+
+  .menu-card-text h3 {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 2px;
+  }
+
+  .menu-card-text p {
+    font-size: 12px;
+    color: rgba(250,249,247,0.4);
+  }
+
+  /* Get Help card — Option A: Standard card like others */
+  .menu-card.get-help-a {
+    /* Same as default */
+  }
+
+  /* Get Help card — Option B: Highlighted with accent border */
+  .menu-card.get-help-b {
+    border-color: rgba(212,165,116,0.3);
+    background: rgba(212,165,116,0.06);
+  }
+  .menu-card.get-help-b .menu-card-icon {
+    background: rgba(212,165,116,0.1);
+  }
+
+  /* Get Help card — Option C: Accent color card */
+  .menu-card.get-help-c {
+    background: rgba(212,165,116,0.1);
+    border-color: rgba(212,165,116,0.2);
+  }
+  .menu-card.get-help-c .menu-card-icon {
+    background: rgba(212,165,116,0.15);
+  }
+  .menu-card.get-help-c .menu-card-text h3 {
+    color: #d4a574;
+  }
+
+  h2.section-label {
+    width: 100%;
+    text-align: center;
+    font-size: 13px;
+    color: rgba(250,249,247,0.4);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+
+  /* Expanded screen mockup */
+  .expanded-screen {
+    position: absolute;
+    inset: 0;
+    background: #1a1a1a;
+    padding: 60px 20px 40px;
+    overflow-y: auto;
+  }
+
+  .expanded-back {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #d4a574;
+    font-size: 14px;
+    margin-bottom: 20px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-family: inherit;
+  }
+
+  .expanded-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 24px;
+  }
+
+  .help-section {
+    margin-bottom: 20px;
+  }
+
+  .help-section-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: rgba(250,249,247,0.3);
+    margin-bottom: 10px;
+  }
+
+  .help-card {
+    padding: 16px;
+    background: rgba(250,249,247,0.04);
+    border: 1px solid rgba(250,249,247,0.06);
+    border-radius: 12px;
+    margin-bottom: 10px;
+  }
+
+  .help-card-title {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .help-card-desc {
+    font-size: 12px;
+    color: rgba(250,249,247,0.5);
+    line-height: 1.5;
+  }
+
+  .help-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #d4a574;
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+    margin-top: 8px;
+  }
+
+  .help-link::after {
+    content: '→';
+  }
+
+  .help-callout {
+    padding: 16px;
+    background: rgba(212,165,116,0.08);
+    border-left: 3px solid #d4a574;
+    border-radius: 0 10px 10px 0;
+    margin-top: 16px;
+  }
+
+  .help-callout-text {
+    font-size: 13px;
+    color: rgba(250,249,247,0.7);
+    line-height: 1.5;
+  }
+
+  .help-callout-text strong {
+    color: #d4a574;
+  }
+</style>
+</head>
+<body>
+
+<!-- Option A: Standard card (blends with others) -->
+<div class="mockup">
+  <div class="mockup-label">Option A — Standard card</div>
+  <div class="menu-overlay">
+    <div class="menu-content">
+      <div class="menu-drag-handle"></div>
+      <div class="menu-greeting">Hey Samuel</div>
+      <div class="menu-scroll">
+        <button class="menu-card">
+          <div class="menu-card-icon">📊</div>
+          <div class="menu-card-text">
+            <h3>Triggers</h3>
+            <p>Your patterns</p>
+          </div>
+        </button>
+        <button class="menu-card">
+          <div class="menu-card-icon">🏆</div>
+          <div class="menu-card-text">
+            <h3>Badges</h3>
+            <p>Your achievements</p>
+          </div>
+        </button>
+        <button class="menu-card get-help-a">
+          <div class="menu-card-icon">🆘</div>
+          <div class="menu-card-text">
+            <h3>Get Help</h3>
+            <p>Quitlines & resources</p>
+          </div>
+        </button>
+        <button class="menu-card">
+          <div class="menu-card-icon">⚙️</div>
+          <div class="menu-card-text">
+            <h3>Settings</h3>
+            <p>Preferences</p>
+          </div>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Option B: Subtle accent border -->
+<div class="mockup">
+  <div class="mockup-label">Option B — Accent border</div>
+  <div class="menu-overlay">
+    <div class="menu-content">
+      <div class="menu-drag-handle"></div>
+      <div class="menu-greeting">Hey Samuel</div>
+      <div class="menu-scroll">
+        <button class="menu-card">
+          <div class="menu-card-icon">📊</div>
+          <div class="menu-card-text">
+            <h3>Triggers</h3>
+            <p>Your patterns</p>
+          </div>
+        </button>
+        <button class="menu-card">
+          <div class="menu-card-icon">🏆</div>
+          <div class="menu-card-text">
+            <h3>Badges</h3>
+            <p>Your achievements</p>
+          </div>
+        </button>
+        <button class="menu-card get-help-b">
+          <div class="menu-card-icon">🆘</div>
+          <div class="menu-card-text">
+            <h3>Get Help</h3>
+            <p>Quitlines & resources</p>
+          </div>
+        </button>
+        <button class="menu-card">
+          <div class="menu-card-icon">⚙️</div>
+          <div class="menu-card-text">
+            <h3>Settings</h3>
+            <p>Preferences</p>
+          </div>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Option C: Expanded screen after tapping Get Help -->
+<div class="mockup">
+  <div class="mockup-label">Option C — Expanded screen</div>
+  <div class="expanded-screen">
+    <button class="expanded-back">← Menu</button>
+    <div class="expanded-title">Get Help</div>
+
+    <div class="help-section">
+      <div class="help-section-label">Talk to someone</div>
+      <div class="help-card">
+        <div class="help-card-title">📞 National Quitline</div>
+        <div class="help-card-desc">Free, confidential support from trained counsellors. Available 24/7 in most countries.</div>
+        <a href="tel:18007848669" class="help-link">Call 1-800-QUIT-NOW</a>
+      </div>
+    </div>
+
+    <div class="help-section">
+      <div class="help-section-label">Medication & NRT</div>
+      <div class="help-card">
+        <div class="help-card-title">💊 Nicotine Replacement Therapy</div>
+        <div class="help-card-desc">Patches, gum, lozenges, and inhalers can reduce withdrawal symptoms by 50-60%. Talk to your pharmacist or doctor.</div>
+        <a href="#" class="help-link">Learn more</a>
+      </div>
+      <div class="help-card">
+        <div class="help-card-title">💉 Prescription Medication</div>
+        <div class="help-card-desc">Varenicline (Champix) and bupropion (Zyban) can double or triple your quit rate. Requires a doctor's prescription.</div>
+        <a href="#" class="help-link">Learn more</a>
+      </div>
+    </div>
+
+    <div class="help-section">
+      <div class="help-section-label">Online resources</div>
+      <div class="help-card">
+        <div class="help-card-title">🌐 Smokefree.gov</div>
+        <div class="help-card-desc">Evidence-based tips, tools, and support from the US National Cancer Institute.</div>
+        <a href="https://smokefree.gov" class="help-link">Visit site</a>
+      </div>
+    </div>
+
+    <div class="help-callout">
+      <div class="help-callout-text"><strong>This app is not a substitute for medical advice.</strong> Combining behavioural support with medication gives you the best chance of quitting for good.</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

@@ -2231,6 +2231,12 @@
     totalMoneySaved = 0;
     totalCigarettesAvoided = 0;
     quitStartDate = Date.now();
+    safeSetItem('quitStreak', '0');
+    safeSetItem('moneySaved', '0');
+    safeSetItem('cigarettesAvoided', '0');
+    safeSetItem('quitStartDate', String(quitStartDate));
+    safeSetItem('cravingLogs', '[]');
+    safeSetItem('earnedBadges', '[]');
     saveToCloud({
       quitStreak: 0,
       moneySaved: 0,
