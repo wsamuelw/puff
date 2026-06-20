@@ -1479,6 +1479,25 @@
     return s[v % 10] || s[0];
   }
 
+  // Coping suggestions by trigger
+  const COPING_SUGGESTIONS = {
+    'stress': 'Try 3 slow breaths — in for 4, hold for 4, out for 4. The craving usually passes in a few minutes.',
+    'anxiety': 'Ground yourself: name 5 things you can see, 4 you can touch, 3 you can hear. The feeling will pass.',
+    'sadness': 'Call or text someone you trust. You don\'t have to explain — just connect.',
+    'anger': 'Do 10 jumping jacks or walk around the block. Physical movement helps release the tension.',
+    'tired': 'Have a glass of water and stretch for 30 seconds. Fatigue cravings are your body asking for a reset.',
+    'drinking': 'Hold your drink in your smoking hand. Next round, try alternating with water.',
+    'coffee': 'Next coffee, try switching to tea or changing where you sit. Break the routine link.',
+    'meals': 'Brush your teeth or go for a short walk right after eating. The craving fades fast.',
+    'social': 'Have a ready phrase: "I\'m good, thanks." Step away for a minute if you need to.',
+    'workbreak': 'Take your break outside for a short walk. Change the scenery, not the habit.',
+    'toilet': 'Leave your phone in another room. Read something or just sit with the quiet.',
+    'aftersex': 'Grab a glass of water, cuddle, or hop in the shower. The moment passes quickly.',
+    'boredom': 'Do something with your hands — call someone, stretch, or play a quick game.',
+    'morning': 'Delay your first cigarette by 10 minutes each week. Change the order of your morning.',
+    'latenight': 'Go to bed 30 minutes earlier. Tired cravings are your body asking for sleep, not nicotine.'
+  };
+
   // Show end screen
   function showEndScreen() {
     // Save trigger to logs with money saved
@@ -1502,6 +1521,17 @@
 
     // Build trigger list with time context
     buildEndTriggerList();
+
+    // Show coping suggestion based on current trigger
+    const copingEl = document.getElementById('end-coping');
+    const copingTextEl = document.getElementById('end-coping-text');
+    const copingTip = COPING_SUGGESTIONS[currentTriggerId];
+    if (copingTip) {
+      copingTextEl.textContent = copingTip;
+      copingEl.style.display = 'block';
+    } else {
+      copingEl.style.display = 'none';
+    }
 
     // Check for milestones
     const daysSinceStart = quitStartDate ? Math.floor((Date.now() - quitStartDate) / (24 * 60 * 60 * 1000)) : 0;
