@@ -273,6 +273,7 @@
   let gameOver = false;
   let cooldownUntil = 0;
   let started = false;
+  let endScreenShown = false;
 
   // Game flow state
   let gameState = 'idle'; // 'idle' | 'trigger-select' | 'smoking' | 'end'
@@ -1422,6 +1423,7 @@
     // Reset smoking state
     burnProgress = 0;
     gameOver = false;
+    endScreenShown = false;
     started = false;
     particles.length = 0;
     ashPieces.length = 0;
@@ -1498,6 +1500,9 @@
 
   // Show end screen
   function showEndScreen() {
+    if (endScreenShown) return; // Prevent duplicate calls
+    endScreenShown = true;
+
     // Save trigger to logs with money saved
     const logs = JSON.parse(safeGetItem('cravingLogs', '[]'));
     logs.push({ time: Date.now(), trigger: currentTriggerId, money: sessionMoneySaved });
@@ -2241,7 +2246,9 @@
       quitStreak: 0,
       moneySaved: 0,
       cigarettesAvoided: 0,
-      quitStartDate: quitStartDate
+      quitStartDate: quitStartDate,
+      cravingLogs: [],
+      earnedBadges: []
     });
     slipupRelapse.classList.remove('active');
   });
@@ -2732,9 +2739,17 @@
   });
 
   // Reset all data
-  settingsReset.addEventListener('click', (e) => {
+  settingsReset.addEventListener('click', async (e) => {
     e.stopPropagation();
     if (confirm('This will erase all your progress, streak, and data. Are you sure?')) {
+      // Delete cloud data first if signed in
+      if (currentUser) {
+        try {
+          await db.collection('user_data').doc(currentUser.uid).delete();
+        } catch (err) {
+          console.warn('Failed to delete cloud data:', err.message);
+        }
+      }
       localStorage.clear();
       location.reload();
     }
