@@ -447,12 +447,13 @@ body.light .consent-link {
   pointer-events: none;
 }
 
+/* Signin always uses cream lined paper regardless of theme */
 body.dark .signin-screen {
-  background: #1a1a1a;
+  background: #f5f0e8;
 }
 
 body.dark .signin-screen::before {
-  background: repeating-linear-gradient(0deg, transparent, transparent 27px, rgba(250,249,247,0.04) 27px, rgba(250,249,247,0.04) 28px);
+  background: repeating-linear-gradient(0deg, transparent, transparent 27px, rgba(0,0,0,0.06) 27px, rgba(0,0,0,0.06) 28px);
 }
 
 .signin-card {
@@ -467,9 +468,10 @@ body.dark .signin-screen::before {
   text-align: center;
 }
 
+/* Signin card always white on cream background */
 body.dark .signin-card {
-  background: #222;
-  box-shadow: 2px 4px 20px rgba(0,0,0,0.3), 0 0 0 1px rgba(250,249,247,0.05);
+  background: #fff;
+  box-shadow: 2px 4px 20px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.02);
 }
 
 .signin-tape {
@@ -490,8 +492,9 @@ body.dark .signin-card {
   margin-bottom: 4px;
 }
 
+/* Signin always light text on cream/white */
 body.dark .signin-title {
-  color: #f5f0eb;
+  color: #1a1a1a;
 }
 
 .signin-sub {
@@ -501,7 +504,7 @@ body.dark .signin-title {
 }
 
 body.dark .signin-sub {
-  color: rgba(245,240,235,0.35);
+  color: rgba(26,26,26,0.35);
 }
 
 .signin-btn {
@@ -525,8 +528,8 @@ body.dark .signin-sub {
 }
 
 body.dark .signin-btn {
-  background: #fff;
-  color: #1a1a1a;
+  background: #1a1a1a;
+  color: #fff;
 }
 
 .signin-btn:hover {
@@ -534,7 +537,7 @@ body.dark .signin-btn {
 }
 
 body.dark .signin-btn:hover {
-  background: #f0f0f0;
+  background: #333;
 }
 
 .signin-btn:active {
@@ -579,7 +582,7 @@ body.dark .signin-btn:hover {
 }
 
 body.dark .signin-note {
-  color: rgba(245,240,235,0.2);
+  color: rgba(26,26,26,0.25);
 }
 
 .signin-error {
