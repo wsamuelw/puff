@@ -1209,7 +1209,6 @@
     { id: 'morning', emoji: '🌅', label: 'Morning routine' },
     { id: 'latenight', emoji: '🌙', label: 'Late night' },
   ];
-  let selectedTrigger = null;
   let triggerSubmitted = false;
 
   // Badge definitions
@@ -1412,7 +1411,6 @@
 
   // Show trigger selection screen (before smoking)
   function showTriggerScreen() {
-    selectedTrigger = null;
     currentTriggerId = null;
     triggerGrid.querySelectorAll('.trigger-btn').forEach(b => b.classList.remove('selected'));
     triggerScreen.classList.add('visible');
@@ -2060,7 +2058,9 @@
       e.target.closest('.signin-screen') ||
       e.target.closest('.menu-overlay') ||
       e.target.closest('.slipup-screen') ||
-      e.target.closest('.settings-screen')
+      e.target.closest('.settings-screen') ||
+      e.target.closest('.end-screen') ||
+      e.target.closest('.trigger-screen')
     );
     handleHoldStart(e);
     handleTap(e);
@@ -2699,12 +2699,13 @@
       const googleName = currentUser.displayName || '';
       const firstName = manualName || (googleName ? googleName.split(' ')[0] : '');
       const email = currentUser.email || '';
+      const esc = (s) => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 
       if (firstName) {
-        menuGreeting.innerHTML = '<div class="menu-greeting-text">Hi, ' + firstName + ' 👋</div>' +
-          (email ? '<div class="menu-greeting-sub">' + email + '</div>' : '');
+        menuGreeting.innerHTML = '<div class="menu-greeting-text">Hi, ' + esc(firstName) + ' 👋</div>' +
+          (email ? '<div class="menu-greeting-sub">' + esc(email) + '</div>' : '');
       } else if (email) {
-        menuGreeting.innerHTML = '<div class="menu-greeting-text">' + email + '</div>';
+        menuGreeting.innerHTML = '<div class="menu-greeting-text">' + esc(email) + '</div>';
       } else {
         menuGreeting.innerHTML = '';
       }
@@ -2747,9 +2748,9 @@
       exportDate: new Date().toISOString(),
       userName: safeGetItem('userName', ''),
       cigPrice: parseFloat(safeGetItem('cigPrice', '0.50')),
-      totalMoneySaved: parseFloat(safeGetItem('totalMoneySaved', '0')),
-      totalCigarettesAvoided: parseInt(safeGetItem('totalCigarettesAvoided', '0')),
-      sessionCount: parseInt(safeGetItem('sessionCount', '0')),
+      totalMoneySaved: parseFloat(safeGetItem('moneySaved', '0')),
+      totalCigarettesAvoided: parseInt(safeGetItem('cigarettesAvoided', '0')),
+      sessionCount: parseInt(safeGetItem('quitStreak', '0')),
       quitStartDate: parseInt(safeGetItem('quitStartDate', '0')),
       earnedBadges: JSON.parse(safeGetItem('earnedBadges', '[]')),
       cravingLogs: JSON.parse(safeGetItem('cravingLogs', '[]'))
@@ -2856,15 +2857,9 @@
 
   window.addEventListener('beforeunload', savePartialProgress);
 
-  // Online/offline status
-  window.addEventListener('online', () => {
-    idleOffline.classList.remove('visible');
-  });
-  window.addEventListener('offline', () => {
-    if (gameState === 'idle') {
-      idleOffline.classList.add('visible');
-    }
-  });
+  // Online/offline status — idle screen removed, no indicator needed
+  window.addEventListener('online', () => {});
+  window.addEventListener('offline', () => {});
 
   // Pause loop when app is in background
   let hiddenAt = 0; // timestamp when tab became hidden
