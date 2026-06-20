@@ -197,10 +197,12 @@
     if (!currentUser || consent !== 'true' || offline === 'true') return;
 
     try {
-      await db.collection('user_data').doc(currentUser.uid).set({
-        data: data,
-        updated_at: firebase.firestore.FieldValue.serverTimestamp()
-      }, { merge: true });
+      // Use dot notation to merge nested fields without replacing the whole data object
+      const update = { updated_at: firebase.firestore.FieldValue.serverTimestamp() };
+      for (const [key, value] of Object.entries(data)) {
+        update['data.' + key] = value;
+      }
+      await db.collection('user_data').doc(currentUser.uid).set(update, { merge: true });
     } catch (e) {
       console.warn('Cloud save failed:', e.message);
     }
@@ -244,7 +246,7 @@
         }
         if (cloudData.lastSessionDate !== undefined) lastSessionDate = parseInt(cloudData.lastSessionDate) || 0;
         if (cloudData.darkMode !== undefined) {
-          isDark = cloudData.darkMode !== 'false';
+          isDark = cloudData.darkMode === true || cloudData.darkMode === 'true';
           applyTheme();
         }
         // Save other fields to localStorage
@@ -1419,7 +1421,11 @@
   }
 
   // Start smoking session
+  let sessionStarting = false;
   async function startSmokingSession() {
+    if (sessionStarting) return; // Prevent re-entrancy
+    sessionStarting = true;
+
     // Reset smoking state
     burnProgress = 0;
     gameOver = false;
@@ -1456,6 +1462,7 @@
       gameStartTime = performance.now();
     }
     loopFrameId = requestAnimationFrame(loop);
+    sessionStarting = false;
   }
 
   // Get trigger insight
@@ -1794,10 +1801,10 @@
       _maybeCleanGradCache();
 
       // Auto-save to localStorage every 10 seconds during gameplay
+      // Only save confirmed totalMoneySaved (not partial session cost)
       if (started && !gameOver && now - _lastAutoSave > 10000) {
         _lastAutoSave = now;
-        const sessionCost = burnProgress * CIG_PRICE();
-        safeSetItem('moneySaved', String(totalMoneySaved + sessionCost));
+        safeSetItem('moneySaved', String(totalMoneySaved));
       }
 
       ctx.fillStyle = isDark ? bgDark : bgLight;
