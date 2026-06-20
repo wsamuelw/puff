@@ -438,7 +438,7 @@ body.light .consent-link {
   content: '';
   position: absolute;
   inset: 0;
-  background: repeating-linear-gradient(0deg, transparent, transparent 27px, rgba(0,0,0,0.02) 27px, rgba(0,0,0,0.02) 28px);
+  background: repeating-linear-gradient(0deg, transparent, transparent 27px, rgba(0,0,0,0.06) 27px, rgba(0,0,0,0.06) 28px);
   pointer-events: none;
 }
 
@@ -452,7 +452,7 @@ body.dark .signin-screen {
 }
 
 body.dark .signin-screen::before {
-  background: repeating-linear-gradient(0deg, transparent, transparent 27px, rgba(250,249,247,0.02) 27px, rgba(250,249,247,0.02) 28px);
+  background: repeating-linear-gradient(0deg, transparent, transparent 27px, rgba(250,249,247,0.04) 27px, rgba(250,249,247,0.04) 28px);
 }
 
 .signin-card {
