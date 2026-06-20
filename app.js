@@ -158,8 +158,10 @@
     }
 
     // If consent given and onboarding done, go to trigger selection
-    if (consentGiven === 'true' && onboardingDone === 'true') {
-      checkSlipUp();
+    // Read fresh from localStorage (consentGiven may have been set during sign-in)
+    if (safeGetItem('consentGiven', 'false') === 'true' && safeGetItem('onboardingComplete', 'false') === 'true') {
+      // Small delay to let signin screen hide
+      setTimeout(() => checkSlipUp(), 100);
     }
   });
 
@@ -1362,7 +1364,7 @@
       safeSetItem('onboardingComplete', 'true');
       logEvent('onboarding_completed');
       setTimeout(() => {
-        signinScreen.classList.remove('hidden');
+        document.getElementById('signin-screen').classList.remove('hidden');
       }, 300);
     }
   });
@@ -2278,7 +2280,7 @@
       safeSetItem('consentGiven', 'true');
       markSignedIn();
       setTimeout(() => {
-        signinScreen.classList.add('hidden');
+        document.getElementById('signin-screen').classList.add('hidden');
         showTriggerScreen();
       }, 800);
     }).catch(() => {
