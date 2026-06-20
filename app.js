@@ -190,6 +190,9 @@
 
   // Save to Firestore (also saves to localStorage as offline cache)
   async function saveToCloud(data) {
+    // Skip if reset is in progress
+    if (isResetting) return;
+
     // Always save locally first
     Object.entries(data).forEach(([key, value]) => {
       safeSetItem(key, typeof value === 'object' ? JSON.stringify(value) : String(value));
@@ -2765,9 +2768,12 @@
   });
 
   // Reset all data
+  let isResetting = false;
   settingsReset.addEventListener('click', async (e) => {
     e.stopPropagation();
     if (confirm('This will erase all your progress, streak, and data. Are you sure?')) {
+      isResetting = true;
+
       // Delete cloud data first if signed in
       if (currentUser) {
         try {
@@ -2776,6 +2782,7 @@
           console.warn('Failed to delete cloud data:', err.message);
         }
       }
+
       // Clear app data keys only (preserve Firebase auth token)
       const appKeys = ['moneySaved', 'cigarettesAvoided', 'quitStreak', 'quitStartDate',
         'cravingLogs', 'earnedBadges', 'lastSessionDate', 'userName', 'cigPrice',
