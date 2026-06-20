@@ -2785,26 +2785,67 @@
     }
   });
 
-  // Export data
+  // Export data as CSV
   const settingsExport = document.getElementById('settings-export');
   settingsExport.addEventListener('click', (e) => {
     e.stopPropagation();
-    const exportData = {
-      exportDate: new Date().toISOString(),
-      userName: safeGetItem('userName', ''),
-      cigPrice: parseFloat(safeGetItem('cigPrice', '0.50')),
-      totalMoneySaved: parseFloat(safeGetItem('moneySaved', '0')),
-      totalCigarettesAvoided: parseInt(safeGetItem('cigarettesAvoided', '0')),
-      sessionCount: parseInt(safeGetItem('quitStreak', '0')),
-      quitStartDate: parseInt(safeGetItem('quitStartDate', '0')),
-      earnedBadges: JSON.parse(safeGetItem('earnedBadges', '[]')),
-      cravingLogs: JSON.parse(safeGetItem('cravingLogs', '[]'))
+
+    const logs = JSON.parse(safeGetItem('cravingLogs', '[]'));
+    const totalMoney = parseFloat(safeGetItem('moneySaved', '0'));
+    const totalCigs = parseInt(safeGetItem('cigarettesAvoided', '0'));
+    const sessions = parseInt(safeGetItem('quitStreak', '0'));
+    const quitStart = parseInt(safeGetItem('quitStartDate', '0'));
+    const earnedBadges = JSON.parse(safeGetItem('earnedBadges', '[]'));
+    const price = parseFloat(safeGetItem('cigPrice', '0.50'));
+
+    const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const triggerLabels = {
+      'stress': 'Stress', 'anxiety': 'Anxiety', 'sadness': 'Sadness', 'anger': 'Anger', 'tired': 'Tired',
+      'drinking': 'Drinking', 'coffee': 'Coffee', 'meals': 'After meals', 'social': 'Social drinking',
+      'workbreak': 'Work break', 'toilet': 'Toilet', 'aftersex': 'After sex', 'boredom': 'Boredom',
+      'morning': 'Morning routine', 'latenight': 'Late night', 'unknown': 'Not sure', 'other': 'Other'
     };
-    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+
+    // Summary section
+    const summary = [
+      '# Puff Export',
+      '# Exported: ' + new Date().toISOString(),
+      '# Cigarette Price: $' + price.toFixed(2),
+      '# Total Saved: $' + totalMoney.toFixed(2),
+      '# Real Cigarettes Avoided: ' + totalCigs,
+      '# Total Sessions: ' + sessions,
+      '# Quit Start: ' + (quitStart ? new Date(quitStart).toISOString() : 'N/A'),
+      '# Badges Earned: ' + (earnedBadges.length ? earnedBadges.join(', ') : 'None'),
+      ''
+    ];
+
+    // CSV header
+    const header = 'date,time,day,hour,trigger_id,trigger_label,money_saved,session_number,cumulative_money,cumulative_cigs';
+
+    // CSV rows
+    let cumulativeMoney = 0;
+    let cumulativeCigs = 0;
+    const rows = logs.map((log, i) => {
+      const d = new Date(log.time);
+      const date = d.toISOString().split('T')[0];
+      const time = d.toTimeString().slice(0, 5);
+      const day = dayNames[d.getDay()];
+      const hour = d.getHours();
+      const triggerId = log.trigger || 'unknown';
+      const triggerLabel = triggerLabels[triggerId] || triggerId;
+      const money = (log.money || 0).toFixed(2);
+      cumulativeMoney += log.money || 0;
+      cumulativeCigs++;
+
+      return `${date},${time},${day},${hour},${triggerId},${triggerLabel},${money},${i + 1},${cumulativeMoney.toFixed(2)},${cumulativeCigs}`;
+    });
+
+    const csv = summary.join('\n') + header + '\n' + rows.join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'puff-data-' + new Date().toISOString().split('T')[0] + '.json';
+    a.download = 'puff-data-' + new Date().toISOString().split('T')[0] + '.csv';
     a.click();
     URL.revokeObjectURL(url);
   });
