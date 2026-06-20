@@ -1205,7 +1205,6 @@
     { id: 'workbreak', emoji: '💼', label: 'Work break' },
     { id: 'toilet', emoji: '🚽', label: 'Toilet' },
     { id: 'aftersex', emoji: '❤️', label: 'After sex' },
-    { id: 'seeing-smoke', emoji: '👀', label: 'Seeing others smoke' },
     { id: 'boredom', emoji: '😑', label: 'Boredom' },
     { id: 'morning', emoji: '🌅', label: 'Morning routine' },
     { id: 'latenight', emoji: '🌙', label: 'Late night' },
@@ -1622,13 +1621,13 @@
     const triggerIcons = {
       'stress': '😰', 'anxiety': '😬', 'sadness': '😔', 'anger': '😤', 'tired': '😴',
       'drinking': '🍺', 'coffee': '☕', 'meals': '🍽️', 'social': '🍻', 'workbreak': '💼',
-      'toilet': '🚽', 'aftersex': '❤️', 'seeing-smoke': '👀', 'boredom': '😑',
+      'toilet': '🚽', 'aftersex': '❤️', 'boredom': '😑',
       'morning': '🌅', 'latenight': '🌙', 'unknown': '🤷', 'other': '💭'
     };
     const triggerLabels = {
       'stress': 'Stress', 'anxiety': 'Anxiety', 'sadness': 'Sadness', 'anger': 'Anger', 'tired': 'Tired',
       'drinking': 'Drinking', 'coffee': 'Coffee', 'meals': 'After meals', 'social': 'Social drinking',
-      'workbreak': 'Work break', 'toilet': 'Toilet', 'aftersex': 'After sex', 'seeing-smoke': 'Seeing others smoke',
+      'workbreak': 'Work break', 'toilet': 'Toilet', 'aftersex': 'After sex',
       'boredom': 'Boredom', 'morning': 'Morning routine', 'latenight': 'Late night',
       'unknown': 'Not sure', 'other': 'Other'
     };
@@ -2573,7 +2572,7 @@
     const triggerIcons = {
       'stress': '😰', 'anxiety': '😬', 'sadness': '😔', 'anger': '😤', 'tired': '😴',
       'drinking': '🍺', 'coffee': '☕', 'meals': '🍽️', 'social': '🍻', 'workbreak': '💼',
-      'toilet': '🚽', 'aftersex': '❤️', 'seeing-smoke': '👀', 'boredom': '😑',
+      'toilet': '🚽', 'aftersex': '❤️', 'boredom': '😑',
       'morning': '🌅', 'latenight': '🌙', 'unknown': '🤷', 'other': '💭'
     };
 
@@ -2581,7 +2580,7 @@
     const triggerLabels = {
       'stress': 'Stress', 'anxiety': 'Anxiety', 'sadness': 'Sadness', 'anger': 'Anger', 'tired': 'Tired',
       'drinking': 'Drinking', 'coffee': 'Coffee', 'meals': 'After meals', 'social': 'Social drinking',
-      'workbreak': 'Work break', 'toilet': 'Toilet', 'aftersex': 'After sex', 'seeing-smoke': 'Seeing others smoke',
+      'workbreak': 'Work break', 'toilet': 'Toilet', 'aftersex': 'After sex',
       'boredom': 'Boredom', 'morning': 'Morning routine', 'latenight': 'Late night',
       'unknown': 'Not sure', 'other': 'Other'
     };
