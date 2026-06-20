@@ -2778,6 +2778,11 @@
       if (currentUser) {
         try {
           await db.collection('user_data').doc(currentUser.uid).delete();
+          // Also delete events
+          const eventsSnapshot = await db.collection('events').where('uid', '==', currentUser.uid).get();
+          const batch = db.batch();
+          eventsSnapshot.docs.forEach(doc => batch.delete(doc.ref));
+          await batch.commit();
         } catch (err) {
           console.warn('Failed to delete cloud data:', err.message);
         }
@@ -2855,29 +2860,6 @@
     a.download = 'puff-data-' + new Date().toISOString().split('T')[0] + '.csv';
     a.click();
     URL.revokeObjectURL(url);
-  });
-
-  // Delete cloud data
-  const settingsDeleteCloud = document.getElementById('settings-delete-cloud');
-  settingsDeleteCloud.addEventListener('click', async (e) => {
-    e.stopPropagation();
-    if (!currentUser) {
-      alert('You need to be signed in to delete cloud data.');
-      return;
-    }
-    if (confirm('This will delete your data from Firebase. Local data will remain. Are you sure?')) {
-      try {
-        await db.collection('user_data').doc(currentUser.uid).delete();
-        // Also delete events
-        const eventsSnapshot = await db.collection('events').where('uid', '==', currentUser.uid).get();
-        const batch = db.batch();
-        eventsSnapshot.docs.forEach(doc => batch.delete(doc.ref));
-        await batch.commit();
-        alert('Cloud data deleted successfully.');
-      } catch (e) {
-        alert('Failed to delete cloud data: ' + e.message);
-      }
-    }
   });
 
   // Auto-save on input change
