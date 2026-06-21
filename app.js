@@ -159,7 +159,12 @@
     const errorEl = document.getElementById('splash-error');
     if (errorEl) errorEl.style.display = 'none';
     activelySignedIn = true;
-    signInWithGoogle().catch(() => {
+    signInWithGoogle().then(() => {
+      // onAuthStateChanged may not re-fire for persisted users,
+      // so proceed directly after successful popup sign-in
+      splashScreen.classList.remove('visible');
+      checkSlipUp();
+    }).catch(() => {
       activelySignedIn = false;
       // Error already displayed by showSplashError()
     });
