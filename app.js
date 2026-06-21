@@ -2146,8 +2146,9 @@
   function applyTheme() {
     document.body.classList.toggle('light', !isDark);
     document.body.classList.toggle('dark', isDark);
-    if (settingsDarkMode) {
-      settingsDarkMode.classList.toggle('active', isDark);
+    const _dm = document.getElementById('settings-dark-mode');
+    if (_dm) {
+      _dm.classList.toggle('active', isDark);
     }
     // Update theme-color meta tag for browser chrome
     const meta = document.querySelector('meta[name="theme-color"]');
