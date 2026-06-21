@@ -607,13 +607,23 @@
       document.getElementById('overlay').style.pointerEvents = 'none';
       document.getElementById('filter-stats').classList.add('visible');
 
-      // White noise — gentle bandpass-filtered noise for hold
+      // Pink noise — warm ember hiss with random micro-pops
       try {
+        // Generate pink noise buffer (Voss-McCartney algorithm)
         const bufferSize = audioCtx.sampleRate * 2;
         const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
         const data = noiseBuffer.getChannelData(0);
+        let b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
         for (let i = 0; i < bufferSize; i++) {
-          data[i] = Math.random() * 2 - 1;
+          const w = Math.random() * 2 - 1;
+          b0 = 0.99886 * b0 + w * 0.0555179;
+          b1 = 0.99332 * b1 + w * 0.0750759;
+          b2 = 0.96900 * b2 + w * 0.1538520;
+          b3 = 0.86650 * b3 + w * 0.3104856;
+          b4 = 0.55000 * b4 + w * 0.5329522;
+          b5 = -0.7616 * b5 - w * 0.0168980;
+          data[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + w * 0.5362) * 0.11;
+          b6 = w * 0.115926;
         }
         const noiseSource = audioCtx.createBufferSource();
         noiseSource.buffer = noiseBuffer;
@@ -621,7 +631,7 @@
         const noiseFilter = audioCtx.createBiquadFilter();
         noiseFilter.type = 'bandpass';
         noiseFilter.frequency.value = 1000;
-        noiseFilter.Q.value = 0.5;
+        noiseFilter.Q.value = 0.7;
         crackleGain = audioCtx.createGain();
         crackleGain.gain.value = 0;
         noiseSource.connect(noiseFilter);
@@ -629,19 +639,69 @@
         crackleGain.connect(audioCtx.destination);
         noiseSource.start();
 
-        // Drag/whoosh sound — low rumble when blowing
-        const dragOsc = audioCtx.createOscillator();
-        dragOsc.type = 'sawtooth';
-        dragOsc.frequency.value = 60;
-        const dragFilter = audioCtx.createBiquadFilter();
-        dragFilter.type = 'lowpass';
-        dragFilter.frequency.value = 200;
+        // Crackle micro-pops — scheduled randomly
+        let popTimer = null;
+        function schedulePop() {
+          if (!audioCtx || audioCtx.state === 'closed') return;
+          const t = audioCtx.currentTime + 0.02;
+          const popBuf = audioCtx.createBuffer(1, 80, audioCtx.sampleRate);
+          const pd = popBuf.getChannelData(0);
+          for (let j = 0; j < 80; j++) pd[j] = (Math.random() * 2 - 1) * Math.exp(-j / 12);
+          const ps = audioCtx.createBufferSource();
+          ps.buffer = popBuf;
+          const pf = audioCtx.createBiquadFilter();
+          pf.type = 'bandpass';
+          pf.frequency.value = 3000 + Math.random() * 2000;
+          pf.Q.value = 1.0;
+          const pg = audioCtx.createGain();
+          pg.gain.setValueAtTime(0.12, t);
+          pg.gain.exponentialRampToValueAtTime(0.001, t + 0.008);
+          ps.connect(pf);
+          pf.connect(pg);
+          pg.connect(audioCtx.destination);
+          ps.start(t);
+          ps.stop(t + 0.01);
+          // Random interval: 150-500ms between pops
+          popTimer = setTimeout(schedulePop, 150 + Math.random() * 350);
+        }
+        schedulePop();
+        // Store cleanup ref
+        crackleGain._popTimer = () => { if (popTimer) clearTimeout(popTimer); };
+
+        // Drag/whoosh — pink noise + bandpass for realistic airflow
+        const dragBuf = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+        const dd = dragBuf.getChannelData(0);
+        b0 = 0; b1 = 0; b2 = 0; b3 = 0; b4 = 0; b5 = 0; b6 = 0;
+        for (let i = 0; i < bufferSize; i++) {
+          const w = Math.random() * 2 - 1;
+          b0 = 0.99886 * b0 + w * 0.0555179;
+          b1 = 0.99332 * b1 + w * 0.0750759;
+          b2 = 0.96900 * b2 + w * 0.1538520;
+          b3 = 0.86650 * b3 + w * 0.3104856;
+          b4 = 0.55000 * b4 + w * 0.5329522;
+          b5 = -0.7616 * b5 - w * 0.0168980;
+          dd[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + w * 0.5362) * 0.11;
+          b6 = w * 0.115926;
+        }
+        const dragSource = audioCtx.createBufferSource();
+        dragSource.buffer = dragBuf;
+        dragSource.loop = true;
+        const dragBp = audioCtx.createBiquadFilter();
+        dragBp.type = 'bandpass';
+        dragBp.frequency.value = 1000;
+        dragBp.Q.value = 1.2;
+        const dragPeak = audioCtx.createBiquadFilter();
+        dragPeak.type = 'peaking';
+        dragPeak.frequency.value = 1200;
+        dragPeak.Q.value = 3.0;
+        dragPeak.gain.value = 4;
         dragGain = audioCtx.createGain();
         dragGain.gain.value = 0;
-        dragOsc.connect(dragFilter);
-        dragFilter.connect(dragGain);
+        dragSource.connect(dragBp);
+        dragBp.connect(dragPeak);
+        dragPeak.connect(dragGain);
         dragGain.connect(audioCtx.destination);
-        dragOsc.start();
+        dragSource.start();
       } catch (e) {}
       return true;
     } catch (err) {
@@ -687,6 +747,11 @@
 
   // Cleanup mic and audio when game ends or page unloads
   function cleanupMic() {
+    // Stop crackle micro-pops
+    if (crackleGain && crackleGain._popTimer) {
+      crackleGain._popTimer();
+      crackleGain._popTimer = null;
+    }
     // Only stop the mic stream, keep audio context open for reuse
     if (micStream) {
       micStream.getTracks().forEach(t => t.stop());
@@ -727,19 +792,39 @@
         navigator.vibrate(50);
       }
     } catch (e) {}
-    // Low-frequency thump for iOS (works everywhere)
+    // Ash flick — sharp high click + subtle paper tap
     if (audioCtx) {
       try {
+        const t = audioCtx.currentTime;
+        // High click — 4kHz noise burst (the "flick")
+        const clickBuf = audioCtx.createBuffer(1, 80, audioCtx.sampleRate);
+        const cd = clickBuf.getChannelData(0);
+        for (let i = 0; i < 80; i++) cd[i] = (Math.random() * 2 - 1) * Math.exp(-i / 15);
+        const cs = audioCtx.createBufferSource();
+        cs.buffer = clickBuf;
+        const cf = audioCtx.createBiquadFilter();
+        cf.type = 'bandpass';
+        cf.frequency.value = 4000;
+        cf.Q.value = 2.0;
+        const cg = audioCtx.createGain();
+        cg.gain.setValueAtTime(0.18, t);
+        cg.gain.exponentialRampToValueAtTime(0.001, t + 0.05);
+        cs.connect(cf);
+        cf.connect(cg);
+        cg.connect(audioCtx.destination);
+        cs.start(t);
+        cs.stop(t + 0.06);
+        // Low paper tap — 150Hz sine (finger hitting paper)
         const osc = audioCtx.createOscillator();
-        const g = audioCtx.createGain();
         osc.type = 'sine';
-        osc.frequency.value = 80;
-        g.gain.setValueAtTime(0.3, audioCtx.currentTime);
-        g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
-        osc.connect(g);
-        g.connect(audioCtx.destination);
-        osc.start();
-        osc.stop(audioCtx.currentTime + 0.1);
+        osc.frequency.value = 150;
+        const lg = audioCtx.createGain();
+        lg.gain.setValueAtTime(0.05, t);
+        lg.gain.exponentialRampToValueAtTime(0.001, t + 0.03);
+        osc.connect(lg);
+        lg.connect(audioCtx.destination);
+        osc.start(t);
+        osc.stop(t + 0.04);
       } catch (e) {}
     }
 
