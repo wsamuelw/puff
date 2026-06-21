@@ -143,11 +143,11 @@
         const firstName = user.displayName.split(' ')[0];
         safeSetItem('userName', firstName);
       }
-      // Only auto-proceed if user actively signed in this session
-      if (activelySignedIn) {
-        splashScreen.classList.remove('visible');
-        checkSlipUp();
-      }
+      // Auto-proceed for ALL signed-in users:
+      // - Returning users: auth restored instantly, no button tap needed
+      // - Fresh sign-in: splash already hidden by button handler
+      splashScreen.classList.remove('visible');
+      checkSlipUp();
     } else {
       // Not signed in — show splash
       resetSplashGoogleBtn();
