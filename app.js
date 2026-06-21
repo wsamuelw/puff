@@ -120,8 +120,9 @@
   const splashScreen = document.getElementById('splash-screen');
   const splashGoogleBtn = document.getElementById('splash-google');
 
-  // Show splash screen if not signed in
-  if (!safeGetItem('consentGiven', 'false') || !currentUser) {
+  // Show splash only for new users (no previous sign-in)
+  // Returning users: skip splash entirely, onAuthStateChanged handles entry
+  if (safeGetItem('consentGiven', 'false') !== 'true') {
     splashScreen.classList.add('visible');
   }
 
