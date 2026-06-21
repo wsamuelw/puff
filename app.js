@@ -120,9 +120,6 @@
   const splashScreen = document.getElementById('splash-screen');
   const splashGoogleBtn = document.getElementById('splash-google');
 
-  // Track if user actively signed in this session
-  let activelySignedIn = false;
-
   // Show splash screen if not signed in
   if (!safeGetItem('consentGiven', 'false') || !currentUser) {
     splashScreen.classList.add('visible');
@@ -139,11 +136,10 @@
         const firstName = user.displayName.split(' ')[0];
         safeSetItem('userName', firstName);
       }
-      // Only auto-proceed if user actively signed in this session
-      if (activelySignedIn) {
-        splashScreen.classList.remove('visible');
-        checkSlipUp();
-      }
+      // Returning users: auto-proceed instantly (auth restored from LOCAL persistence)
+      // Fresh sign-in: splash already hidden by button handler's .then()
+      splashScreen.classList.remove('visible');
+      checkSlipUp();
     } else {
       // Not signed in — show splash
       resetSplashGoogleBtn();
@@ -159,14 +155,7 @@
     // Clear any previous error
     const errorEl = document.getElementById('splash-error');
     if (errorEl) errorEl.style.display = 'none';
-    activelySignedIn = true;
-    signInWithGoogle().then(() => {
-      // onAuthStateChanged may not re-fire for persisted users,
-      // so proceed directly after successful popup sign-in
-      splashScreen.classList.remove('visible');
-      checkSlipUp();
-    }).catch(() => {
-      activelySignedIn = false;
+    signInWithGoogle().catch(() => {
       // Error already displayed by showSplashError()
     });
   });
