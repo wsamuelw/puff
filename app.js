@@ -367,17 +367,6 @@
 
   // Health milestones
   let quitStartDate = parseInt(safeGetItem('quitStartDate', '0'));
-  const HEALTH_MILESTONES = [
-    { time: 20 * 60,           icon: '❤️', title: 'Heart rate normalised', desc: 'Your pulse dropped to a healthy resting rate.' },
-    { time: 12 * 3600,         icon: '🫁', title: 'Carbon monoxide clearing', desc: 'CO levels dropping. Oxygen transport improving.' },
-    { time: 48 * 3600,         icon: '👃', title: 'Taste and smell return', desc: 'Nerve endings regenerating. Food will taste better.' },
-    { time: 7 * 24 * 3600,     icon: '⚡', title: 'Energy increases', desc: 'Lung function improving. Walking feels easier.' },
-    { time: 30 * 24 * 3600,    icon: '🌿', title: 'Lungs regenerating', desc: 'Cilia regrowing. Lungs cleaning themselves.' },
-    { time: 90 * 24 * 3600,    icon: '🩸', title: 'Circulation restored', desc: 'Blood flow normalised. Hands and feet warmer.' },
-    { time: 365 * 24 * 3600,   icon: '💪', title: 'Heart disease risk halved', desc: 'Major risk reduction achieved.' },
-    { time: 5 * 365 * 24 * 3600, icon: '🧠', title: 'Stroke risk = non-smoker', desc: 'Your body has reset.' },
-  ];
-
   // Slip-up handling
   let lastSessionDate = parseInt(safeGetItem('lastSessionDate', '0'));
   let slipUpShown = false;
@@ -587,6 +576,25 @@
   window.addEventListener('resize', resize);
   resize();
 
+  // --- Pink noise buffer helper (Voss-McCartney) ---
+  function createPinkNoiseBuffer(ctx, length) {
+    const buf = ctx.createBuffer(1, length, ctx.sampleRate);
+    const d = buf.getChannelData(0);
+    let b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
+    for (let i = 0; i < length; i++) {
+      const w = Math.random() * 2 - 1;
+      b0 = 0.99886 * b0 + w * 0.0555179;
+      b1 = 0.99332 * b1 + w * 0.0750759;
+      b2 = 0.96900 * b2 + w * 0.1538520;
+      b3 = 0.86650 * b3 + w * 0.3104856;
+      b4 = 0.55000 * b4 + w * 0.5329522;
+      b5 = -0.7616 * b5 - w * 0.0168980;
+      d[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + w * 0.5362) * 0.11;
+      b6 = w * 0.115926;
+    }
+    return buf;
+  }
+
   // --- Mic ---
   async function startMic() {
     if (micStarted) return true;
@@ -614,22 +622,8 @@
 
       // Pink noise — warm ember hiss with random micro-pops
       try {
-        // Generate pink noise buffer (Voss-McCartney algorithm)
         const bufferSize = audioCtx.sampleRate * 2;
-        const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-        const data = noiseBuffer.getChannelData(0);
-        let b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
-        for (let i = 0; i < bufferSize; i++) {
-          const w = Math.random() * 2 - 1;
-          b0 = 0.99886 * b0 + w * 0.0555179;
-          b1 = 0.99332 * b1 + w * 0.0750759;
-          b2 = 0.96900 * b2 + w * 0.1538520;
-          b3 = 0.86650 * b3 + w * 0.3104856;
-          b4 = 0.55000 * b4 + w * 0.5329522;
-          b5 = -0.7616 * b5 - w * 0.0168980;
-          data[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + w * 0.5362) * 0.11;
-          b6 = w * 0.115926;
-        }
+        const noiseBuffer = createPinkNoiseBuffer(audioCtx, bufferSize);
         const noiseSource = audioCtx.createBufferSource();
         noiseSource.buffer = noiseBuffer;
         noiseSource.loop = true;
@@ -674,20 +668,7 @@
         crackleGain._popTimer = () => { if (popTimer) clearTimeout(popTimer); };
 
         // Drag/whoosh — pink noise + bandpass for realistic airflow
-        const dragBuf = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-        const dd = dragBuf.getChannelData(0);
-        b0 = 0; b1 = 0; b2 = 0; b3 = 0; b4 = 0; b5 = 0; b6 = 0;
-        for (let i = 0; i < bufferSize; i++) {
-          const w = Math.random() * 2 - 1;
-          b0 = 0.99886 * b0 + w * 0.0555179;
-          b1 = 0.99332 * b1 + w * 0.0750759;
-          b2 = 0.96900 * b2 + w * 0.1538520;
-          b3 = 0.86650 * b3 + w * 0.3104856;
-          b4 = 0.55000 * b4 + w * 0.5329522;
-          b5 = -0.7616 * b5 - w * 0.0168980;
-          dd[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + w * 0.5362) * 0.11;
-          b6 = w * 0.115926;
-        }
+        const dragBuf = createPinkNoiseBuffer(audioCtx, bufferSize);
         const dragSource = audioCtx.createBufferSource();
         dragSource.buffer = dragBuf;
         dragSource.loop = true;
@@ -770,17 +751,11 @@
 
   // Full cleanup on page unload
   function fullCleanup() {
-    if (micStream) {
-      micStream.getTracks().forEach(t => t.stop());
-      micStream = null;
-    }
+    cleanupMic();
     if (audioCtx && audioCtx.state !== 'closed') {
       audioCtx.close().catch(() => {});
       audioCtx = null;
     }
-    micStarted = false;
-    analyser = null;
-    dataArray = null;
   }
 
   // --- Drop ash ---
@@ -917,9 +892,6 @@
   function getCigTopY() {
     const burnHeight = CIG.bodyLength * (1 - burnProgress);
     return FILTER_Y() - burnHeight;
-  }
-  function getCigFilterY() {
-    return FILTER_Y();
   }
 
   // --- Draw ---
@@ -1329,7 +1301,9 @@
     { id: 'morning', emoji: '🌅', label: 'Morning routine' },
     { id: 'latenight', emoji: '🌙', label: 'Late night' },
   ];
-  let triggerSubmitted = false;
+  // Derived lookup maps (built once from TRIGGER_OPTIONS)
+  const TRIGGER_ICONS = Object.fromEntries(TRIGGER_OPTIONS.map(t => [t.id, t.emoji]));
+  const TRIGGER_LABELS = Object.fromEntries(TRIGGER_OPTIONS.map(t => [t.id, t.label]));
 
   // Badge definitions
   const BADGES = [
@@ -1563,26 +1537,6 @@
   }
 
   // Get trigger insight
-  function getTriggerInsight(triggerId) {
-    const logs = JSON.parse(safeGetItem('cravingLogs', '[]'));
-    const triggerLogs = logs.filter(l => l.trigger === triggerId);
-    const count = triggerLogs.length;
-    const trigger = TRIGGER_OPTIONS.find(t => t.id === triggerId);
-    if (!trigger) return '';
-
-    if (count <= 1) return `Your first ${trigger.label.toLowerCase()} session`;
-    if (count >= 5) return `Your ${count}th ${trigger.label.toLowerCase()} trigger — consider alternatives`;
-    return `Your ${count}${ordinal(count)} ${trigger.label.toLowerCase()} trigger`;
-  }
-
-  // Ordinal suffix helper
-  function ordinal(n) {
-    const v = n % 100;
-    if (v >= 11 && v <= 13) return 'th';
-    const s = ['th', 'st', 'nd', 'rd'];
-    return s[v % 10] || s[0];
-  }
-
   // Coping suggestions by trigger
   const COPING_SUGGESTIONS = {
     'stress': 'Try 3 slow breaths — in for 4, hold for 4, out for 4. The craving usually passes in a few minutes.',
@@ -1756,21 +1710,6 @@
     // Sort by count descending
     const sorted = Object.entries(triggerData).sort((a, b) => b[1].count - a[1].count).slice(0, 5);
 
-    // Trigger icons/labels
-    const triggerIcons = {
-      'stress': '😰', 'anxiety': '😬', 'sadness': '😔', 'anger': '😤', 'tired': '😴',
-      'drinking': '🍺', 'coffee': '☕', 'meals': '🍽️', 'social': '🍻', 'workbreak': '💼',
-      'toilet': '🚽', 'aftersex': '❤️', 'boredom': '😑',
-      'morning': '🌅', 'latenight': '🌙', 'unknown': '🤷', 'other': '💭'
-    };
-    const triggerLabels = {
-      'stress': 'Stress', 'anxiety': 'Anxiety', 'sadness': 'Sadness', 'anger': 'Anger', 'tired': 'Tired',
-      'drinking': 'Drinking', 'coffee': 'Coffee', 'meals': 'After meals', 'social': 'Social drinking',
-      'workbreak': 'Work break', 'toilet': 'Toilet', 'aftersex': 'After sex',
-      'boredom': 'Boredom', 'morning': 'Morning routine', 'latenight': 'Late night',
-      'unknown': 'Not sure', 'other': 'Other'
-    };
-
     // Get time context from hour array
     function getTimeContext(hours) {
       if (!hours.length) return '';
@@ -1787,8 +1726,8 @@
     // Build trigger rows
     endTriggerList.innerHTML = '';
     sorted.forEach(([trigger, data]) => {
-      const icon = triggerIcons[trigger] || '📊';
-      const label = triggerLabels[trigger] || trigger;
+      const icon = TRIGGER_ICONS[trigger] || '📊';
+      const label = TRIGGER_LABELS[trigger] || trigger;
       const time = getTimeContext(data.hours);
 
       const row = document.createElement('div');
@@ -1830,29 +1769,6 @@
     endScreen.classList.remove('visible');
     showTriggerScreen();
   });
-
-  // Helper: format elapsed time for health timeline
-  function formatQuitDuration() {
-    if (!quitStartDate) return '0:00:00';
-    const elapsed = Math.floor((Date.now() - quitStartDate) / 1000);
-    const days = Math.floor(elapsed / 86400);
-    const hours = Math.floor((elapsed % 86400) / 3600);
-    const mins = Math.floor((elapsed % 3600) / 60);
-    const secs = elapsed % 60;
-    if (days > 0) return `${days}d ${hours}h`;
-    if (hours > 0) return `${hours}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-    return `${mins}:${String(secs).padStart(2, '0')}`;
-  }
-
-  // Helper: get next milestone
-  function getNextMilestone() {
-    if (!quitStartDate) return HEALTH_MILESTONES[0];
-    const elapsed = (Date.now() - quitStartDate) / 1000;
-    for (const m of HEALTH_MILESTONES) {
-      if (elapsed < m.time) return m;
-    }
-    return null; // all milestones reached
-  }
 
   // --- Stats Display ---
   const barStats = document.getElementById('filter-stats');
@@ -2230,7 +2146,6 @@
   function applyTheme() {
     document.body.classList.toggle('light', !isDark);
     document.body.classList.toggle('dark', isDark);
-    const settingsDarkMode = document.getElementById('settings-dark-mode');
     if (settingsDarkMode) {
       settingsDarkMode.classList.toggle('active', isDark);
     }
@@ -2692,23 +2607,6 @@
     const sorted = Object.entries(triggerCounts).sort((a, b) => b[1] - a[1]);
     const maxCount = sorted[0][1];
 
-    // Trigger icons mapping
-    const triggerIcons = {
-      'stress': '😰', 'anxiety': '😬', 'sadness': '😔', 'anger': '😤', 'tired': '😴',
-      'drinking': '🍺', 'coffee': '☕', 'meals': '🍽️', 'social': '🍻', 'workbreak': '💼',
-      'toilet': '🚽', 'aftersex': '❤️', 'boredom': '😑',
-      'morning': '🌅', 'latenight': '🌙', 'unknown': '🤷', 'other': '💭'
-    };
-
-    // Trigger labels mapping
-    const triggerLabels = {
-      'stress': 'Stress', 'anxiety': 'Anxiety', 'sadness': 'Sadness', 'anger': 'Anger', 'tired': 'Tired',
-      'drinking': 'Drinking', 'coffee': 'Coffee', 'meals': 'After meals', 'social': 'Social drinking',
-      'workbreak': 'Work break', 'toilet': 'Toilet', 'aftersex': 'After sex',
-      'boredom': 'Boredom', 'morning': 'Morning routine', 'latenight': 'Late night',
-      'unknown': 'Not sure', 'other': 'Other'
-    };
-
     // Bar colors
     const barColors = ['amber', 'blue', 'green', 'pink', 'gray', 'gray'];
 
@@ -2716,8 +2614,8 @@
     triggersBars.innerHTML = '';
     sorted.forEach(([trigger, count], i) => {
       const pct = (count / maxCount) * 100;
-      const icon = triggerIcons[trigger] || '📊';
-      const label = triggerLabels[trigger] || trigger;
+      const icon = TRIGGER_ICONS[trigger] || '📊';
+      const label = TRIGGER_LABELS[trigger] || trigger;
       const color = barColors[i] || 'gray';
 
       const group = document.createElement('div');
@@ -2865,12 +2763,6 @@
     const price = parseFloat(safeGetItem('cigPrice', '1.00'));
 
     const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-    const triggerLabels = {
-      'stress': 'Stress', 'anxiety': 'Anxiety', 'sadness': 'Sadness', 'anger': 'Anger', 'tired': 'Tired',
-      'drinking': 'Drinking', 'coffee': 'Coffee', 'meals': 'After meals', 'social': 'Social drinking',
-      'workbreak': 'Work break', 'toilet': 'Toilet', 'aftersex': 'After sex', 'boredom': 'Boredom',
-      'morning': 'Morning routine', 'latenight': 'Late night', 'unknown': 'Not sure', 'other': 'Other'
-    };
 
     // Summary section
     const summary = [
@@ -2898,7 +2790,7 @@
       const day = dayNames[d.getDay()];
       const hour = d.getHours();
       const triggerId = log.trigger || 'unknown';
-      const triggerLabel = triggerLabels[triggerId] || triggerId;
+      const triggerLabel = TRIGGER_LABELS[triggerId] || triggerId;
       const money = (log.money || 0).toFixed(2);
       cumulativeMoney += log.money || 0;
       cumulativeCigs++;
