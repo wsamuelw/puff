@@ -91,20 +91,22 @@
   async function signInWithGoogle() {
     logEvent('sign_in_started');
     try {
-      const result = await auth.signInWithPopup(provider);
-      currentUser = result.user;
-      logEvent('sign_in_completed', { uid: result.user.uid });
-      return result.user;
+      // Use redirect on desktop (no popup), popup on mobile
+      const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+      if (isMobile) {
+        const result = await auth.signInWithPopup(provider);
+        currentUser = result.user;
+        logEvent('sign_in_completed', { uid: result.user.uid });
+        return result.user;
+      } else {
+        // Store intent so onAuthStateChanged knows to proceed after redirect
+        sessionStorage.setItem('puff_signin_pending', 'true');
+        await auth.signInWithRedirect(provider);
+      }
     } catch (e) {
       console.warn('Auth failed:', e.message);
       logEvent('sign_in_failed', { error: e.code });
-      if (e.code === 'auth/popup-blocked') {
-        showSplashError('Popup blocked. Please allow popups and try again.');
-      } else if (e.code === 'auth/popup-closed-by-user') {
-        showSplashError('Sign-in cancelled. Tap to try again.');
-      } else {
-        showSplashError('Sign-in failed. Tap to try again.');
-      }
+      showSplashError('Sign-in failed. Tap to try again.');
       throw e;
     }
   }
@@ -120,7 +122,9 @@
   const splashGoogleBtn = document.getElementById('splash-google');
 
   // Track if user actively signed in this session
-  let activelySignedIn = false;
+  // Restore across redirect (desktop sign-in uses redirect, not popup)
+  let activelySignedIn = sessionStorage.getItem('puff_signin_pending') === 'true';
+  if (activelySignedIn) sessionStorage.removeItem('puff_signin_pending');
 
   // Show splash screen if not signed in
   if (!safeGetItem('consentGiven', 'false') || !currentUser) {
