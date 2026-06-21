@@ -119,6 +119,9 @@
   const splashScreen = document.getElementById('splash-screen');
   const splashGoogleBtn = document.getElementById('splash-google');
 
+  // Track if user actively signed in this session
+  let activelySignedIn = false;
+
   // Show splash screen if not signed in
   if (!safeGetItem('consentGiven', 'false') || !currentUser) {
     splashScreen.classList.add('visible');
@@ -129,15 +132,17 @@
     currentUser = user;
 
     if (user) {
-      // Signed in — hide splash and proceed
       safeSetItem('consentGiven', 'true');
       loadFromCloud();
       if (!safeGetItem('userName', '') && user.displayName) {
         const firstName = user.displayName.split(' ')[0];
         safeSetItem('userName', firstName);
       }
-      splashScreen.classList.remove('visible');
-      checkSlipUp();
+      // Only auto-proceed if user actively signed in this session
+      if (activelySignedIn) {
+        splashScreen.classList.remove('visible');
+        checkSlipUp();
+      }
     } else {
       // Not signed in — show splash
       resetSplashGoogleBtn();
@@ -153,7 +158,9 @@
     // Clear any previous error
     const errorEl = document.getElementById('splash-error');
     if (errorEl) errorEl.style.display = 'none';
+    activelySignedIn = true;
     signInWithGoogle().catch(() => {
+      activelySignedIn = false;
       // Error already displayed by showSplashError()
     });
   });
