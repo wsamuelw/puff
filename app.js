@@ -295,7 +295,7 @@
   const PUFF_COMPLETE_DURATION = 1.0; // seconds to complete puff after release
 
   // Auto-burn (~5 min full length at idle)
-  const BASE_BURN_RATE = 0.0033; // per second
+  const BASE_BURN_RATE = 0.003067; // per second — 0.92 / 300s = 5 min idle
   const BLOW_BOOST = 0.04;       // per second when blowing (~8-12 puffs to finish)
   let lastFrameTime = 0;
   const ASH_REGROW_SPEED = 0.5; // px per second (~5mm/min, realistic ash growth)
