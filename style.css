@@ -293,303 +293,120 @@ body.light .splash-feature-text {
   cursor: pointer;
   min-height: 48px;
 }
-
-/* ─── Consent Screen ─── */
-.consent-screen {
-  position: fixed;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 490;
-  background: #1a1a1a;
-  opacity: 0;
-  transition: opacity 0.4s ease;
-  pointer-events: none;
-  padding: calc(24px + env(safe-area-inset-top, 0px)) 24px calc(24px + env(safe-area-inset-bottom, 0px));
-}
-.consent-screen.visible {
-  opacity: 1;
-  pointer-events: auto;
-}
-body.light .consent-screen {
-  background: #f5f0e8;
-}
-.consent-content {
-  text-align: center;
-  max-width: 340px;
-  width: 100%;
-}
-.consent-title {
-  font-size: 28px;
-  font-weight: 700;
-  color: #faf9f7;
-  margin-bottom: 4px;
-}
-body.light .consent-title {
-  color: #1a1a1a;
-}
-.consent-sub {
-  font-size: 13px;
-  color: rgba(250,249,247,0.4);
-  margin-bottom: 24px;
-}
-body.light .consent-sub {
-  color: rgba(26,26,26,0.4);
-}
-.consent-card {
-  background: rgba(250,249,247,0.04);
-  border: 1px solid rgba(250,249,247,0.06);
-  border-radius: 12px;
-  padding: 24px 20px;
-  text-align: left;
-}
-body.light .consent-card {
-  background: rgba(26,26,26,0.03);
-  border-color: rgba(26,26,26,0.08);
-}
-.consent-heading {
-  font-size: 16px;
-  font-weight: 600;
-  color: #faf9f7;
-  margin-bottom: 12px;
-}
-body.light .consent-heading {
-  color: #1a1a1a;
-}
-.consent-text {
-  font-size: 13px;
-  color: rgba(250,249,247,0.6);
-  line-height: 1.6;
-  margin-bottom: 20px;
-}
-body.light .consent-text {
-  color: rgba(26,26,26,0.6);
-}
-.consent-text ul {
-  margin: 8px 0;
-  padding-left: 20px;
-}
-.consent-text li {
-  margin-bottom: 4px;
-}
-.consent-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-bottom: 16px;
-}
-.consent-accept {
+.splash-google-btn {
   width: 100%;
   padding: 14px;
-  background: #d4a574;
-  color: #1a1a1a;
-  border: none;
-  border-radius: 10px;
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
-  min-height: 48px;
-}
-.consent-offline {
-  width: 100%;
-  padding: 14px;
-  background: transparent;
-  color: rgba(250,249,247,0.5);
-  border: 1px solid rgba(250,249,247,0.1);
-  border-radius: 10px;
-  font-size: 14px;
-  cursor: pointer;
-  min-height: 48px;
-}
-body.light .consent-offline {
-  color: rgba(26,26,26,0.5);
-  border-color: rgba(26,26,26,0.15);
-}
-.consent-links {
-  text-align: center;
-}
-.consent-link {
-  font-size: 12px;
-  color: rgba(250,249,247,0.3);
-  text-decoration: underline;
-}
-body.light .consent-link {
-  color: rgba(26,26,26,0.3);
-}
-
-/* ─── Sign-in Screen ─── */
-/* ─── Sign-in Screen (Sticky Note) ─── */
-.signin-screen {
-  position: fixed;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 400;
-  background: #f5f0e8;
-  opacity: 1;
-  pointer-events: auto;
-  transition: opacity 0.4s ease;
-  padding: calc(24px + env(safe-area-inset-top, 0px)) 24px calc(24px + env(safe-area-inset-bottom, 0px));
-}
-
-.signin-screen::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: repeating-linear-gradient(0deg, transparent, transparent 27px, rgba(0,0,0,0.06) 27px, rgba(0,0,0,0.06) 28px);
-  pointer-events: none;
-}
-
-.signin-screen.hidden {
-  opacity: 0;
-  pointer-events: none;
-}
-
-/* Signin always uses cream lined paper regardless of theme */
-body.dark .signin-screen {
-  background: #f5f0e8;
-}
-
-body.dark .signin-screen::before {
-  background: repeating-linear-gradient(0deg, transparent, transparent 27px, rgba(0,0,0,0.06) 27px, rgba(0,0,0,0.06) 28px);
-}
-
-.signin-card {
   background: #fff;
-  padding: 32px 28px;
-  border-radius: 4px;
-  box-shadow: 2px 4px 20px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.02);
-  transform: rotate(-1deg);
-  width: 100%;
-  max-width: 300px;
-  position: relative;
-  text-align: center;
-}
-
-/* Signin card always white on cream background */
-body.dark .signin-card {
-  background: #fff;
-  box-shadow: 2px 4px 20px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.02);
-}
-
-.signin-tape {
-  position: absolute;
-  top: -8px;
-  left: 50%;
-  transform: translateX(-50%) rotate(2deg);
-  width: 60px;
-  height: 16px;
-  background: rgba(212,165,116,0.3);
-  border-radius: 2px;
-}
-
-.signin-title {
-  font-family: 'Libre Baskerville', serif;
-  font-size: 32px;
   color: #1a1a1a;
-  margin-bottom: 4px;
-}
-
-/* Signin always light text on cream/white */
-body.dark .signin-title {
-  color: #1a1a1a;
-}
-
-.signin-sub {
-  font-size: 13px;
-  color: rgba(26,26,26,0.35);
-  margin-bottom: 24px;
-}
-
-body.dark .signin-sub {
-  color: rgba(26,26,26,0.35);
-}
-
-.signin-btn {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 16px 24px;
-  background: #1a1a1a;
-  border: none;
-  border-radius: 12px;
-  font-family: 'Outfit', sans-serif;
+  border: 1px solid rgba(0,0,0,0.1);
+  border-radius: 10px;
   font-size: 15px;
   font-weight: 500;
-  color: #fff;
   cursor: pointer;
-  width: 100%;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
   justify-content: center;
+  gap: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
   transition: all 0.2s ease;
   -webkit-tap-highlight-color: transparent;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
 }
-
-body.dark .signin-btn {
-  background: #1a1a1a;
-  color: #fff;
+.splash-google-btn:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
-
-.signin-btn:hover {
-  background: #333;
-}
-
-body.dark .signin-btn:hover {
-  background: #333;
-}
-
-.signin-btn:active {
+.splash-google-btn:active {
   transform: scale(0.98);
 }
-
-.signin-btn:disabled {
+.splash-google-btn:disabled {
   opacity: 0.7;
   cursor: not-allowed;
 }
+body.light .splash-google-btn {
+  background: #fff;
+  color: #1a1a1a;
+}
+.splash-consent {
+  margin-top: 16px;
+  font-size: 11px;
+  color: rgba(250,249,247,0.3);
+  line-height: 1.5;
+}
+body.light .splash-consent {
+  color: rgba(26,26,26,0.3);
+}
+.splash-consent a {
+  color: rgba(250,249,247,0.5);
+  text-decoration: underline;
+}
+body.light .splash-consent a {
+  color: rgba(26,26,26,0.5);
+}
+.splash-error {
+  display: none;
+  margin-top: 12px;
+  padding: 10px 14px;
+  background: rgba(234,67,53,0.1);
+  border: 1px solid rgba(234,67,53,0.2);
+  border-radius: 8px;
+  font-size: 13px;
+  color: #EA4335;
+  text-align: center;
+}
 
-.signin-start {
-  margin-top: 10px;
-  padding: 16px;
+/* ─── First-session Tooltip ─── */
+.first-session-tooltip {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 600;
+  background: rgba(0,0,0,0.6);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  padding: 24px;
+}
+.first-session-tooltip.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+.tooltip-content {
+  background: #fff;
+  border-radius: 16px;
+  padding: 28px 24px;
+  text-align: center;
+  max-width: 280px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+}
+.tooltip-emoji {
+  font-size: 40px;
+  margin-bottom: 12px;
+}
+.tooltip-title {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 18px;
+  color: #1a1a1a;
+  margin-bottom: 8px;
+}
+.tooltip-desc {
+  font-size: 14px;
+  color: rgba(26,26,26,0.6);
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+.tooltip-dismiss {
   width: 100%;
+  padding: 12px;
   background: #d4a574;
+  color: #1a1a1a;
   border: none;
-  border-radius: 12px;
-  font-family: 'Outfit', sans-serif;
+  border-radius: 10px;
   font-size: 15px;
   font-weight: 600;
-  color: #1a1a1a;
   cursor: pointer;
-  transition: all 0.2s ease;
-  -webkit-tap-highlight-color: transparent;
-  box-shadow: 0 2px 8px rgba(212,165,116,0.2);
-}
-
-.signin-start:hover {
-  background: #c49564;
-}
-
-.signin-start:active {
-  transform: scale(0.96);
-}
-
-.signin-note {
-  margin-top: 16px;
-  font-size: 12px;
-  color: rgba(26,26,26,0.25);
-  font-style: italic;
-}
-
-body.dark .signin-note {
-  color: rgba(26,26,26,0.25);
-}
-
-.signin-error {
-  margin-top: 16px;
-  font-size: 13px;
-  color: rgba(200,80,80,0.8);
-  text-align: center;
+  min-height: 44px;
 }
 
 /* ─── Menu Overlay ─── */
@@ -793,134 +610,6 @@ body.light .menu-greeting-sub {
 }
 
 /* ─── Onboarding Screen ─── */
-.onboarding-screen {
-  position: fixed;
-  inset: 0;
-  background: #1a1a1a;
-  z-index: 450;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.4s ease;
-  padding-top: env(safe-area-inset-top, 0px);
-  padding-bottom: env(safe-area-inset-bottom, 0px);
-}
-
-body.light .onboarding-screen {
-  background: #faf9f7;
-}
-
-.onboarding-screen.visible {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.onboarding-content {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-
-.onboarding-card-area {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 40px;
-}
-
-.onboarding-card {
-  background: rgba(250,249,247,0.04);
-  border: 1px solid rgba(250,249,247,0.06);
-  border-radius: 20px;
-  padding: 32px 24px;
-  text-align: center;
-  width: 100%;
-  max-width: 280px;
-}
-
-body.light .onboarding-card {
-  background: rgba(0,0,0,0.03);
-  border-color: rgba(0,0,0,0.06);
-}
-
-.onboarding-card-icon {
-  font-size: 48px;
-  margin-bottom: 16px;
-}
-
-.onboarding-card-title {
-  font-family: 'Libre Baskerville', serif;
-  font-size: 20px;
-  color: #faf9f7;
-  margin-bottom: 8px;
-}
-
-body.light .onboarding-card-title {
-  color: #1a1a1a;
-}
-
-.onboarding-card-desc {
-  font-size: 14px;
-  color: rgba(250,249,247,0.5);
-  line-height: 1.5;
-}
-
-body.light .onboarding-card-desc {
-  color: rgba(26,26,26,0.5);
-}
-
-.onboarding-footer {
-  padding: 24px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.onboarding-dots {
-  display: flex;
-  gap: 6px;
-}
-
-.onboarding-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: rgba(250,249,247,0.15);
-  transition: all 0.2s ease;
-}
-
-body.light .onboarding-dot {
-  background: rgba(0,0,0,0.15);
-}
-
-.onboarding-dot.active {
-  background: #d4a574;
-  width: 18px;
-  border-radius: 3px;
-}
-
-.onboarding-next {
-  padding: 12px 32px;
-  background: #d4a574;
-  border: none;
-  border-radius: 12px;
-  color: #1a1a1a;
-  font-family: 'Outfit', sans-serif;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.onboarding-next:hover {
-  background: #c49564;
-}
-
-.onboarding-next:active {
-  transform: scale(0.96);
-}
-
 /* ─── Trigger Analytics Screen ─── */
 .triggers-screen {
   position: fixed;

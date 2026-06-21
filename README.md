@@ -59,11 +59,9 @@ The cigarette renders on a Canvas 2D element with:
 ### Use it
 
 1. Open the app in Safari or Chrome on your phone
-2. Tap "Get Started" on the welcome screen
-3. Accept privacy terms (or use offline only)
-4. Complete the 4-step onboarding tutorial
-5. Grant microphone access (or continue without mic)
-6. Select your trigger and hold the screen to smoke
+2. Tap "Continue with Google" to sign in
+3. Select your trigger and hold the screen to smoke
+4. Blow into the mic to burn faster (or just hold)
 
 ### Run locally
 

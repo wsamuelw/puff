@@ -62,30 +62,26 @@
   const provider = new firebase.auth.GoogleAuthProvider();
   let currentUser = null;
 
-  // Reset sign-in button to default state
-  function resetSigninButton() {
-    const signinBtn = document.getElementById('signin-google');
-    if (signinBtn) {
-      signinBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg> Sign in with Google';
-      signinBtn.disabled = false;
-      signinBtn.style.background = '';
-      signinBtn.style.color = '';
-      signinBtn.style.borderColor = '';
+  // Reset splash Google button to default state
+  function resetSplashGoogleBtn() {
+    const btn = document.getElementById('splash-google');
+    if (btn) {
+      btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg> Continue with Google';
+      btn.disabled = false;
+      btn.style.background = '';
+      btn.style.color = '';
+      btn.style.borderColor = '';
     }
   }
 
-  // Show error on sign-in screen
-  function showSigninError(message) {
-    const signinScreen = document.getElementById('signin-screen');
-    const signinBtn = document.getElementById('signin-google');
-    resetSigninButton();
-    let errorDiv = signinScreen.querySelector('.signin-error');
-    if (!errorDiv) {
-      errorDiv = document.createElement('div');
-      errorDiv.className = 'signin-error';
-      signinBtn.parentNode.insertBefore(errorDiv, signinBtn.nextSibling);
+  // Show error on splash screen
+  function showSplashError(message) {
+    const errorEl = document.getElementById('splash-error');
+    if (errorEl) {
+      errorEl.textContent = message;
+      errorEl.style.display = 'block';
     }
-    errorDiv.textContent = message;
+    resetSplashGoogleBtn();
   }
 
   // Set auth persistence on load (not during sign-in click)
@@ -103,11 +99,11 @@
       console.warn('Auth failed:', e.message);
       logEvent('sign_in_failed', { error: e.code });
       if (e.code === 'auth/popup-blocked') {
-        showSigninError('Popup blocked. Please allow popups and try again.');
+        showSplashError('Popup blocked. Please allow popups and try again.');
       } else if (e.code === 'auth/popup-closed-by-user') {
-        showSigninError('Sign-in cancelled. Tap to try again.');
+        showSplashError('Sign-in cancelled. Tap to try again.');
       } else {
-        showSigninError('Sign-in failed. Tap to try again.');
+        showSplashError('Sign-in failed. Tap to try again.');
       }
       throw e;
     }
@@ -119,74 +115,49 @@
     currentUser = null;
   }
 
-  // Consent screen
-  const consentScreen = document.getElementById('consent-screen');
-  const consentAccept = document.getElementById('consent-accept');
-  const consentOffline = document.getElementById('consent-offline');
-
-  // Splash screen (value proposition)
+  // Splash screen (value proposition + sign-in)
   const splashScreen = document.getElementById('splash-screen');
-  const splashStart = document.getElementById('splash-start');
+  const splashGoogleBtn = document.getElementById('splash-google');
 
-  // Check if consent has been given
-  const consentGiven = safeGetItem('consentGiven', 'false');
-  const offlineMode = safeGetItem('offlineMode', 'false');
-
-  // Show splash screen first if consent not given yet
-  if (consentGiven === 'false') {
+  // Show splash screen if not signed in
+  if (!safeGetItem('consentGiven', 'false') || !currentUser) {
     splashScreen.classList.add('visible');
   }
 
-  // Splash "Get Started" → show consent
-  splashStart.addEventListener('click', (e) => {
-    e.stopPropagation();
-    splashScreen.classList.remove('visible');
-    setTimeout(() => {
-      consentScreen.classList.add('visible');
-    }, 300);
-  });
-
-  // Accept consent — show sign-in
-  consentAccept.addEventListener('click', (e) => {
-    e.stopPropagation();
-    safeSetItem('consentGiven', 'true');
-    safeSetItem('offlineMode', 'false');
-    consentScreen.classList.remove('visible');
-    signinScreen.classList.remove('hidden');
-  });
-
-  // Offline mode — skip sign-in, go straight to app
-  consentOffline.addEventListener('click', (e) => {
-    e.stopPropagation();
-    safeSetItem('consentGiven', 'true');
-    safeSetItem('offlineMode', 'true');
-    consentScreen.classList.remove('visible');
-    // Skip sign-in, show idle screen directly
-    checkSlipUp();
-  });
-
-  // Listen for auth state changes — always show signin page
+  // Listen for auth state changes
   auth.onAuthStateChanged((user) => {
     currentUser = user;
-    const signinScreen = document.getElementById('signin-screen');
 
     if (user) {
-      // Already signed in — show confirmed state
-      markSignedIn();
+      // Signed in — hide splash and proceed
+      safeSetItem('consentGiven', 'true');
       loadFromCloud();
       if (!safeGetItem('userName', '') && user.displayName) {
         const firstName = user.displayName.split(' ')[0];
         safeSetItem('userName', firstName);
       }
+      splashScreen.classList.remove('visible');
+      checkSlipUp();
     } else {
-      resetSigninButton();
-    }
-
-    // Always show signin page — user must click Start
-    if (consentGiven === 'true') {
-      signinScreen.classList.remove('hidden');
+      // Not signed in — show splash
+      resetSplashGoogleBtn();
+      splashScreen.classList.add('visible');
     }
   });
+
+  // Splash Google button — sign in directly
+  splashGoogleBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    splashGoogleBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg> Signing in...';
+    splashGoogleBtn.disabled = true;
+    // Clear any previous error
+    const errorEl = document.getElementById('splash-error');
+    if (errorEl) errorEl.style.display = 'none';
+    signInWithGoogle().catch(() => {
+      // Error already displayed by showSplashError()
+    });
+  });
+  splashGoogleBtn.addEventListener('touchstart', (e) => e.stopPropagation(), { passive: true });
 
   // Save to Firestore (also saves to localStorage as offline cache)
   async function saveToCloud(data) {
@@ -198,10 +169,9 @@
       safeSetItem(key, typeof value === 'object' ? JSON.stringify(value) : String(value));
     });
 
-    // Skip cloud save if no consent or offline mode
+    // Skip cloud save if no consent or not signed in
     const consent = safeGetItem('consentGiven', 'false');
-    const offline = safeGetItem('offlineMode', 'false');
-    if (!currentUser || consent !== 'true' || offline === 'true') return;
+    if (!currentUser || consent !== 'true') return;
 
     try {
       // Use dot notation to merge nested fields without replacing the whole data object
@@ -217,10 +187,9 @@
 
   // Event logging — track user actions in Firebase
   async function logEvent(eventName, props = {}) {
-    // Skip logging if no consent or offline mode
+    // Skip logging if no consent or not signed in
     const consent = safeGetItem('consentGiven', 'false');
-    const offline = safeGetItem('offlineMode', 'false');
-    if (!currentUser || consent !== 'true' || offline === 'true') return;
+    if (!currentUser || consent !== 'true') return;
     try {
       await db.collection('events').add({
         uid: currentUser.uid,
@@ -1340,56 +1309,31 @@
   const endTriggerList = document.getElementById('end-trigger-list');
   const endAnother = document.getElementById('end-another');
 
-  // Onboarding
-  const onboardingScreen = document.getElementById('onboarding-screen');
-  const onboardingIcon = document.getElementById('onboarding-icon');
-  const onboardingTitle = document.getElementById('onboarding-title');
-  const onboardingDesc = document.getElementById('onboarding-desc');
-  const onboardingDots = document.getElementById('onboarding-dots');
-  const onboardingNext = document.getElementById('onboarding-next');
-  const ONBOARDING_STEPS = [
-    { icon: '🫁', title: 'Quit by simulating', desc: 'Each session you complete means a cigarette you didn\'t smoke in real life. Track your savings and understand your triggers.' },
-    { icon: '👆', title: 'Hold to puff', desc: 'Press and hold anywhere on the screen to take a drag.' },
-    { icon: '🌬️', title: 'Blow to burn', desc: 'Blow into the mic to burn the cigarette faster.' },
-    { icon: '👆👆', title: 'Double-tap to flick', desc: 'Tap twice to flick the ash off.' },
-  ];
-  let onboardingStep = 0;
+  // First-session tooltip
+  const tooltip = document.getElementById('first-session-tooltip');
+  const tooltipDismiss = document.getElementById('tooltip-dismiss');
+  const tooltipShown = safeGetItem('tooltipShown', 'false');
 
-  function showOnboarding() {
-    onboardingStep = 0;
-    updateOnboardingCard();
-    onboardingScreen.classList.add('visible');
+  if (tooltipDismiss) {
+    tooltipDismiss.addEventListener('click', (e) => {
+      e.stopPropagation();
+      tooltip.classList.remove('visible');
+      safeSetItem('tooltipShown', 'true');
+      logEvent('tooltip_dismissed');
+    });
   }
 
-  function updateOnboardingCard() {
-    const step = ONBOARDING_STEPS[onboardingStep];
-    onboardingIcon.textContent = step.icon;
-    onboardingTitle.textContent = step.title;
-    onboardingDesc.textContent = step.desc;
-    // Update dots
-    const dots = onboardingDots.querySelectorAll('.onboarding-dot');
-    dots.forEach((dot, i) => dot.classList.toggle('active', i === onboardingStep));
-    // Update button text
-    onboardingNext.textContent = onboardingStep < ONBOARDING_STEPS.length - 1 ? 'Next' : 'Get started';
+  function showFirstSessionTooltip() {
+    if (tooltipShown === 'true') return;
+    tooltip.classList.add('visible');
+    // Auto-dismiss after 8 seconds
+    setTimeout(() => {
+      if (tooltip.classList.contains('visible')) {
+        tooltip.classList.remove('visible');
+        safeSetItem('tooltipShown', 'true');
+      }
+    }, 8000);
   }
-
-  let onboardingDebounce = false;
-  onboardingNext.addEventListener('click', (e) => {
-    e.stopPropagation();
-    if (onboardingDebounce) return;
-    onboardingDebounce = true;
-    setTimeout(() => { onboardingDebounce = false; }, 400);
-
-    if (onboardingStep < ONBOARDING_STEPS.length - 1) {
-      onboardingStep++;
-      updateOnboardingCard();
-    } else {
-      // Complete onboarding
-      onboardingScreen.classList.remove('visible');
-      safeSetItem('onboardingComplete', 'true');
-      logEvent('onboarding_completed');
-    }
-  });
 
   // Build trigger buttons
   TRIGGER_OPTIONS.forEach(trigger => {
@@ -1721,12 +1665,9 @@
   // Show idle screen
   // Idle screen removed — go directly to trigger selection
   function showIdleScreen() {
-    const onboardingComplete = safeGetItem('onboardingComplete', 'false');
-    if (onboardingComplete !== 'true') {
-      showOnboarding();
-      return;
-    }
     gameState = 'idle';
+    // Show first-session tooltip if not shown yet
+    showFirstSessionTooltip();
   }
 
   // End screen button — go to trigger selection
@@ -1997,7 +1938,8 @@
       if (e && e.target && e.target.closest && (
         e.target.closest('.filter-stats') ||
         e.target.closest('.menu-pill') ||
-        e.target.closest('.signin-screen') ||
+        e.target.closest('.splash-screen') ||
+        e.target.closest('.first-session-tooltip') ||
         e.target.closest('.end-screen') ||
         e.target.closest('.trigger-screen')
       )) return;
@@ -2032,7 +1974,8 @@
     if (e && e.target && e.target.closest && (
       e.target.closest('.filter-stats') ||
       e.target.closest('.menu-pill') ||
-      e.target.closest('.signin-screen') ||
+      e.target.closest('.splash-screen') ||
+      e.target.closest('.first-session-tooltip') ||
       e.target.closest('#overlay') ||
       e.target.closest('.menu-overlay') ||
       e.target.closest('.slipup-screen') ||
@@ -2089,7 +2032,8 @@
     const isUI = e.target.closest && (
       e.target.closest('.filter-stats') ||
       e.target.closest('.menu-pill') ||
-      e.target.closest('.signin-screen') ||
+      e.target.closest('.splash-screen') ||
+      e.target.closest('.first-session-tooltip') ||
       e.target.closest('.menu-overlay') ||
       e.target.closest('.slipup-screen') ||
       e.target.closest('.settings-screen') ||
@@ -2190,7 +2134,7 @@
   function checkSlipUp() {
     if (slipUpShown) return;
     if (!lastSessionDate) {
-      // First time user — no slip-up check needed
+      // First time user — no welcome back needed
       lastSessionDate = Date.now();
       saveToCloud({ lastSessionDate: lastSessionDate });
       showIdleScreen();
@@ -2205,22 +2149,18 @@
     lastSessionDate = now;
     saveToCloud({ lastSessionDate: lastSessionDate });
 
-    // No gap — show idle screen
-    if (gapHours < 24) {
-      showIdleScreen();
-      return;
-    }
-
     // Calculate streak in days (based on quitStartDate)
     const streakDays = quitStartDate ? Math.floor((now - quitStartDate) / (1000 * 60 * 60 * 24)) : 0;
 
     slipUpShown = true;
 
     if (gapHours < 72) {
-      // Short gap (1-3 days) — encouraging
+      // Short gap (<3 days) — encouraging welcome back
       const userName = safeGetItem('userName', '');
       slipupWelcomeTitle.textContent = userName ? `Welcome back, ${userName}` : 'Welcome back';
-      slipupWelcomeSubtitle.textContent = `You've been away for ${formatGap(gapHours)}. Your progress is still here.`;
+      slipupWelcomeSubtitle.textContent = gapHours < 24
+        ? `Your progress is still here. Keep going!`
+        : `You've been away for ${formatGap(gapHours)}. Your progress is still here.`;
       slipupStreak.textContent = formatStreak(streakDays);
       slipupMoney.textContent = '$' + totalMoneySaved.toFixed(2);
       slipupCigs.textContent = totalCigarettesAvoided;
@@ -2287,45 +2227,6 @@
   slipupWelcome.addEventListener('touchstart', (e) => e.stopPropagation(), { passive: true });
   slipupRelapse.addEventListener('click', (e) => e.stopPropagation());
   slipupRelapse.addEventListener('touchstart', (e) => e.stopPropagation(), { passive: true });
-
-  // Sign-in button
-  const signinBtn = document.getElementById('signin-google');
-  signinBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    signinBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg> Signing in...';
-    signinBtn.disabled = true;
-    // Clear any previous error
-    const errorDiv = document.querySelector('.signin-error');
-    if (errorDiv) errorDiv.remove();
-    signInWithGoogle().then(() => {
-      // Success — show confirmed state
-      markSignedIn();
-    }).catch(() => {
-      // Error already displayed by showSigninError() — don't overwrite it
-    });
-  });
-
-  // Mark Google button as signed in
-  function markSignedIn() {
-    const signinBtn = document.getElementById('signin-google');
-    if (signinBtn) {
-      signinBtn.innerHTML = '✓ Signed in with Google';
-      signinBtn.disabled = true;
-      signinBtn.style.background = 'rgba(52,168,83,0.1)';
-      signinBtn.style.color = '#34A853';
-      signinBtn.style.borderColor = 'rgba(52,168,83,0.2)';
-    }
-  }
-  signinBtn.addEventListener('touchstart', (e) => e.stopPropagation(), { passive: true });
-
-  // Start button — hide signin and show trigger selection
-  const signinStart = document.getElementById('signin-start');
-  signinStart.addEventListener('click', (e) => {
-    e.stopPropagation();
-    document.getElementById('signin-screen').classList.add('hidden');
-    showTriggerScreen();
-  });
-  signinStart.addEventListener('touchstart', (e) => e.stopPropagation(), { passive: true });
 
 
   // --- Menu ---
@@ -2791,7 +2692,7 @@
       // Clear app data keys only (preserve Firebase auth token)
       const appKeys = ['moneySaved', 'cigarettesAvoided', 'quitStreak', 'quitStartDate',
         'cravingLogs', 'earnedBadges', 'lastSessionDate', 'userName', 'cigPrice',
-        'darkMode', 'onboardingComplete', 'consentGiven', 'offlineMode', 'lastAppOpen'];
+        'darkMode', 'consentGiven', 'tooltipShown', 'lastAppOpen'];
       appKeys.forEach(key => localStorage.removeItem(key));
       location.reload();
     }
