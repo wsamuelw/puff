@@ -259,6 +259,7 @@
   let blowIntensity = 0;
   let blowFrames = 0;
   let burnProgress = 0; // 0 = full, 1 = gone
+  const BURN_END = 0.92; // leave a bit of white paper — real smokers don't smoke to the filter
   let puffing = false;
   let gameOver = false;
   let cooldownUntil = 0;
@@ -918,7 +919,7 @@
     ctx.restore();
 
     // Transition zone — scorched paper + charred edge (only when burning)
-    if (burnProgress > 0 && burnProgress < 1) {
+    if (burnProgress > 0 && burnProgress < BURN_END) {
       const tzHeight = Math.min(8, burnHeight); // clamp to paper height
 
       // Scorched paper — yellowed/browned edge
@@ -955,7 +956,7 @@
   let emberPulseTarget = 0;
 
   function drawEmber(cigY) {
-    if (burnProgress <= 0 || burnProgress >= 1) return;
+    if (burnProgress <= 0 || burnProgress >= BURN_END) return;
     const x = W / 2;
     const emberY = cigY;
 
@@ -1827,7 +1828,7 @@
         const menuOpen = document.getElementById('menu-overlay').classList.contains('active');
         if (!menuOpen) {
           const burnRate = BASE_BURN_RATE + (puffing ? BLOW_BOOST * blowIntensity : 0);
-          burnProgress = Math.min(1, burnProgress + burnRate * dt);
+          burnProgress = Math.min(BURN_END, burnProgress + burnRate * dt);
         }
 
         // Set fixed ceiling when cigarette starts burning
@@ -1856,7 +1857,7 @@
         }
 
         // Smoke particles — from ember tip AND from paper near burn zone
-        if (particles.length < MAX_PARTICLES && burnProgress > 0 && burnProgress < 1) {
+        if (particles.length < MAX_PARTICLES && burnProgress > 0 && burnProgress < BURN_END) {
           const cigTopY = getCigTopY();
           const spawnRate = puffing ? 4 : 0.8;
           currentSpawnRate += (spawnRate - currentSpawnRate) * 0.12;
@@ -1882,7 +1883,7 @@
           }
         }
 
-        if (burnProgress >= 1) {
+        if (burnProgress >= BURN_END) {
           endSessionAndSave();
           showEndScreen();
         }
@@ -2801,7 +2802,7 @@
 
     // Calculate money based on how much was smoked
     sessionMoneySaved = burnProgress * CIG_PRICE();
-    const isFullSession = burnProgress >= 1;
+    const isFullSession = burnProgress >= BURN_END;
     if (sessionMoneySaved > 0) {
       totalMoneySaved += sessionMoneySaved;
       sessionCount++;
@@ -2838,7 +2839,7 @@
   }
 
   function savePartialProgress() {
-    if (started && !gameOver && burnProgress > 0 && burnProgress < 1) {
+    if (started && !gameOver && burnProgress > 0 && burnProgress < BURN_END) {
       endSessionAndSave();
     }
   }
@@ -2876,8 +2877,8 @@
       // Start background interval to keep burning while hidden
       if (started && !gameOver) {
         backgroundInterval = setInterval(() => {
-          burnProgress = Math.min(1, burnProgress + BASE_BURN_RATE);
-          if (burnProgress >= 1) {
+          burnProgress = Math.min(BURN_END, burnProgress + BASE_BURN_RATE);
+          if (burnProgress >= BURN_END) {
             clearInterval(backgroundInterval);
             backgroundInterval = null;
             endSessionAndSave();
@@ -2900,11 +2901,11 @@
         // Calculate elapsed time while hidden and advance burn progress
         if (hiddenAt > 0) {
           const elapsed = (Date.now() - hiddenAt) / 1000; // seconds
-          burnProgress = Math.min(1, burnProgress + BASE_BURN_RATE * elapsed);
+          burnProgress = Math.min(BURN_END, burnProgress + BASE_BURN_RATE * elapsed);
           hiddenAt = 0;
 
           // Check if cigarette finished while away
-          if (burnProgress >= 1) {
+          if (burnProgress >= BURN_END) {
             endSessionAndSave();
             showEndScreen();
             return;
