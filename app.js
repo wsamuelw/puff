@@ -1078,15 +1078,36 @@
     ctx.fillStyle = ashGrad;
     ctx.fill();
 
-    // Cylindrical shading
+    // Dual-light shading — key light top-right, fill light left
     const cylGrad = ctx.createLinearGradient(x - r, ashTop, x + r, ashTop);
-    cylGrad.addColorStop(0, 'rgba(0,0,0,0.06)');
-    cylGrad.addColorStop(0.3, 'rgba(255,255,255,0.05)');
-    cylGrad.addColorStop(0.5, 'rgba(255,255,255,0.08)');
-    cylGrad.addColorStop(0.7, 'rgba(255,255,255,0.05)');
-    cylGrad.addColorStop(1, 'rgba(0,0,0,0.06)');
+    cylGrad.addColorStop(0, 'rgba(0,0,0,0.22)');
+    cylGrad.addColorStop(0.3, 'rgba(0,0,0,0.06)');
+    cylGrad.addColorStop(0.55, 'rgba(255,255,255,0.18)');
+    cylGrad.addColorStop(0.65, 'rgba(255,255,255,0.25)');
+    cylGrad.addColorStop(0.75, 'rgba(255,255,255,0.12)');
+    cylGrad.addColorStop(0.9, 'rgba(0,0,0,0.04)');
+    cylGrad.addColorStop(1, 'rgba(0,0,0,0.15)');
     ctx.fillStyle = cylGrad;
     ctx.fill();
+
+    // Fill light from left — warm, soft
+    const fillGrad = ctx.createRadialGradient(x - r * 2, ashTop + totalHeight * 0.3, 0, x - r * 2, ashTop + totalHeight * 0.3, r * 3);
+    fillGrad.addColorStop(0, 'rgba(255,220,180,0.08)');
+    fillGrad.addColorStop(0.5, 'rgba(255,200,150,0.03)');
+    fillGrad.addColorStop(1, 'rgba(255,180,120,0)');
+    ctx.fillStyle = fillGrad;
+    ctx.fill();
+
+    // Rim light on right edge
+    ctx.beginPath();
+    for (let i = 0; i <= segs; i++) {
+      const rimX = rightEdge[i].x - 0.5;
+      if (i === 0) ctx.moveTo(rimX, rightEdge[i].y);
+      else ctx.lineTo(rimX, rightEdge[i].y);
+    }
+    ctx.strokeStyle = 'rgba(255,250,240,0.2)';
+    ctx.lineWidth = 1.2;
+    ctx.stroke();
 
     // Heat tint near ember — responds to ember pulse
     const heatZone = Math.min(totalHeight * 0.2, 10);
