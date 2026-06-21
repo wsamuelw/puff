@@ -113,6 +113,7 @@
 
   // Sign out
   async function signOut() {
+    if (_cloudUnsubscribe) { _cloudUnsubscribe(); _cloudUnsubscribe = null; }
     await auth.signOut();
     currentUser = null;
   }
@@ -218,38 +219,50 @@
     }
   }
 
-  // Load from Firestore — merge with local, don't blindly overwrite
+  // Apply cloud data to local state (used by both initial load and real-time listener)
+  let _cloudUnsubscribe = null;
+
+  function applyCloudData(cloudData) {
+    if (!cloudData) return;
+    if (cloudData.quitStreak !== undefined) sessionCount = parseInt(cloudData.quitStreak) || 0;
+    if (cloudData.moneySaved !== undefined) totalMoneySaved = parseFloat(cloudData.moneySaved) || 0;
+    if (cloudData.cigarettesAvoided !== undefined) totalCigarettesAvoided = parseInt(cloudData.cigarettesAvoided) || 0;
+    if (cloudData.quitStartDate !== undefined) quitStartDate = parseInt(cloudData.quitStartDate) || 0;
+    if (cloudData.cigPrice !== undefined) cigPrice = parseFloat(cloudData.cigPrice) || 1.00;
+    if (cloudData.cravingLogs) {
+      cravingLogs = cloudData.cravingLogs;
+      safeSetItem('cravingLogs', JSON.stringify(cravingLogs));
+    }
+    if (cloudData.lastSessionDate !== undefined) lastSessionDate = parseInt(cloudData.lastSessionDate) || 0;
+    if (cloudData.darkMode !== undefined) {
+      isDark = cloudData.darkMode === true || cloudData.darkMode === 'true';
+      applyTheme();
+    }
+    safeSetItem('userName', cloudData.userName || '');
+    safeSetItem('cigPrice', String(cigPrice));
+    safeSetItem('darkMode', String(isDark));
+    updateStatsDisplay();
+  }
+
   async function loadFromCloud() {
     if (!currentUser) return;
     try {
       const doc = await db.collection('user_data').doc(currentUser.uid).get();
       if (doc.exists) {
-        const cloudData = doc.data().data;
-
-        // Use cloud data as source of truth (no merging)
-        if (cloudData.quitStreak !== undefined) sessionCount = parseInt(cloudData.quitStreak) || 0;
-        if (cloudData.moneySaved !== undefined) totalMoneySaved = parseFloat(cloudData.moneySaved) || 0;
-        if (cloudData.cigarettesAvoided !== undefined) totalCigarettesAvoided = parseInt(cloudData.cigarettesAvoided) || 0;
-        if (cloudData.quitStartDate !== undefined) quitStartDate = parseInt(cloudData.quitStartDate) || 0;
-        if (cloudData.cigPrice !== undefined) cigPrice = parseFloat(cloudData.cigPrice) || 1.00;
-        if (cloudData.cravingLogs) {
-          cravingLogs = cloudData.cravingLogs;
-          safeSetItem('cravingLogs', JSON.stringify(cravingLogs));
-        }
-        if (cloudData.lastSessionDate !== undefined) lastSessionDate = parseInt(cloudData.lastSessionDate) || 0;
-        if (cloudData.darkMode !== undefined) {
-          isDark = cloudData.darkMode === true || cloudData.darkMode === 'true';
-          applyTheme();
-        }
-        // Save other fields to localStorage
-        safeSetItem('userName', cloudData.userName || '');
-        safeSetItem('cigPrice', String(cigPrice));
-        safeSetItem('darkMode', String(isDark));
-        updateStatsDisplay();
+        applyCloudData(doc.data().data);
       }
     } catch (e) {
       console.warn('Cloud load failed:', e.message);
     }
+
+    // Subscribe to real-time updates for cross-device sync
+    if (_cloudUnsubscribe) _cloudUnsubscribe();
+    _cloudUnsubscribe = db.collection('user_data').doc(currentUser.uid)
+      .onSnapshot((snap) => {
+        if (snap.exists && snap.data().data) {
+          applyCloudData(snap.data().data);
+        }
+      }, (e) => console.warn('Cloud listener error:', e.message));
   }
 
   // --- State ---
