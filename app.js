@@ -91,23 +91,25 @@
   async function signInWithGoogle() {
     logEvent('sign_in_started');
     try {
-      const result = await auth.signInWithPopup(provider);
-      currentUser = result.user;
-      logEvent('sign_in_completed', { uid: result.user.uid });
-      return result.user;
+      // Use redirect — no popup window, full-page Google flow
+      await auth.signInWithRedirect(provider);
     } catch (e) {
       console.warn('Auth failed:', e.message);
       logEvent('sign_in_failed', { error: e.code });
-      if (e.code === 'auth/popup-blocked') {
-        showSplashError('Popup blocked. Please allow popups and try again.');
-      } else if (e.code === 'auth/popup-closed-by-user') {
-        showSplashError('Sign-in cancelled. Tap to try again.');
-      } else {
-        showSplashError('Sign-in failed. Tap to try again.');
-      }
+      showSplashError('Sign-in failed. Tap to try again.');
       throw e;
     }
   }
+
+  // Handle redirect result on page load (after Google redirects back)
+  auth.getRedirectResult().then((result) => {
+    if (result && result.user) {
+      currentUser = result.user;
+      logEvent('sign_in_completed', { uid: result.user.uid });
+    }
+  }).catch((e) => {
+    console.warn('Redirect result error:', e.message);
+  });
 
   // Sign out
   async function signOut() {
