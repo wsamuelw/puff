@@ -114,8 +114,11 @@
     if (_cloudUnsubscribe) { _cloudUnsubscribe(); _cloudUnsubscribe = null; }
     // Close all overlays before signing out
     settingsScreen.classList.remove('active');
-    const menuOverlay = document.getElementById('overlay');
-    if (menuOverlay) menuOverlay.classList.remove('visible');
+    settingsScreen.classList.remove('visible');
+    const menuOverlay = document.getElementById('menu-overlay');
+    if (menuOverlay) menuOverlay.classList.remove('active');
+    const filterOverlay = document.getElementById('overlay');
+    if (filterOverlay) filterOverlay.classList.remove('visible');
     endScreen.classList.remove('visible');
     triggerScreen.classList.remove('visible');
     slipupWelcome.classList.remove('active');
