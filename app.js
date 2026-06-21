@@ -1798,8 +1798,20 @@
   // Idle screen removed — go directly to trigger selection
   function showIdleScreen() {
     gameState = 'idle';
-    // Show first-session tooltip if not shown yet
-    showFirstSessionTooltip();
+    // Show first-session tooltip, then go straight to triggers
+    if (tooltipShown === 'true') {
+      showTriggerScreen();
+    } else {
+      showFirstSessionTooltip();
+      // Auto-advance to triggers after tooltip dismisses
+      const observer = new MutationObserver(() => {
+        if (!tooltip.classList.contains('visible')) {
+          observer.disconnect();
+          showTriggerScreen();
+        }
+      });
+      observer.observe(tooltip, { attributes: true, attributeFilter: ['class'] });
+    }
   }
 
   // End screen button — go to trigger selection
