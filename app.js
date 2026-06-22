@@ -817,6 +817,45 @@
 
     // Trigger screen shake
     if (!reducedMotion) shakeAmount = 6;
+  }
+
+  // End-of-session chime — soft bell tone
+  function playEndChime() {
+    if (!audioCtx) return;
+    try {
+      const t = audioCtx.currentTime;
+      // Fundamental — C5
+      const o1 = audioCtx.createOscillator();
+      const g1 = audioCtx.createGain();
+      o1.type = 'sine';
+      o1.frequency.value = 523;
+      g1.gain.setValueAtTime(0.15, t);
+      g1.gain.exponentialRampToValueAtTime(0.001, t + 1.2);
+      o1.connect(g1).connect(audioCtx.destination);
+      o1.start(t);
+      o1.stop(t + 1.2);
+      // Harmonic — G5
+      const o2 = audioCtx.createOscillator();
+      const g2 = audioCtx.createGain();
+      o2.type = 'sine';
+      o2.frequency.value = 784;
+      g2.gain.setValueAtTime(0.08, t + 0.05);
+      g2.gain.exponentialRampToValueAtTime(0.001, t + 1.0);
+      o2.connect(g2).connect(audioCtx.destination);
+      o2.start(t + 0.05);
+      o2.stop(t + 1.0);
+      // Higher harmonic — C6
+      const o3 = audioCtx.createOscillator();
+      const g3 = audioCtx.createGain();
+      o3.type = 'sine';
+      o3.frequency.value = 1046;
+      g3.gain.setValueAtTime(0.04, t + 0.1);
+      g3.gain.exponentialRampToValueAtTime(0.001, t + 0.8);
+      o3.connect(g3).connect(audioCtx.destination);
+      o3.start(t + 0.1);
+      o3.stop(t + 0.8);
+    } catch (e) {}
+  }
 
     // After drop completes, reset ceiling to new ember position
     if (ashDropTimeout) clearTimeout(ashDropTimeout);
@@ -1941,6 +1980,7 @@
 
         if (burnProgress >= BURN_END) {
           endSessionAndSave();
+          playEndChime();
           showEndScreen();
         }
       }
@@ -2935,6 +2975,7 @@
           // Check if cigarette finished while away
           if (burnProgress >= BURN_END) {
             endSessionAndSave();
+            playEndChime();
             showEndScreen();
             return;
           }
