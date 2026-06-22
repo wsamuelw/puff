@@ -2885,7 +2885,6 @@
 
   // Pause loop when app is in background
   let hiddenAt = 0; // timestamp when tab became hidden
-  let backgroundInterval = null; // interval for burning while hidden
 
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) {
@@ -2907,23 +2906,8 @@
       loopRunning = false;
       if (loopFrameId) cancelAnimationFrame(loopFrameId);
 
-      // Start background interval to keep burning while hidden
-      if (started && !gameOver) {
-        backgroundInterval = setInterval(() => {
-          burnProgress = Math.min(BURN_END, burnProgress + BASE_BURN_RATE);
-          if (burnProgress >= BURN_END) {
-            clearInterval(backgroundInterval);
-            backgroundInterval = null;
-            endSessionAndSave();
-          }
-        }, 1000);
-      }
+      // Cigarette keeps burning in background — catch up on return
     } else {
-      // Clear background interval
-      if (backgroundInterval) {
-        clearInterval(backgroundInterval);
-        backgroundInterval = null;
-      }
 
       // Resume AudioContext if suspended (iOS backgrounding)
       if (audioCtx && audioCtx.state === 'suspended') {
