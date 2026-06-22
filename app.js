@@ -235,7 +235,7 @@
     if (cloudData.moneySaved !== undefined) totalMoneySaved = parseFloat(cloudData.moneySaved) || 0;
     if (cloudData.cigarettesAvoided !== undefined) totalCigarettesAvoided = parseInt(cloudData.cigarettesAvoided) || 0;
     if (cloudData.quitStartDate !== undefined) quitStartDate = parseInt(cloudData.quitStartDate) || 0;
-    if (cloudData.cigPrice !== undefined) cigPrice = parseFloat(cloudData.cigPrice) || 1.00;
+    if (cloudData.cigPrice !== undefined) cigPrice = Math.max(0.01, parseFloat(cloudData.cigPrice) || 1.00);
     if (cloudData.cravingLogs) {
       cravingLogs = cloudData.cravingLogs;
       safeSetItem('cravingLogs', JSON.stringify(cravingLogs));
@@ -366,7 +366,7 @@
   let sessionCount = parseInt(safeGetItem('quitStreak', '0'));
   let gameStartTime = 0;
   // Money saved tracking (loaded from settings, default $1)
-  let cigPrice = parseFloat(safeGetItem('cigPrice', '1.00'));
+  let cigPrice = Math.max(0.01, parseFloat(safeGetItem('cigPrice', '1.00')));
   const CIG_PRICE = () => cigPrice; // getter for backward compat
   let totalMoneySaved = parseFloat(safeGetItem('moneySaved', '0'));
   let sessionMoneySaved = 0;
@@ -2439,7 +2439,7 @@
 
   // Save settings to cloud + localStorage
   function saveSettings() {
-    cigPrice = parseFloat(settingsPrice.value) || 1.00;
+    cigPrice = Math.max(0.01, parseFloat(settingsPrice.value) || 1.00);
     const userName = settingsName.value.trim();
     saveToCloud({
       userName: userName,
