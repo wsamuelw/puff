@@ -2713,14 +2713,12 @@
   // Back button
   settingsBack.addEventListener('click', (e) => {
     e.stopPropagation();
-    saveSettings();
     settingsScreen.classList.remove('visible');
   });
 
   // Click background to close settings
   settingsScreen.addEventListener('click', (e) => {
     if (e.target === settingsScreen) {
-      saveSettings();
       settingsScreen.classList.remove('visible');
     }
   });
