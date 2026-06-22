@@ -2148,7 +2148,7 @@
   // --- Theme Toggle ---
   let isDark = safeGetItem('darkMode', 'true') === 'true';
   const bgDark = '#1a1a1a';
-  const bgLight = '#faf9f7';
+  const bgLight = '#ddd5c8';
 
   function applyTheme() {
     document.body.classList.toggle('light', !isDark);
@@ -2159,7 +2159,7 @@
     }
     // Update theme-color meta tag for browser chrome
     const meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.content = isDark ? '#1a1a1a' : '#faf9f7';
+    if (meta) meta.content = isDark ? '#1a1a1a' : '#ddd5c8';
   }
 
   // Apply theme on load

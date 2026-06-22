@@ -42,7 +42,7 @@ html, body {
 }
 
 body.light {
-  background: #faf9f7;
+  background: #ddd5c8;
   color: #1a1a1a;
 }
 
@@ -614,7 +614,7 @@ body.light .menu-greeting-sub {
 .triggers-screen {
   position: fixed;
   inset: 0;
-  background: #faf9f7;
+  background: #ddd5c8;
   z-index: 200;
   opacity: 0;
   transform: translateY(20px);
@@ -1136,7 +1136,7 @@ body.light .badge-notification-name {
 .badges-screen {
   position: fixed;
   inset: 0;
-  background: #faf9f7;
+  background: #ddd5c8;
   z-index: 200;
   opacity: 0;
   transform: translateY(20px);
@@ -1972,7 +1972,7 @@ body.dark .slipup-secondary:focus {
 .settings-screen {
   position: fixed;
   inset: 0;
-  background: #faf9f7;
+  background: #ddd5c8;
   z-index: 200;
   opacity: 0;
   transform: translateY(20px);
