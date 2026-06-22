@@ -171,26 +171,18 @@ body.light .menu-pill:focus {
 
 .fs-streak {
   font-family: 'Libre Baskerville', serif;
-  font-size: 36px;
-  font-weight: 700;
+  font-size: 24px;
+  font-weight: 400;
   color: #faf9f7;
-  line-height: 1;
+  letter-spacing: -0.5px;
 }
 
 body.light .fs-streak {
   color: #1a1a1a;
 }
 
-.fs-streak-label {
-  font-size: 11px;
-  color: rgba(255,255,255,0.45);
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
-  margin-top: 4px;
-}
-
-body.light .fs-streak-label {
-  color: rgba(26,26,26,0.4);
+.fs-streak span {
+  font-weight: 700;
 }
 
 .fs-money {
@@ -198,7 +190,7 @@ body.light .fs-streak-label {
   font-size: 15px;
   font-weight: 400;
   color: rgba(255,255,255,0.5);
-  margin-top: 10px;
+  margin-top: 4px;
 }
 
 body.light .fs-money {
