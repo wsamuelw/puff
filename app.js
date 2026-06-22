@@ -2581,6 +2581,11 @@
     badgesScreen.classList.remove('visible');
   });
 
+  // Click background to close badges
+  badgesScreen.addEventListener('click', (e) => {
+    if (e.target === badgesScreen) badgesScreen.classList.remove('visible');
+  });
+
   // Open settings from menu
   menuSettings.addEventListener('click', (e) => {
     e.stopPropagation();
@@ -2674,9 +2679,10 @@
     triggersScreen.classList.remove('visible');
   });
 
-  // Prevent taps propagating
-  triggersScreen.addEventListener('click', (e) => e.stopPropagation());
-  triggersScreen.addEventListener('touchstart', (e) => e.stopPropagation(), { passive: true });
+  // Click background to close triggers
+  triggersScreen.addEventListener('click', (e) => {
+    if (e.target === triggersScreen) triggersScreen.classList.remove('visible');
+  });
 
   // Menu greeting
   const menuGreeting = document.getElementById('menu-greeting');
