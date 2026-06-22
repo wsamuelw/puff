@@ -1873,7 +1873,7 @@
           blowIntensity = 0;
           puffing = false;
         } else if (holding) {
-          blowIntensity = detectBlow();
+          blowIntensity = touchOnlyMode ? 0.5 : detectBlow();
           puffing = blowIntensity > 0;
         } else if (puffCompleting) {
           // Puff completing after release — maintain current burn rate
