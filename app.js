@@ -125,6 +125,8 @@
     triggerScreen.classList.remove('visible');
     slipupWelcome.classList.remove('active');
     slipupRelapse.classList.remove('active');
+    // Save any in-progress session before resetting
+    if (started && !gameOver && burnProgress > 0) endSessionAndSave();
     // Reset game state
     gameState = 'idle';
     started = false;
