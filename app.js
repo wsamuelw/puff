@@ -1831,14 +1831,14 @@
       const total = '$' + (totalMoneySaved + sessionCost).toFixed(2);
       const m = total + ' saved';
       if (m !== _lastMoney) { statsMoney.textContent = m; _lastMoney = m; }
-      const days = getDaysSinceLastSession();
+      const days = quitStartDate ? Math.floor((Date.now() - quitStartDate) / (24 * 60 * 60 * 1000)) : 0;
       const s = String(days);
       if (s !== _lastStreak) { statsStreak.textContent = s; _lastStreak = s; }
     } else if (!started) {
       if (!_lastVisible) { barStats.classList.add('visible'); _lastVisible = true; }
       const m = '$' + totalMoneySaved.toFixed(2) + ' saved';
       if (m !== _lastMoney) { statsMoney.textContent = m; _lastMoney = m; }
-      const days = getDaysSinceLastSession();
+      const days = quitStartDate ? Math.floor((Date.now() - quitStartDate) / (24 * 60 * 60 * 1000)) : 0;
       const s = String(days);
       if (s !== _lastStreak) { statsStreak.textContent = s; _lastStreak = s; }
     } else {
