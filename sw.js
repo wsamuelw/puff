@@ -1,4 +1,4 @@
-const CACHE_NAME = 'puff-v71';
+const CACHE_NAME = 'puff-v72';
 const FONT_CACHE = 'puff-fonts-v1';
 const ASSETS = [
   '/',

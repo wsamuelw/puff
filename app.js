@@ -1661,13 +1661,10 @@
 
   // Check and show milestones
   function checkMilestones(daysSinceStart) {
-    const milestone = MILESTONES.find(m => m.days === daysSinceStart);
-    if (!milestone) return;
-
-    // Check if already shown
     const shown = safeGetItem('milestonesShown', '[]');
     const shownList = JSON.parse(shown);
-    if (shownList.includes(milestone.days)) return;
+    const milestone = MILESTONES.find(m => daysSinceStart >= m.days && !shownList.includes(m.days));
+    if (!milestone) return;
 
     // Mark as shown
     shownList.push(milestone.days);
