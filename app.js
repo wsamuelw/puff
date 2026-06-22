@@ -231,16 +231,27 @@
 
   function applyCloudData(cloudData) {
     if (!cloudData) return;
-    if (cloudData.quitStreak !== undefined) sessionCount = parseInt(cloudData.quitStreak) || 0;
-    if (cloudData.moneySaved !== undefined) totalMoneySaved = parseFloat(cloudData.moneySaved) || 0;
-    if (cloudData.cigarettesAvoided !== undefined) totalCigarettesAvoided = parseInt(cloudData.cigarettesAvoided) || 0;
-    if (cloudData.quitStartDate !== undefined) quitStartDate = parseInt(cloudData.quitStartDate) || 0;
-    if (cloudData.cigPrice !== undefined) cigPrice = Math.max(0.01, parseFloat(cloudData.cigPrice) || 1.00);
-    if (cloudData.cravingLogs) {
-      cravingLogs = cloudData.cravingLogs;
-      safeSetItem('cravingLogs', JSON.stringify(cravingLogs));
+
+    // Don't overwrite in-progress session stats
+    if (!started || gameOver) {
+      if (cloudData.quitStreak !== undefined) sessionCount = parseInt(cloudData.quitStreak) || 0;
+      if (cloudData.moneySaved !== undefined) totalMoneySaved = parseFloat(cloudData.moneySaved) || 0;
+      if (cloudData.cigarettesAvoided !== undefined) totalCigarettesAvoided = parseInt(cloudData.cigarettesAvoided) || 0;
+      if (cloudData.quitStartDate !== undefined) quitStartDate = parseInt(cloudData.quitStartDate) || 0;
+      if (cloudData.lastSessionDate !== undefined) lastSessionDate = parseInt(cloudData.lastSessionDate) || 0;
+      if (cloudData.cravingLogs) {
+        cravingLogs = cloudData.cravingLogs;
+        safeSetItem('cravingLogs', JSON.stringify(cravingLogs));
+      }
+      // Persist synced values to localStorage
+      safeSetItem('moneySaved', String(totalMoneySaved));
+      safeSetItem('quitStreak', String(sessionCount));
+      safeSetItem('cigarettesAvoided', String(totalCigarettesAvoided));
+      safeSetItem('quitStartDate', String(quitStartDate));
+      safeSetItem('lastSessionDate', String(lastSessionDate));
     }
-    if (cloudData.lastSessionDate !== undefined) lastSessionDate = parseInt(cloudData.lastSessionDate) || 0;
+
+    if (cloudData.cigPrice !== undefined) cigPrice = Math.max(0.01, parseFloat(cloudData.cigPrice) || 1.00);
     if (cloudData.earnedBadges) {
       const local = JSON.parse(safeGetItem('earnedBadges', '[]'));
       const merged = [...new Set([...local, ...cloudData.earnedBadges])];
