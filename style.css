@@ -173,12 +173,12 @@ body.light .menu-pill:focus {
   font-family: 'Libre Baskerville', serif;
   font-size: 24px;
   font-weight: 400;
-  color: #faf9f7;
+  color: rgba(255,255,255,0.5);
   letter-spacing: -0.5px;
 }
 
 body.light .fs-streak {
-  color: #1a1a1a;
+  color: rgba(26,26,26,0.45);
 }
 
 .fs-streak span {
