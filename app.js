@@ -1558,7 +1558,7 @@
     'meals': 'Brush your teeth or go for a short walk right after eating. The craving fades fast.',
     'social': 'Have a ready phrase: "I\'m good, thanks." Step away for a minute if you need to.',
     'workbreak': 'Take your break outside for a short walk. Change the scenery, not the habit.',
-    'toilet': 'Leave your phone in another room. Read something or just sit with the quiet.',
+    'toilet': 'Try a quick mental task — count backwards from 100 by 7s. It redirects your focus.',
     'aftersex': 'Grab a glass of water, cuddle, or hop in the shower. The moment passes quickly.',
     'boredom': 'Do something with your hands — call someone, stretch, or play a quick game.',
     'morning': 'Delay your first cigarette by 10 minutes each week. Change the order of your morning.',
