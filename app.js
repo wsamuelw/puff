@@ -2889,7 +2889,6 @@
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) {
       hiddenAt = Date.now();
-      savePartialProgress();
       // Sync all state to cloud when leaving
       if (currentUser) {
         const logs = JSON.parse(safeGetItem('cravingLogs', '[]'));
