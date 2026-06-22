@@ -241,6 +241,11 @@
       safeSetItem('cravingLogs', JSON.stringify(cravingLogs));
     }
     if (cloudData.lastSessionDate !== undefined) lastSessionDate = parseInt(cloudData.lastSessionDate) || 0;
+    if (cloudData.earnedBadges) {
+      const local = JSON.parse(safeGetItem('earnedBadges', '[]'));
+      const merged = [...new Set([...local, ...cloudData.earnedBadges])];
+      safeSetItem('earnedBadges', JSON.stringify(merged));
+    }
     if (cloudData.darkMode !== undefined) {
       isDark = cloudData.darkMode === true || cloudData.darkMode === 'true';
       applyTheme();
