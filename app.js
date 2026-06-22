@@ -1586,7 +1586,7 @@
     });
 
     // Update end screen stats
-    endTotalStat.textContent = '$' + Math.floor(totalMoneySaved);
+    endTotalStat.textContent = '$' + totalMoneySaved.toFixed(2);
     endCigsStat.textContent = totalCigarettesAvoided;
 
     // Build trigger list with time context
@@ -1651,7 +1651,7 @@
         <div class="milestone-desc">${milestone.desc}</div>
         <div class="milestone-stats">
           <div class="milestone-stat">
-            <div class="milestone-stat-num">$${Math.floor(totalMoneySaved)}</div>
+            <div class="milestone-stat-num">$${totalMoneySaved.toFixed(2)}</div>
             <div class="milestone-stat-label">Saved</div>
           </div>
           <div class="milestone-stat">
@@ -1672,7 +1672,7 @@
     document.getElementById('milestone-share').addEventListener('click', async () => {
       try {
         // Generate share text
-        const shareText = `${milestone.title}\n\n💰 $${Math.floor(totalMoneySaved)} saved\n🚬 ${totalCigarettesAvoided} real cigarettes avoided\n\npuff — your quit companion`;
+        const shareText = `${milestone.title}\n\n💰 $${totalMoneySaved.toFixed(2)} saved\n🚬 ${totalCigarettesAvoided} real cigarettes avoided\n\npuff — your quit companion`;
 
         // Use Web Share API if available
         if (navigator.share) {
@@ -2245,7 +2245,7 @@
       // Long gap (3+ days) — supportive relapse message
       slipupRelapseSubtitle.textContent = `It's been ${formatGap(gapHours)}. Slipping up doesn't erase your progress.`;
       slipupRelapseDays.textContent = streakDays;
-      slipupRelapseMoney.textContent = '$' + Math.floor(totalMoneySaved);
+      slipupRelapseMoney.textContent = '$' + totalMoneySaved.toFixed(2);
       slipupRelapse.classList.add('active');
     }
   }
