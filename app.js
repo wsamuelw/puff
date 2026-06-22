@@ -2717,6 +2717,14 @@
     settingsScreen.classList.remove('visible');
   });
 
+  // Click background to close settings
+  settingsScreen.addEventListener('click', (e) => {
+    if (e.target === settingsScreen) {
+      saveSettings();
+      settingsScreen.classList.remove('visible');
+    }
+  });
+
   // Toggle dark mode (in settings)
   const settingsDarkMode = document.getElementById('settings-dark-mode');
   settingsDarkMode.addEventListener('click', (e) => {
