@@ -78,6 +78,7 @@
     <div id="filter-stats" class="filter-stats">
       <div class="fs-streak"><span id="stats-streak">0</span> smoke-free days</div>
       <div class="fs-money" id="stats-money">$0.00 saved</div>
+      <div class="fs-lastseen" id="stats-lastseen">just now</div>
     </div>
 
     <!-- Trigger Selection Screen (before smoking) -->
@@ -205,6 +206,10 @@
           <div class="slipup-stat">
             <span class="slipup-stat-label">Real cigs avoided</span>
             <span class="slipup-stat-value" id="slipup-cigs">7</span>
+          </div>
+          <div class="slipup-stat">
+            <span class="slipup-stat-label">Last session</span>
+            <span class="slipup-stat-value" id="slipup-lastseen">2h ago</span>
           </div>
         </div>
 
@@ -336,7 +341,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-    <script src="app.js?v=133"></script>
+    <script src="app.js?v=134"></script>
     <script>
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('/sw.js').catch(() => {});

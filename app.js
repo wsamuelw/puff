@@ -1818,8 +1818,19 @@
   const barStats = document.getElementById('filter-stats');
   const statsMoney = document.getElementById('stats-money');
   const statsStreak = document.getElementById('stats-streak');
-  let _lastMoney = '', _lastStreak = '', _lastVisible = false;
+  const statsLastseen = document.getElementById('stats-lastseen');
+  let _lastMoney = '', _lastStreak = '', _lastSeen = '', _lastVisible = false;
   let _lastStatsUpdate = 0;
+
+  function formatLastSeen(ms) {
+    const mins = Math.floor(ms / 60000);
+    if (mins < 1) return 'just now';
+    if (mins < 60) return mins + 'm ago';
+    const hours = Math.floor(mins / 60);
+    if (hours < 24) return hours + 'h ago';
+    const days = Math.floor(hours / 24);
+    return days + 'd ago';
+  }
 
   function updateStatsDisplay() {
     const now = performance.now();
@@ -1834,6 +1845,8 @@
       const days = quitStartDate ? Math.floor((Date.now() - quitStartDate) / (24 * 60 * 60 * 1000)) : 0;
       const s = String(days);
       if (s !== _lastStreak) { statsStreak.textContent = s; _lastStreak = s; }
+      const seen = formatLastSeen(Date.now() - lastSessionDate);
+      if (seen !== _lastSeen) { statsLastseen.textContent = seen; _lastSeen = seen; }
     } else if (!started) {
       if (!_lastVisible) { barStats.classList.add('visible'); _lastVisible = true; }
       const m = '$' + totalMoneySaved.toFixed(2) + ' saved';
@@ -1841,6 +1854,8 @@
       const days = quitStartDate ? Math.floor((Date.now() - quitStartDate) / (24 * 60 * 60 * 1000)) : 0;
       const s = String(days);
       if (s !== _lastStreak) { statsStreak.textContent = s; _lastStreak = s; }
+      const seen = formatLastSeen(Date.now() - lastSessionDate);
+      if (seen !== _lastSeen) { statsLastseen.textContent = seen; _lastSeen = seen; }
     } else {
       if (_lastVisible) { barStats.classList.remove('visible'); _lastVisible = false; }
     }
@@ -2207,6 +2222,7 @@
   const slipupStreak = document.getElementById('slipup-streak');
   const slipupMoney = document.getElementById('slipup-money');
   const slipupCigs = document.getElementById('slipup-cigs');
+  const slipupLastseen = document.getElementById('slipup-lastseen');
   const slipupRelapseSubtitle = document.getElementById('slipup-relapse-subtitle');
   const slipupRelapseDays = document.getElementById('slipup-relapse-days');
   const slipupRelapseMoney = document.getElementById('slipup-relapse-money');
@@ -2269,6 +2285,7 @@
       slipupStreak.textContent = formatStreak(streakDays);
       slipupMoney.textContent = '$' + totalMoneySaved.toFixed(2);
       slipupCigs.textContent = totalCigarettesAvoided;
+      slipupLastseen.textContent = formatLastSeen(Date.now() - lastSessionDate);
       slipupWelcome.classList.add('active');
     } else {
       // Long gap (3+ days) — supportive relapse message
