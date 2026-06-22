@@ -155,7 +155,7 @@ body.light .menu-pill:focus {
 /* ─── Filter Stats ─── */
 .filter-stats {
   position: fixed;
-  bottom: 100px;
+  bottom: 82px;
   left: 0;
   right: 0;
   text-align: center;
@@ -169,42 +169,40 @@ body.light .menu-pill:focus {
   opacity: 1;
 }
 
-.fs-money {
+.fs-streak {
   font-family: 'Libre Baskerville', serif;
-  font-size: 24px;
-  font-weight: 400;
+  font-size: 36px;
+  font-weight: 700;
   color: #faf9f7;
-  letter-spacing: -0.5px;
+  line-height: 1;
 }
 
-body.light .fs-money {
+body.light .fs-streak {
   color: #1a1a1a;
 }
 
-.fs-row {
-  display: flex;
-  align-items: baseline;
-  justify-content: center;
-  gap: 8px;
+.fs-streak-label {
+  font-size: 11px;
+  color: rgba(255,255,255,0.45);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
   margin-top: 4px;
 }
 
-.fs-item {
-  font-size: 13px;
-  color: rgba(255,255,255,0.6);
+body.light .fs-streak-label {
+  color: rgba(26,26,26,0.4);
 }
 
-.fs-item span {
-  font-weight: 500;
-  color: rgba(255,255,255,0.7);
+.fs-money {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 15px;
+  font-weight: 400;
+  color: rgba(255,255,255,0.5);
+  margin-top: 10px;
 }
 
-body.light .fs-item {
-  color: rgba(26,26,26,0.5);
-}
-
-body.light .fs-item span {
-  color: rgba(26,26,26,0.7);
+body.light .fs-money {
+  color: rgba(26,26,26,0.45);
 }
 
 /* ─── Splash Screen ─── */

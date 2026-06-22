@@ -76,10 +76,9 @@
 
     <!-- Stats below filter -->
     <div id="filter-stats" class="filter-stats">
-      <div class="fs-money" id="stats-money">$0.00</div>
-      <div class="fs-row">
-        <div class="fs-item" id="stats-lastseen">just now</div>
-      </div>
+      <div class="fs-streak" id="stats-streak">0</div>
+      <div class="fs-streak-label">smoke-free days</div>
+      <div class="fs-money" id="stats-money">$0.00 saved</div>
     </div>
 
     <!-- Trigger Selection Screen (before smoking) -->
@@ -338,7 +337,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-    <script src="app.js?v=126"></script>
+    <script src="app.js?v=127"></script>
     <script>
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('/sw.js').catch(() => {});

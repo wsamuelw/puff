@@ -1782,19 +1782,9 @@
   // --- Stats Display ---
   const barStats = document.getElementById('filter-stats');
   const statsMoney = document.getElementById('stats-money');
-  const statsLastseen = document.getElementById('stats-lastseen');
-  let _lastMoney = '', _lastSeen = '', _lastVisible = false;
+  const statsStreak = document.getElementById('stats-streak');
+  let _lastMoney = '', _lastStreak = '', _lastVisible = false;
   let _lastStatsUpdate = 0;
-
-  function formatLastSeen(ms) {
-    const mins = Math.floor(ms / 60000);
-    if (mins < 1) return 'just now';
-    if (mins < 60) return mins + 'm ago';
-    const hours = Math.floor(mins / 60);
-    if (hours < 24) return hours + 'h ago';
-    const days = Math.floor(hours / 24);
-    return days + 'd ago';
-  }
 
   function updateStatsDisplay() {
     const now = performance.now();
@@ -1803,18 +1793,19 @@
     if (started && !gameOver && burnProgress > 0) {
       if (!_lastVisible) { barStats.classList.add('visible'); _lastVisible = true; }
       const sessionCost = burnProgress * CIG_PRICE();
-      const session = '$' + sessionCost.toFixed(2);
       const total = '$' + (totalMoneySaved + sessionCost).toFixed(2);
-      const m = session + ' → ' + total;
+      const m = total + ' saved';
       if (m !== _lastMoney) { statsMoney.textContent = m; _lastMoney = m; }
-      const seen = formatLastSeen(Date.now() - lastAppOpen);
-      if (seen !== _lastSeen) { statsLastseen.textContent = seen; _lastSeen = seen; }
+      const days = getDaysSinceLastSession();
+      const s = String(days);
+      if (s !== _lastStreak) { statsStreak.textContent = s; _lastStreak = s; }
     } else if (!started) {
       if (!_lastVisible) { barStats.classList.add('visible'); _lastVisible = true; }
       const m = '$' + totalMoneySaved.toFixed(2) + ' saved';
       if (m !== _lastMoney) { statsMoney.textContent = m; _lastMoney = m; }
-      const seen = formatLastSeen(Date.now() - lastAppOpen);
-      if (seen !== _lastSeen) { statsLastseen.textContent = seen; _lastSeen = seen; }
+      const days = getDaysSinceLastSession();
+      const s = String(days);
+      if (s !== _lastStreak) { statsStreak.textContent = s; _lastStreak = s; }
     } else {
       if (_lastVisible) { barStats.classList.remove('visible'); _lastVisible = false; }
     }
