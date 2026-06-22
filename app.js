@@ -1520,6 +1520,8 @@
     blowIntensity = 0;
     cooldownUntil = performance.now() + 800;
     sessionMoneySaved = 0;
+    lastFrameTime = 0; // reset so first frame dt is not stale
+    hiddenAt = 0; // clear any stale background timestamp
     // Recalculate dimensions in case window size changed
     resize();
     // Start mic and loop
