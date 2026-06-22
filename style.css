@@ -2264,6 +2264,27 @@ body.dark .settings-edit-cancel {
   cursor: pointer;
 }
 
+.confirm-desc {
+  font-size: 14px;
+  color: rgba(255,255,255,0.5);
+  text-align: center;
+  line-height: 1.5;
+  margin-bottom: 24px;
+}
+
+body.light .confirm-desc {
+  color: rgba(26,26,26,0.5);
+}
+
+.confirm-danger {
+  background: #e74c3c !important;
+  color: #fff !important;
+}
+
+.confirm-danger:hover {
+  background: #c0392b !important;
+}
+
 /* Toggle switch */
 .settings-toggle {
   position: relative;

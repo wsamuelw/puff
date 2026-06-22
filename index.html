@@ -333,6 +333,17 @@
           </div>
         </div>
 
+        <div id="confirm-modal" class="settings-edit-modal">
+          <div class="settings-edit-content">
+            <div class="settings-edit-title" id="confirm-title">Reset everything?</div>
+            <p class="confirm-desc" id="confirm-desc">This will erase all your progress, streak, and data.</p>
+            <div class="settings-edit-actions">
+              <button class="settings-edit-cancel" id="confirm-cancel">Cancel</button>
+              <button class="settings-edit-save confirm-danger" id="confirm-ok">Reset</button>
+            </div>
+          </div>
+        </div>
+
         <div class="settings-version">puff v1.0</div>
       </div>
     </div>
@@ -341,7 +352,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-    <script src="app.js?v=135"></script>
+    <script src="app.js?v=136"></script>
     <script>
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('/sw.js').catch(() => {});

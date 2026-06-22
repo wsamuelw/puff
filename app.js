@@ -2783,33 +2783,49 @@
   });
 
   // Reset all data
+  const confirmModal = document.getElementById('confirm-modal');
+  const confirmOk = document.getElementById('confirm-ok');
+  const confirmCancel = document.getElementById('confirm-cancel');
   let isResetting = false;
-  settingsReset.addEventListener('click', async (e) => {
+
+  settingsReset.addEventListener('click', (e) => {
     e.stopPropagation();
-    if (confirm('This will erase all your progress, streak, and data. Are you sure?')) {
-      isResetting = true;
+    confirmModal.classList.add('active');
+  });
 
-      // Delete cloud data first if signed in
-      if (currentUser) {
-        try {
-          await db.collection('user_data').doc(currentUser.uid).delete();
-          // Also delete events
-          const eventsSnapshot = await db.collection('events').where('uid', '==', currentUser.uid).get();
-          const batch = db.batch();
-          eventsSnapshot.docs.forEach(doc => batch.delete(doc.ref));
-          await batch.commit();
-        } catch (err) {
-          console.warn('Failed to delete cloud data:', err.message);
-        }
+  confirmCancel.addEventListener('click', (e) => {
+    e.stopPropagation();
+    confirmModal.classList.remove('active');
+  });
+
+  confirmModal.addEventListener('click', (e) => {
+    if (e.target === confirmModal) confirmModal.classList.remove('active');
+  });
+
+  confirmOk.addEventListener('click', async (e) => {
+    e.stopPropagation();
+    confirmModal.classList.remove('active');
+    isResetting = true;
+
+    // Delete cloud data first if signed in
+    if (currentUser) {
+      try {
+        await db.collection('user_data').doc(currentUser.uid).delete();
+        const eventsSnapshot = await db.collection('events').where('uid', '==', currentUser.uid).get();
+        const batch = db.batch();
+        eventsSnapshot.docs.forEach(doc => batch.delete(doc.ref));
+        await batch.commit();
+      } catch (err) {
+        console.warn('Failed to delete cloud data:', err.message);
       }
-
-      // Clear app data keys only (preserve Firebase auth token)
-      const appKeys = ['moneySaved', 'cigarettesAvoided', 'quitStreak', 'quitStartDate',
-        'cravingLogs', 'earnedBadges', 'lastSessionDate', 'userName', 'cigPrice',
-        'darkMode', 'consentGiven', 'tooltipShown', 'lastAppOpen'];
-      appKeys.forEach(key => localStorage.removeItem(key));
-      location.reload();
     }
+
+    // Clear app data keys only (preserve Firebase auth token)
+    const appKeys = ['moneySaved', 'cigarettesAvoided', 'quitStreak', 'quitStartDate',
+      'cravingLogs', 'earnedBadges', 'lastSessionDate', 'userName', 'cigPrice',
+      'darkMode', 'consentGiven', 'tooltipShown', 'lastAppOpen'];
+    appKeys.forEach(key => localStorage.removeItem(key));
+    location.reload();
   });
 
   // Export data as CSV
