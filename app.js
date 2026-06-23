@@ -192,10 +192,9 @@
 
     console.log('[sync] saveToCloud:', JSON.stringify(data));
     try {
-      // Use dot notation to merge nested fields without replacing the whole data object
       const update = { updated_at: firebase.firestore.FieldValue.serverTimestamp() };
       for (const [key, value] of Object.entries(data)) {
-        update['data.' + key] = value;
+        update[key] = value;
       }
       await db.collection('user_data').doc(currentUser.uid).set(update, { merge: true });
       console.log('[sync] saveToCloud: success');
@@ -226,6 +225,12 @@
 
   function applyCloudData(cloudData) {
     if (!cloudData) return;
+    // Strip 'data.' prefix from legacy Firestore keys (e.g. "data.quitStreak" → "quitStreak")
+    const cleaned = {};
+    for (const [k, v] of Object.entries(cloudData)) {
+      cleaned[k.startsWith('data.') ? k.slice(5) : k] = v;
+    }
+    cloudData = cleaned;
     console.log('[sync] applyCloudData:', JSON.stringify(cloudData));
 
     // Don't overwrite in-progress session stats
@@ -269,10 +274,7 @@
     try {
       const doc = await db.collection('user_data').doc(currentUser.uid).get();
       const raw = doc.exists ? doc.data() : null;
-      console.log('[sync] raw doc:', raw ? JSON.stringify(raw) : 'no doc');
-      const cloudData = raw && raw.data ? raw.data : raw; // fallback to flat structure
-      console.log('[sync] cloudData:', cloudData ? JSON.stringify(cloudData) : 'no data');
-      if (cloudData) applyCloudData(cloudData);
+      if (raw) { delete raw.updated_at; applyCloudData(raw); }
     } catch (e) {
       console.warn('[sync] Cloud load failed:', e.message);
     }
@@ -282,9 +284,7 @@
     _cloudUnsubscribe = db.collection('user_data').doc(currentUser.uid)
       .onSnapshot((snap) => {
         const raw = snap.exists ? snap.data() : null;
-        const cloudData = raw && raw.data ? raw.data : raw; // fallback to flat structure
-        console.log('[sync] onSnapshot:', cloudData ? JSON.stringify(cloudData) : 'no data');
-        if (cloudData) applyCloudData(cloudData);
+        if (raw) { delete raw.updated_at; applyCloudData(raw); }
       }, (e) => console.warn('[sync] Cloud listener error:', e.message));
   }
 
