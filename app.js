@@ -2249,9 +2249,7 @@
     const gapMs = now - lastSessionDate;
     const gapHours = gapMs / (1000 * 60 * 60);
 
-    // Update last session date
-    lastSessionDate = now;
-    saveToCloud({ lastSessionDate: lastSessionDate });
+    // Don't overwrite lastSessionDate — it's the time of last cigarette, used for "last seen" display
 
     // Calculate streak in days (based on quitStartDate)
     const streakDays = quitStartDate ? Math.floor((now - quitStartDate) / (1000 * 60 * 60 * 24)) : 0;
