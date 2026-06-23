@@ -268,10 +268,11 @@
     console.log('[sync] loadFromCloud: fetching for', currentUser.uid);
     try {
       const doc = await db.collection('user_data').doc(currentUser.uid).get();
-      console.log('[sync] initial fetch — exists:', doc.exists, doc.exists ? JSON.stringify(doc.data().data) : 'no data');
-      if (doc.exists) {
-        applyCloudData(doc.data().data);
-      }
+      const raw = doc.exists ? doc.data() : null;
+      console.log('[sync] raw doc:', raw ? JSON.stringify(raw) : 'no doc');
+      const cloudData = raw && raw.data ? raw.data : raw; // fallback to flat structure
+      console.log('[sync] cloudData:', cloudData ? JSON.stringify(cloudData) : 'no data');
+      if (cloudData) applyCloudData(cloudData);
     } catch (e) {
       console.warn('[sync] Cloud load failed:', e.message);
     }
@@ -280,10 +281,10 @@
     if (_cloudUnsubscribe) _cloudUnsubscribe();
     _cloudUnsubscribe = db.collection('user_data').doc(currentUser.uid)
       .onSnapshot((snap) => {
-        console.log('[sync] onSnapshot fired — exists:', snap.exists, snap.exists ? JSON.stringify(snap.data().data) : 'no data');
-        if (snap.exists && snap.data().data) {
-          applyCloudData(snap.data().data);
-        }
+        const raw = snap.exists ? snap.data() : null;
+        const cloudData = raw && raw.data ? raw.data : raw; // fallback to flat structure
+        console.log('[sync] onSnapshot:', cloudData ? JSON.stringify(cloudData) : 'no data');
+        if (cloudData) applyCloudData(cloudData);
       }, (e) => console.warn('[sync] Cloud listener error:', e.message));
   }
 
