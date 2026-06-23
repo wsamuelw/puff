@@ -292,7 +292,6 @@
   let dpr = window.devicePixelRatio || 1;
   let W, H;
   let micStarted = false;
-  let touchOnlyMode = false;
   let reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   let micStream = null; // store stream for cleanup
   let audioCtx, analyser, dataArray, crackleGain, dragGain;
@@ -709,32 +708,18 @@
       } catch (e) {}
       return true;
     } catch (err) {
-      // Show retry + skip options
-      promptEl.innerHTML = 'Microphone access denied.<br><span style="font-size:14px;opacity:0.7">Tap to retry · <span id="mic-skip" style="text-decoration:underline;cursor:pointer">Continue without mic</span></span>';
+      // Show retry option — mic is required
+      promptEl.innerHTML = 'Microphone access is required.<br><span style="font-size:14px;opacity:0.7">Tap to retry</span>';
       promptEl.style.opacity = '1';
       promptEl.style.pointerEvents = 'auto';
       document.getElementById('overlay').style.pointerEvents = 'auto';
-      // Skip button handler
-      const skipBtn = document.getElementById('mic-skip');
-      if (skipBtn) {
-        skipBtn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          touchOnlyMode = true;
-          promptEl.style.opacity = '0';
-          promptEl.style.pointerEvents = 'none';
-          overlayEl.style.pointerEvents = 'none';
-          started = true;
-          gameStartTime = performance.now();
-          loopFrameId = requestAnimationFrame(loop);
-        });
-      }
       return false;
     }
   }
 
   // Retry mic on overlay tap
   overlayEl.addEventListener('click', async () => {
-    if (!micStarted && !touchOnlyMode) {
+    if (!micStarted) {
       // Hide the error message
       promptEl.style.opacity = '0';
       promptEl.style.pointerEvents = 'none';
@@ -1924,7 +1909,7 @@
           blowIntensity = 0;
           puffing = false;
         } else if (holding) {
-          blowIntensity = touchOnlyMode ? 0.5 : detectBlow();
+          blowIntensity = detectBlow();
           puffing = blowIntensity > 0;
         } else if (puffCompleting) {
           // Puff completing after release — maintain current burn rate
@@ -2114,7 +2099,7 @@
     )) return;
 
     // Only start hold when game is running
-    if (started && !gameOver && (micStarted || touchOnlyMode)) {
+    if (started && !gameOver && micStarted) {
       holding = true;
       holdStartTime = performance.now();
       puffCompleting = false;
@@ -2919,7 +2904,6 @@
     if (gameOver) return; // Already ended
 
     gameOver = true;
-    touchOnlyMode = false;
     cleanupMic();
 
     // Calculate money based on how much was smoked
