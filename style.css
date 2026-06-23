@@ -1370,26 +1370,6 @@ body.light .mic-modal-desc {
   color: rgba(26,26,26,0.5);
 }
 
-.mic-modal-btn {
-  width: 100%;
-  padding: 14px;
-  background: #d4a574;
-  color: #1a1a1a;
-  border: none;
-  border-radius: 12px;
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.mic-modal-btn:hover {
-  background: #c49564;
-}
-
-.mic-modal-btn:active {
-  transform: scale(0.97);
-}
 
 /* Badge detail modal */
 .badge-modal {

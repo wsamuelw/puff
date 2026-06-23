@@ -23,7 +23,6 @@
   const promptEl = document.getElementById('prompt');
   const overlayEl = document.getElementById('overlay');
   const micModal = document.getElementById('mic-modal');
-  const micModalBtn = document.getElementById('mic-modal-btn');
 
   // --- Safe localStorage helpers ---
   function safeGetItem(key, fallback) {
@@ -718,15 +717,9 @@
     }
   }
 
-  // Retry mic via modal button
-  micModalBtn.addEventListener('click', async () => {
+  // Tap anywhere on modal to dismiss
+  micModal.addEventListener('click', () => {
     micModal.classList.remove('visible');
-    const ok = await startMic();
-    if (ok) {
-      started = true;
-      gameStartTime = performance.now();
-      loopFrameId = requestAnimationFrame(loop);
-    }
   });
 
   // Cleanup mic and audio when game ends or page unloads
@@ -1561,13 +1554,15 @@
       if (ok) {
         started = true;
         gameStartTime = performance.now();
+        loopFrameId = requestAnimationFrame(loop);
       }
+      // If mic denied, modal is shown — don't start loop
     } else {
       // Mic already started, just restart the game
       started = true;
       gameStartTime = performance.now();
+      loopFrameId = requestAnimationFrame(loop);
     }
-    loopFrameId = requestAnimationFrame(loop);
     sessionStarting = false;
   }
 
