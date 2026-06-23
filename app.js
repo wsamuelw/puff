@@ -2971,7 +2971,7 @@
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) {
       hiddenAt = Date.now();
-      // Sync all state to cloud when leaving
+      // Sync current stats to cloud when leaving (don't overwrite lastSessionDate — only real sessions set it)
       if (currentUser) {
         const logs = JSON.parse(safeGetItem('cravingLogs', '[]'));
         saveToCloud({
@@ -2979,8 +2979,7 @@
           moneySaved: totalMoneySaved,
           quitStreak: sessionCount,
           cigarettesAvoided: totalCigarettesAvoided,
-          quitStartDate: quitStartDate,
-          lastSessionDate: Date.now()
+          quitStartDate: quitStartDate
         });
       }
       // Stop the animation loop
@@ -2994,6 +2993,9 @@
       if (audioCtx && audioCtx.state === 'suspended') {
         audioCtx.resume();
       }
+
+      // Re-fetch from cloud on return to pick up changes from other devices
+      if (currentUser) loadFromCloud();
 
       if (!gameOver && started) {
         // Calculate elapsed time while hidden and advance burn progress
