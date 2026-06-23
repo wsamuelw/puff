@@ -1600,7 +1600,7 @@
 
     // Sync craving logs to cloud
     saveToCloud({
-      cravingLogs: logs,
+      cravingLogs: pruned,
       moneySaved: totalMoneySaved,
       quitStreak: sessionCount,
       cigarettesAvoided: totalCigarettesAvoided,
