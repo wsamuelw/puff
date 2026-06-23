@@ -1308,6 +1308,89 @@ body.dark .badges-section-title {
   color: rgba(250,249,247,0.25);
 }
 
+/* Mic permission modal */
+.mic-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 500;
+  padding: 24px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.mic-modal.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.mic-modal-content {
+  background: #1e1e1e;
+  border-radius: 20px;
+  padding: 32px;
+  text-align: center;
+  max-width: 300px;
+  width: 100%;
+}
+
+body.light .mic-modal-content {
+  background: #fff;
+}
+
+.mic-modal-icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+}
+
+.mic-modal-title {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 18px;
+  color: #faf9f7;
+  margin-bottom: 8px;
+}
+
+body.light .mic-modal-title {
+  color: #1a1a1a;
+}
+
+.mic-modal-desc {
+  font-size: 13px;
+  color: rgba(250,249,247,0.5);
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+body.light .mic-modal-desc {
+  color: rgba(26,26,26,0.5);
+}
+
+.mic-modal-btn {
+  width: 100%;
+  padding: 14px;
+  background: #d4a574;
+  color: #1a1a1a;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.mic-modal-btn:hover {
+  background: #c49564;
+}
+
+.mic-modal-btn:active {
+  transform: scale(0.97);
+}
+
 /* Badge detail modal */
 .badge-modal {
   position: fixed;

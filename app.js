@@ -22,6 +22,8 @@
   const ctx = canvas.getContext('2d');
   const promptEl = document.getElementById('prompt');
   const overlayEl = document.getElementById('overlay');
+  const micModal = document.getElementById('mic-modal');
+  const micModalBtn = document.getElementById('mic-modal-btn');
 
   // --- Safe localStorage helpers ---
   function safeGetItem(key, fallback) {
@@ -114,6 +116,7 @@
     if (menuOverlay) menuOverlay.classList.remove('active');
     const filterOverlay = document.getElementById('overlay');
     if (filterOverlay) filterOverlay.classList.remove('visible');
+    micModal.classList.remove('visible');
     endScreen.classList.remove('visible');
     triggerScreen.classList.remove('visible');
     slipupWelcome.classList.remove('active');
@@ -634,6 +637,7 @@
       micStarted = true;
       cooldownUntil = performance.now() + 1500;
       promptEl.classList.add('hidden');
+      micModal.classList.remove('visible');
       document.getElementById('overlay').style.pointerEvents = 'none';
       document.getElementById('filter-stats').classList.add('visible');
 
@@ -708,29 +712,20 @@
       } catch (e) {}
       return true;
     } catch (err) {
-      // Show retry option — mic is required
-      promptEl.innerHTML = 'Microphone access is required.<br><span style="font-size:14px;opacity:0.7">Tap to retry</span>';
-      promptEl.style.opacity = '1';
-      promptEl.style.pointerEvents = 'auto';
-      document.getElementById('overlay').style.pointerEvents = 'auto';
+      // Show mic permission modal
+      micModal.classList.add('visible');
       return false;
     }
   }
 
-  // Retry mic on overlay tap
-  overlayEl.addEventListener('click', async () => {
-    if (!micStarted) {
-      // Hide the error message
-      promptEl.style.opacity = '0';
-      promptEl.style.pointerEvents = 'none';
-      overlayEl.style.pointerEvents = 'none';
-      // Retry mic
-      const ok = await startMic();
-      if (ok) {
-        started = true;
-        gameStartTime = performance.now();
-        loopFrameId = requestAnimationFrame(loop);
-      }
+  // Retry mic via modal button
+  micModalBtn.addEventListener('click', async () => {
+    micModal.classList.remove('visible');
+    const ok = await startMic();
+    if (ok) {
+      started = true;
+      gameStartTime = performance.now();
+      loopFrameId = requestAnimationFrame(loop);
     }
   });
 
@@ -2904,6 +2899,7 @@
     if (gameOver) return; // Already ended
 
     gameOver = true;
+    micModal.classList.remove('visible');
     cleanupMic();
 
     // Calculate money based on how much was smoked
