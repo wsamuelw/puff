@@ -242,6 +242,8 @@
       if (cloudData.cigarettesAvoided !== undefined) totalCigarettesAvoided = parseInt(cloudData.cigarettesAvoided) || 0;
       if (cloudData.quitStartDate !== undefined) quitStartDate = parseInt(cloudData.quitStartDate) || 0;
       if (cloudData.lastSessionDate !== undefined) lastSessionDate = parseInt(cloudData.lastSessionDate) || 0;
+      if (cloudData.dailyStreak !== undefined) dailyStreak = parseInt(cloudData.dailyStreak) || 0;
+      if (cloudData.lastStreakDate !== undefined) lastStreakDate = cloudData.lastStreakDate || '';
       if (cloudData.cravingLogs) {
         cravingLogs = cloudData.cravingLogs;
         safeSetItem('cravingLogs', JSON.stringify(cravingLogs));
@@ -252,6 +254,8 @@
       safeSetItem('cigarettesAvoided', String(totalCigarettesAvoided));
       safeSetItem('quitStartDate', String(quitStartDate));
       safeSetItem('lastSessionDate', String(lastSessionDate));
+      safeSetItem('dailyStreak', String(dailyStreak));
+      safeSetItem('lastStreakDate', lastStreakDate);
     }
 
     if (cloudData.cigPrice !== undefined) cigPrice = Math.max(0.01, parseFloat(cloudData.cigPrice) || 1.00);
@@ -1626,46 +1630,67 @@
       copingEl.style.display = 'none';
     }
 
-    // Check for milestones
-    const daysSinceStart = quitStartDate ? Math.floor((Date.now() - quitStartDate) / (24 * 60 * 60 * 1000)) : 0;
-    checkMilestones(daysSinceStart);
+    // Update daily streak and check milestones
+    updateDailyStreak();
+    checkMilestones();
 
     endScreen.classList.add('visible');
     gameState = 'end';
   }
 
   // Milestone definitions
+  // Daily streak tracking
+  let dailyStreak = parseInt(safeGetItem('dailyStreak', '0'));
+  let lastStreakDate = safeGetItem('lastStreakDate', '');
+
   const MILESTONES = [
-    { days: 1, title: '1 Day Smoke-Free!', desc: 'The hardest day is behind you.' },
-    { days: 3, title: '3 Days Smoke-Free!', desc: 'Nicotine is leaving your body.' },
-    { days: 7, title: '1 Week Smoke-Free!', desc: 'Your lungs are starting to heal.' },
-    { days: 14, title: '2 Weeks Smoke-Free!', desc: 'Circulation improving.' },
-    { days: 30, title: '1 Month Smoke-Free!', desc: 'Lung function increasing.' },
-    { days: 90, title: '3 Months Smoke-Free!', desc: 'Heart disease risk dropping.' },
-    { days: 365, title: '1 Year Smoke-Free!', desc: 'Heart disease risk halved.' },
+    { days: 3, title: '3-Day Streak!', desc: "You're building a habit." },
+    { days: 7, title: '1-Week Streak!', desc: "A full week — that's real commitment." },
+    { days: 14, title: '2-Week Streak!', desc: 'Two weeks strong.' },
+    { days: 30, title: '1-Month Streak!', desc: 'A month of consistency.' },
+    { days: 90, title: '3-Month Streak!', desc: 'This is your new normal.' },
+    { days: 180, title: '6-Month Streak!', desc: 'Half a year — incredible.' },
+    { days: 365, title: '1-Year Streak!', desc: "A full year. You've done it." },
   ];
 
+  // Update daily streak — call after each session ends
+  function updateDailyStreak() {
+    const today = new Date().toISOString().split('T')[0]; // "2026-06-23"
+    if (lastStreakDate === today) return; // Already counted today
+
+    const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+    if (lastStreakDate === yesterday) {
+      dailyStreak++; // Consecutive day
+    } else {
+      dailyStreak = 1; // Missed a day or first session
+    }
+    lastStreakDate = today;
+    safeSetItem('dailyStreak', String(dailyStreak));
+    safeSetItem('lastStreakDate', lastStreakDate);
+    saveToCloud({ dailyStreak: dailyStreak, lastStreakDate: lastStreakDate });
+  }
+
   // Check and show milestones
-  function checkMilestones(daysSinceStart) {
+  function checkMilestones() {
     const shown = safeGetItem('milestonesShown', '[]');
     const shownList = JSON.parse(shown);
-    const milestone = MILESTONES.find(m => daysSinceStart >= m.days && !shownList.includes(m.days));
+    const milestone = MILESTONES.find(m => dailyStreak >= m.days && !shownList.includes(m.days));
     if (!milestone) return;
 
     // Mark as shown
     shownList.push(milestone.days);
     safeSetItem('milestonesShown', JSON.stringify(shownList));
 
-    // Show share card
     showMilestoneCard(milestone);
   }
 
-  // Show milestone share card
+  // Show milestone card — glow design, tap anywhere to dismiss
   function showMilestoneCard(milestone) {
     const card = document.createElement('div');
     card.className = 'milestone-card-overlay';
     card.innerHTML = `
       <div class="milestone-card">
+        <div class="milestone-glow"></div>
         <div class="milestone-emoji">🎉</div>
         <div class="milestone-title">${milestone.title}</div>
         <div class="milestone-desc">${milestone.desc}</div>
@@ -1680,40 +1705,13 @@
           </div>
         </div>
         <div class="milestone-brand">puff — your quit companion</div>
-        <div class="milestone-actions">
-          <button class="milestone-share" id="milestone-share">Share</button>
-          <button class="milestone-close" id="milestone-close">Close</button>
-        </div>
+        <div class="milestone-hint">tap anywhere to continue</div>
       </div>
     `;
     document.body.appendChild(card);
 
-    // Share button
-    document.getElementById('milestone-share').addEventListener('click', async () => {
-      try {
-        // Generate share text
-        const shareText = `${milestone.title}\n\n💰 $${totalMoneySaved.toFixed(2)} saved\n🚬 ${totalCigarettesAvoided} real cigarettes avoided\n\npuff — your quit companion`;
-
-        // Use Web Share API if available
-        if (navigator.share) {
-          await navigator.share({
-            title: milestone.title,
-            text: shareText,
-          });
-        } else {
-          // Fallback: copy to clipboard
-          await navigator.clipboard.writeText(shareText);
-          alert('Copied to clipboard!');
-        }
-      } catch (e) {
-        // User cancelled share
-      }
-    });
-
-    // Close button
-    document.getElementById('milestone-close').addEventListener('click', () => {
-      card.remove();
-    });
+    // Tap anywhere to dismiss
+    card.addEventListener('click', () => card.remove());
   }
 
   // Build trigger list with time context for end screen
@@ -2807,7 +2805,8 @@
     // Clear app data keys only (preserve Firebase auth token)
     const appKeys = ['moneySaved', 'cigarettesAvoided', 'quitStreak', 'quitStartDate',
       'cravingLogs', 'earnedBadges', 'lastSessionDate', 'userName', 'cigPrice',
-      'darkMode', 'consentGiven', 'tooltipShown', 'lastAppOpen'];
+      'darkMode', 'consentGiven', 'tooltipShown', 'lastAppOpen',
+      'dailyStreak', 'lastStreakDate', 'milestonesShown'];
     appKeys.forEach(key => localStorage.removeItem(key));
     location.reload();
   });

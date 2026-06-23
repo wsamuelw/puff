@@ -875,51 +875,73 @@ body.light .trigger-btn.selected {
 }
 
 /* ─── Milestone Card ─── */
+/* ─── Milestone Card (Glow Design) ─── */
 .milestone-card-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.6);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  background: rgba(0,0,0,0.8);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 500;
   padding: 24px;
+  cursor: pointer;
 }
 
 .milestone-card {
-  background: #fff;
+  background: rgba(0,0,0,0.8);
   border-radius: 20px;
-  padding: 40px 32px;
+  padding: 40px 24px;
   text-align: center;
   max-width: 320px;
   width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.milestone-glow {
+  position: absolute;
+  top: -60px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, rgba(212,165,116,0.3) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
 }
 
 .milestone-emoji {
-  font-size: 48px;
+  font-size: 56px;
   margin-bottom: 16px;
+  position: relative;
+  z-index: 1;
 }
 
 .milestone-title {
   font-family: 'Libre Baskerville', serif;
-  font-size: 24px;
-  color: #1a1a1a;
-  margin-bottom: 4px;
+  font-size: 22px;
+  color: #faf9f7;
+  margin-bottom: 6px;
+  position: relative;
+  z-index: 1;
 }
 
 .milestone-desc {
-  font-size: 14px;
-  color: rgba(26,26,26,0.5);
+  font-size: 13px;
+  color: rgba(250,249,247,0.5);
   margin-bottom: 24px;
+  position: relative;
+  z-index: 1;
 }
 
 .milestone-stats {
   display: flex;
   justify-content: center;
-  gap: 24px;
+  gap: 32px;
   margin-bottom: 24px;
+  position: relative;
+  z-index: 1;
 }
 
 .milestone-stat {
@@ -928,108 +950,60 @@ body.light .trigger-btn.selected {
 
 .milestone-stat-num {
   font-family: 'Libre Baskerville', serif;
-  font-size: 28px;
-  color: #1a1a1a;
+  font-size: 22px;
+  color: #d4a574;
 }
 
 .milestone-stat-label {
-  font-size: 11px;
-  color: rgba(26,26,26,0.3);
+  font-size: 10px;
+  color: rgba(250,249,247,0.3);
   text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-top: 4px;
+  letter-spacing: 0.5px;
+  margin-top: 2px;
 }
 
 .milestone-brand {
   font-size: 11px;
-  color: rgba(26,26,26,0.2);
-  margin-bottom: 24px;
+  color: rgba(250,249,247,0.15);
+  font-style: italic;
+  position: relative;
+  z-index: 1;
+  margin-bottom: 16px;
 }
 
-.milestone-actions {
-  display: flex;
-  gap: 12px;
+.milestone-hint {
+  font-size: 12px;
+  color: rgba(250,249,247,0.2);
+  position: relative;
+  z-index: 1;
 }
 
-.milestone-share {
-  flex: 1;
-  padding: 14px;
-  background: #d4a574;
-  border: none;
-  border-radius: 12px;
+body.light .milestone-card {
+  background: rgba(255,255,255,0.95);
+}
+
+body.light .milestone-title {
   color: #1a1a1a;
-  font-family: 'Outfit', sans-serif;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  -webkit-tap-highlight-color: transparent;
 }
 
-.milestone-share:hover {
-  background: #c49564;
-}
-
-.milestone-share:active {
-  transform: scale(0.96);
-}
-
-.milestone-close {
-  flex: 1;
-  padding: 14px;
-  background: transparent;
-  border: 1px solid rgba(0,0,0,0.1);
-  border-radius: 12px;
+body.light .milestone-desc {
   color: rgba(26,26,26,0.5);
-  font-family: 'Outfit', sans-serif;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  -webkit-tap-highlight-color: transparent;
 }
 
-.milestone-close:hover {
-  border-color: rgba(0,0,0,0.2);
-  color: rgba(26,26,26,0.7);
+body.light .milestone-stat-label {
+  color: rgba(26,26,26,0.3);
 }
 
-/* ─── Milestone Card Dark Mode ─── */
-body.dark .milestone-card {
-  background: #1e1e1e;
+body.light .milestone-brand {
+  color: rgba(26,26,26,0.2);
 }
 
-body.dark .milestone-title {
-  color: #f5f0eb;
+body.light .milestone-hint {
+  color: rgba(26,26,26,0.25);
 }
 
-body.dark .milestone-desc {
-  color: rgba(245,240,235,0.5);
-}
-
-body.dark .milestone-stat-num {
-  color: #f5f0eb;
-}
-
-body.dark .milestone-stat-label {
-  color: rgba(245,240,235,0.3);
-}
-
-body.dark .milestone-brand {
-  color: rgba(245,240,235,0.2);
-}
-
-body.dark .milestone-share {
-  color: #1a1a1a;
-}
-
-body.dark .milestone-close {
-  border-color: rgba(245,240,235,0.1);
-  color: rgba(245,240,235,0.5);
-}
-
-body.dark .milestone-close:hover {
-  border-color: rgba(245,240,235,0.2);
-  color: rgba(245,240,235,0.7);
+body.light .milestone-glow {
+  background: radial-gradient(circle, rgba(212,165,116,0.2) 0%, transparent 70%);
 }
 
 /* ─── Badge Notification ─── */
