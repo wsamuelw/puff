@@ -87,12 +87,15 @@
   // Set auth persistence on load (not during sign-in click)
   auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(() => {});
 
-  // Google sign-in — always use popup
+  // Google sign-in — popup (no redirect loops)
   async function signInWithGoogle() {
     logEvent('sign_in_started');
     try {
-      // Use redirect — no popup window, full-page Google flow
-      await auth.signInWithRedirect(provider);
+      const result = await auth.signInWithPopup(provider);
+      if (result && result.user) {
+        currentUser = result.user;
+        logEvent('sign_in_completed', { uid: result.user.uid });
+      }
     } catch (e) {
       console.warn('Auth failed:', e.message);
       logEvent('sign_in_failed', { error: e.code });
@@ -100,16 +103,6 @@
       throw e;
     }
   }
-
-  // Handle redirect result on page load (after Google redirects back)
-  auth.getRedirectResult().then((result) => {
-    if (result && result.user) {
-      currentUser = result.user;
-      logEvent('sign_in_completed', { uid: result.user.uid });
-    }
-  }).catch((e) => {
-    console.warn('Redirect result error:', e.message);
-  });
 
   // Sign out
   async function signOut() {
