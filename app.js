@@ -190,6 +190,7 @@
     const consent = safeGetItem('consentGiven', 'false');
     if (!currentUser || consent !== 'true') return;
 
+    console.log('[sync] saveToCloud:', JSON.stringify(data));
     try {
       // Use dot notation to merge nested fields without replacing the whole data object
       const update = { updated_at: firebase.firestore.FieldValue.serverTimestamp() };
@@ -197,8 +198,9 @@
         update['data.' + key] = value;
       }
       await db.collection('user_data').doc(currentUser.uid).set(update, { merge: true });
+      console.log('[sync] saveToCloud: success');
     } catch (e) {
-      console.warn('Cloud save failed:', e.message);
+      console.warn('[sync] Cloud save failed:', e.message);
     }
   }
 
@@ -224,6 +226,7 @@
 
   function applyCloudData(cloudData) {
     if (!cloudData) return;
+    console.log('[sync] applyCloudData:', JSON.stringify(cloudData));
 
     // Don't overwrite in-progress session stats
     if (!started || gameOver) {
@@ -261,24 +264,27 @@
   }
 
   async function loadFromCloud() {
-    if (!currentUser) return;
+    if (!currentUser) { console.log('[sync] loadFromCloud: no user'); return; }
+    console.log('[sync] loadFromCloud: fetching for', currentUser.uid);
     try {
       const doc = await db.collection('user_data').doc(currentUser.uid).get();
+      console.log('[sync] initial fetch — exists:', doc.exists, doc.exists ? JSON.stringify(doc.data().data) : 'no data');
       if (doc.exists) {
         applyCloudData(doc.data().data);
       }
     } catch (e) {
-      console.warn('Cloud load failed:', e.message);
+      console.warn('[sync] Cloud load failed:', e.message);
     }
 
     // Subscribe to real-time updates for cross-device sync
     if (_cloudUnsubscribe) _cloudUnsubscribe();
     _cloudUnsubscribe = db.collection('user_data').doc(currentUser.uid)
       .onSnapshot((snap) => {
+        console.log('[sync] onSnapshot fired — exists:', snap.exists, snap.exists ? JSON.stringify(snap.data().data) : 'no data');
         if (snap.exists && snap.data().data) {
           applyCloudData(snap.data().data);
         }
-      }, (e) => console.warn('Cloud listener error:', e.message));
+      }, (e) => console.warn('[sync] Cloud listener error:', e.message));
   }
 
   // --- State ---
