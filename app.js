@@ -2936,9 +2936,6 @@
 
   window.addEventListener('beforeunload', savePartialProgress);
 
-  // Online/offline status — idle screen removed, no indicator needed
-  window.addEventListener('online', () => {});
-  window.addEventListener('offline', () => {});
 
   // Pause loop when app is in background
   let hiddenAt = 0; // timestamp when tab became hidden
