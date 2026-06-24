@@ -1604,11 +1604,10 @@
     endScreenShown = true;
 
     // Save trigger to logs with money saved, prune entries older than 90 days
-    const logs = JSON.parse(safeGetItem('cravingLogs', '[]'));
-    logs.push({ time: Date.now(), trigger: currentTriggerId, money: sessionMoneySaved });
+    cravingLogs.push({ time: Date.now(), trigger: currentTriggerId, money: sessionMoneySaved });
     const ninetyDaysAgo = Date.now() - (90 * 24 * 60 * 60 * 1000);
-    const pruned = logs.filter(log => log.time > ninetyDaysAgo);
-    safeSetItem('cravingLogs', JSON.stringify(pruned));
+    cravingLogs = cravingLogs.filter(log => log.time > ninetyDaysAgo);
+    safeSetItem('cravingLogs', JSON.stringify(cravingLogs));
 
     // Sync craving logs to cloud
     saveToCloud({
@@ -1724,7 +1723,7 @@
 
   // Build trigger list with time context for end screen
   function buildEndTriggerList() {
-    const logs = JSON.parse(safeGetItem('cravingLogs', '[]'));
+    const logs = cravingLogs;
 
     // Count triggers and track time patterns
     const triggerData = {};
@@ -2599,7 +2598,7 @@
   // Build weekly summary card
   function buildTriggerHeatmap() {
     const triggersBars = document.getElementById('triggers-bars');
-    const logs = JSON.parse(safeGetItem('cravingLogs', '[]'));
+    const logs = cravingLogs;
 
     if (!logs.length) {
       triggersBars.innerHTML = '<div class="triggers-empty">No data yet. Complete a session to see patterns.</div>';
