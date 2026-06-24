@@ -171,7 +171,7 @@
   splashGoogleBtn.addEventListener('touchstart', (e) => e.stopPropagation(), { passive: true });
 
   // Save to Firestore (also saves to localStorage as offline cache)
-  async function saveToCloud(data) {
+  async function saveToCloud(data, keepalive = false) {
     // Skip if reset is in progress
     if (isResetting) return;
 
@@ -184,15 +184,35 @@
     const consent = safeGetItem('consentGiven', 'false');
     if (!currentUser || consent !== 'true') return;
 
-    console.log('[sync] saveToCloud:', JSON.stringify(data));
-    // Track local save time so we can compare with cloud on restart
-    safeSetItem('lastSaveTimestamp', String(Date.now()));
+    console.log('[sync] saveToCloud:', JSON.stringify(data), keepalive ? '(keepalive)' : '');
     try {
       const update = { updated_at: firebase.firestore.FieldValue.serverTimestamp() };
       for (const [key, value] of Object.entries(data)) {
         update[key] = value;
       }
-      await db.collection('user_data').doc(currentUser.uid).set(update, { merge: true });
+      if (keepalive) {
+        // Use fetch with keepalive for page-close scenarios — browser guarantees delivery
+        const projectId = 'puff-8bdb8';
+        const uid = currentUser.uid;
+        const url = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/user_data/${uid}`;
+        const token = await currentUser.getIdToken();
+        const fields = {};
+        for (const [k, v] of Object.entries(update)) {
+          if (k === 'updated_at') { fields[k] = { timestampValue: new Date().toISOString() }; continue; }
+          if (typeof v === 'number') fields[k] = { integerValue: String(v) };
+          else if (typeof v === 'boolean') fields[k] = { booleanValue: v };
+          else if (Array.isArray(v)) fields[k] = { arrayValue: { values: v.map(item => ({ mapValue: { fields: Object.fromEntries(Object.entries(item).map(([ik, iv]) => [ik, typeof iv === 'number' ? { integerValue: String(iv) } : { stringValue: String(iv) }])) } })) } };
+          else fields[k] = { stringValue: String(v) };
+        }
+        fetch(url + '?updateMask.fieldPaths=' + Object.keys(fields).join('&updateMask.fieldPaths=') + '&access_token=' + encodeURIComponent(token), {
+          method: 'PATCH',
+          body: JSON.stringify({ fields }),
+          keepalive: true,
+          headers: { 'Content-Type': 'application/json' }
+        }).catch(() => {});
+      } else {
+        await db.collection('user_data').doc(currentUser.uid).set(update, { merge: true });
+      }
       console.log('[sync] saveToCloud: success');
     } catch (e) {
       console.warn('[sync] Cloud save failed:', e.message);
@@ -231,15 +251,10 @@
   // Apply cloud data to local state (used by both initial load and real-time listener)
   let _cloudUnsubscribe = null;
 
-  // Apply session stats from cloud (skipped if local is newer or session in progress)
+  // Apply session stats from cloud (cloud is source of truth, skipped only during active session)
   function applyCloudStats(data) {
-    const cloudTs = data._updated_at;
-    const localTs = parseInt(safeGetItem('lastSaveTimestamp', '0'));
-    const cloudMs = cloudTs && cloudTs.seconds ? cloudTs.seconds * 1000 : 0;
-    const localIsNewer = localTs > 0 && cloudMs > 0 && localTs > cloudMs;
-    console.log('[sync] applyCloudStats — localTs:', localTs, 'cloudMs:', cloudMs, 'localIsNewer:', localIsNewer, 'started:', started, 'gameOver:', gameOver);
-    if ((started && !gameOver) || localIsNewer) {
-      console.log('[sync] applyCloudStats: SKIPPED (local is newer or session in progress)');
+    if (started && !gameOver) {
+      console.log('[sync] applyCloudStats: SKIPPED (session in progress)');
       return;
     }
 
@@ -2934,7 +2949,7 @@
     });
     flushEvents(); // Flush immediately on session end
 
-    // Save to cloud + localStorage
+    // Save to cloud + localStorage (keepalive ensures delivery even on page close)
     saveToCloud({
       quitStreak: sessionCount,
       moneySaved: totalMoneySaved,
@@ -2942,7 +2957,7 @@
       quitStartDate: quitStartDate,
       lastSessionDate: Date.now(),
       earnedBadges: JSON.parse(safeGetItem('earnedBadges', '[]'))
-    });
+    }, true);
 
     // Check for new badges
     checkBadges();
@@ -2963,7 +2978,7 @@
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) {
       hiddenAt = Date.now();
-      // Sync current stats to cloud when leaving (don't overwrite lastSessionDate — only real sessions set it)
+      // Sync current stats to cloud when leaving (keepalive ensures delivery)
       if (currentUser) {
         const logs = JSON.parse(safeGetItem('cravingLogs', '[]'));
         saveToCloud({
@@ -2972,7 +2987,7 @@
           quitStreak: sessionCount,
           cigarettesAvoided: totalCigarettesAvoided,
           quitStartDate: quitStartDate
-        });
+        }, true);
       }
       // Stop the animation loop
       loopRunning = false;
