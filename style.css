@@ -199,7 +199,7 @@ body.light .fs-money {
 
 .fs-lastseen {
   font-size: 12px;
-  color: rgba(255,255,255,0.3);
+  color: rgba(255,255,255,0.5);
   margin-top: 2px;
 }
 
@@ -541,7 +541,7 @@ body.light .menu-card:hover {
 
 .menu-card-text p {
   font-size: 12px;
-  color: rgba(255,255,255,0.3);
+  color: rgba(255,255,255,0.5);
   line-height: 1.4;
 }
 
@@ -1369,7 +1369,7 @@ body.light .badge-modal-desc {
 
 .badge-modal-status {
   font-size: 13px;
-  color: rgba(255,255,255,0.3);
+  color: rgba(255,255,255,0.5);
 }
 
 body.light .badge-modal-status {
