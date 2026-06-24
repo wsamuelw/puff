@@ -315,6 +315,12 @@
   let blowFrames = 0;
   let burnProgress = 0; // 0 = full, 1 = gone
   const BURN_END = 0.92; // leave a bit of white paper — real smokers don't smoke to the filter
+  const MIC_COOLDOWN_MS = 1500;
+  const SESSION_COOLDOWN_MS = 800;
+  const PRUNE_WINDOW_DAYS = 90;
+  const PRUNE_WINDOW_MS = PRUNE_WINDOW_DAYS * 24 * 60 * 60 * 1000;
+  const TOOLTIP_DISMISS_MS = 8000;
+  const STATS_THROTTLE_MS = 50;
   let puffing = false;
   let gameOver = false;
   let cooldownUntil = 0;
@@ -413,10 +419,10 @@
   let cravingLogs = [];
   try {
     cravingLogs = JSON.parse(safeGetItem('cravingLogs', '[]'));
-    // Prune entries older than 90 days to prevent localStorage bloat
-    const ninetyDaysAgo = Date.now() - (90 * 24 * 60 * 60 * 1000);
+    // Prune entries older than PRUNE_WINDOW_DAYS to prevent localStorage bloat
+    const pruneBefore = Date.now() - PRUNE_WINDOW_MS;
     const beforeCount = cravingLogs.length;
-    cravingLogs = cravingLogs.filter(log => log.time > ninetyDaysAgo);
+    cravingLogs = cravingLogs.filter(log => log.time > pruneBefore);
     if (cravingLogs.length < beforeCount) {
       safeSetItem('cravingLogs', JSON.stringify(cravingLogs));
     }
@@ -647,7 +653,7 @@
       source.connect(analyser);
       dataArray = new Uint8Array(analyser.frequencyBinCount);
       micStarted = true;
-      cooldownUntil = performance.now() + 1500;
+      cooldownUntil = performance.now() + MIC_COOLDOWN_MS;
       promptEl.classList.add('hidden');
       micModal.classList.remove('visible');
       document.getElementById('overlay').style.pointerEvents = 'none';
@@ -1491,13 +1497,13 @@
   function showFirstSessionTooltip() {
     if (tooltipShown === 'true') return;
     tooltip.classList.add('visible');
-    // Auto-dismiss after 8 seconds
+    // Auto-dismiss after TOOLTIP_DISMISS_MS
     setTimeout(() => {
       if (tooltip.classList.contains('visible')) {
         tooltip.classList.remove('visible');
         safeSetItem('tooltipShown', 'true');
       }
-    }, 8000);
+    }, TOOLTIP_DISMISS_MS);
   }
 
   // Build trigger buttons
@@ -1561,7 +1567,7 @@
     ashCeilingSet = false;
     blowFrames = 0;
     blowIntensity = 0;
-    cooldownUntil = performance.now() + 800;
+    cooldownUntil = performance.now() + SESSION_COOLDOWN_MS;
     sessionMoneySaved = 0;
     lastFrameTime = 0; // reset so first frame dt is not stale
     hiddenAt = 0; // clear any stale background timestamp
@@ -1618,8 +1624,8 @@
 
     // Save trigger to logs with money saved, prune entries older than 90 days
     cravingLogs.push({ time: Date.now(), trigger: currentTriggerId, money: sessionMoneySaved });
-    const ninetyDaysAgo = Date.now() - (90 * 24 * 60 * 60 * 1000);
-    cravingLogs = cravingLogs.filter(log => log.time > ninetyDaysAgo);
+    const pruneBefore = Date.now() - PRUNE_WINDOW_MS;
+    cravingLogs = cravingLogs.filter(log => log.time > pruneBefore);
     safeSetItem('cravingLogs', JSON.stringify(cravingLogs));
 
     // Sync craving logs to cloud
@@ -1834,7 +1840,7 @@
 
   function updateStatsDisplay() {
     const now = performance.now();
-    if (now - _lastStatsUpdate < 50) return; // throttle to ~20fps
+    if (now - _lastStatsUpdate < STATS_THROTTLE_MS) return; // throttle to ~20fps
     _lastStatsUpdate = now;
     if ((started && !gameOver && burnProgress > 0) || !started) {
       if (!_lastVisible) { barStats.classList.add('visible'); _lastVisible = true; }
