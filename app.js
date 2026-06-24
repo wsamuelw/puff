@@ -199,18 +199,30 @@
     }
   }
 
-  // Event logging — track user actions in Firebase
-  async function logEvent(eventName, props = {}) {
-    // Skip logging if no consent or not signed in
+  // Event logging — batched for efficiency
+  const _eventQueue = [];
+  let _eventFlushTimer = null;
+
+  function logEvent(eventName, props = {}) {
     const consent = safeGetItem('consentGiven', 'false');
     if (!currentUser || consent !== 'true') return;
+    _eventQueue.push({
+      uid: currentUser.uid,
+      event: eventName,
+      props: props,
+      ts: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    // Flush after 2 seconds of inactivity, or on session end
+    if (_eventFlushTimer) clearTimeout(_eventFlushTimer);
+    _eventFlushTimer = setTimeout(flushEvents, 2000);
+  }
+
+  async function flushEvents() {
+    if (_eventQueue.length === 0 || !currentUser) return;
+    const batch = _eventQueue.splice(0);
     try {
-      await db.collection('events').add({
-        uid: currentUser.uid,
-        event: eventName,
-        props: props,
-        ts: firebase.firestore.FieldValue.serverTimestamp()
-      });
+      const ref = db.collection('events');
+      await Promise.all(batch.map(e => ref.add(e)));
     } catch (e) {
       // Silently fail — don't interrupt user experience
     }
@@ -2921,6 +2933,7 @@
       isFullSession: isFullSession,
       durationSeconds: sessionDuration
     });
+    flushEvents(); // Flush immediately on session end
 
     // Save to cloud + localStorage
     saveToCloud({
