@@ -1376,29 +1376,25 @@
   }
 
   function getNonStressSessions() {
-    const logs = JSON.parse(safeGetItem('cravingLogs', '[]'));
-    return logs.filter(l => l.trigger && l.trigger !== 'stress').length;
+    return cravingLogs.filter(l => l.trigger && l.trigger !== 'stress').length;
   }
 
   function getEarlySessions() {
-    const logs = JSON.parse(safeGetItem('cravingLogs', '[]'));
-    return logs.filter(l => {
+    return cravingLogs.filter(l => {
       const hour = new Date(l.time).getHours();
       return hour < 9;
     }).length;
   }
 
   function getLateSessions() {
-    const logs = JSON.parse(safeGetItem('cravingLogs', '[]'));
-    return logs.filter(l => {
+    return cravingLogs.filter(l => {
       const hour = new Date(l.time).getHours();
       return hour >= 22;
     }).length;
   }
 
   function getWeekendSessions() {
-    const logs = JSON.parse(safeGetItem('cravingLogs', '[]'));
-    return logs.filter(l => {
+    return cravingLogs.filter(l => {
       const day = new Date(l.time).getDay();
       return day === 0 || day === 6;
     }).length;
