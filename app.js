@@ -108,18 +108,7 @@
   // Sign out
   async function signOut() {
     if (_cloudUnsubscribe) { _cloudUnsubscribe(); _cloudUnsubscribe = null; }
-    // Close all overlays before signing out
-    settingsScreen.classList.remove('active');
-    settingsScreen.classList.remove('visible');
-    const menuOverlay = document.getElementById('menu-overlay');
-    if (menuOverlay) menuOverlay.classList.remove('active');
-    const filterOverlay = document.getElementById('overlay');
-    if (filterOverlay) filterOverlay.classList.remove('visible');
-    micModal.classList.remove('visible');
-    endScreen.classList.remove('visible');
-    triggerScreen.classList.remove('visible');
-    slipupWelcome.classList.remove('active');
-    slipupRelapse.classList.remove('active');
+    closeAllScreens();
     // Save any in-progress session before resetting
     if (started && !gameOver && burnProgress > 0) endSessionAndSave();
     // Reset game state
@@ -2974,6 +2963,21 @@
   });
 
   // --- History management for iOS swipe-back ---
+  // Close all screens and overlays
+  function closeAllScreens() {
+    settingsScreen.classList.remove('active', 'visible');
+    triggersScreen.classList.remove('visible');
+    badgesScreen.classList.remove('visible');
+    menuOverlay.classList.remove('active');
+    micModal.classList.remove('visible');
+    endScreen.classList.remove('visible');
+    triggerScreen.classList.remove('visible');
+    slipupWelcome.classList.remove('active');
+    slipupRelapse.classList.remove('active');
+    const filterOverlay = document.getElementById('overlay');
+    if (filterOverlay) filterOverlay.classList.remove('visible');
+  }
+
   function closeActiveScreen() {
     if (settingsScreen.classList.contains('visible')) {
       settingsScreen.classList.remove('visible');
