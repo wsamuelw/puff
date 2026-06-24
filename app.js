@@ -1175,15 +1175,18 @@
     ctx.fillStyle = ashGrad;
     ctx.fill();
 
-    // Dual-light shading — key light top-right, fill light left
-    const cylGrad = ctx.createLinearGradient(x - r, ashTop, x + r, ashTop);
-    cylGrad.addColorStop(0, 'rgba(0,0,0,0.22)');
-    cylGrad.addColorStop(0.3, 'rgba(0,0,0,0.06)');
-    cylGrad.addColorStop(0.55, 'rgba(255,255,255,0.18)');
-    cylGrad.addColorStop(0.65, 'rgba(255,255,255,0.25)');
-    cylGrad.addColorStop(0.75, 'rgba(255,255,255,0.12)');
-    cylGrad.addColorStop(0.9, 'rgba(0,0,0,0.04)');
-    cylGrad.addColorStop(1, 'rgba(0,0,0,0.15)');
+    // Dual-light shading — key light top-right, fill light left (cached — horizontal gradient, coordinates don't matter)
+    const cylGrad = _getCachedGrad('ashCyl', () => {
+      const g = ctx.createLinearGradient(0, 0, 1, 0);
+      g.addColorStop(0, 'rgba(0,0,0,0.22)');
+      g.addColorStop(0.3, 'rgba(0,0,0,0.06)');
+      g.addColorStop(0.55, 'rgba(255,255,255,0.18)');
+      g.addColorStop(0.65, 'rgba(255,255,255,0.25)');
+      g.addColorStop(0.75, 'rgba(255,255,255,0.12)');
+      g.addColorStop(0.9, 'rgba(0,0,0,0.04)');
+      g.addColorStop(1, 'rgba(0,0,0,0.15)');
+      return g;
+    });
     ctx.fillStyle = cylGrad;
     ctx.fill();
 
