@@ -1445,6 +1445,8 @@
   function showNextBadge() {
     if (_badgeShowing || _badgeQueue.length === 0) return;
     _badgeShowing = true;
+    // Remove any existing notification
+    document.querySelectorAll('.badge-notification').forEach(el => el.remove());
     const badge = _badgeQueue.shift();
     const notification = document.createElement('div');
     notification.className = 'badge-notification';
