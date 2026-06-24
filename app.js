@@ -185,6 +185,8 @@
     if (!currentUser || consent !== 'true') return;
 
     console.log('[sync] saveToCloud:', JSON.stringify(data));
+    // Track local save time so we can compare with cloud on restart
+    safeSetItem('lastSaveTimestamp', String(Date.now()));
     try {
       const update = { updated_at: firebase.firestore.FieldValue.serverTimestamp() };
       for (const [key, value] of Object.entries(data)) {
@@ -227,8 +229,14 @@
     cloudData = cleaned;
     console.log('[sync] applyCloudData:', JSON.stringify(cloudData));
 
-    // Don't overwrite in-progress session stats
-    if (!started || gameOver) {
+    // Don't overwrite if local data is newer (e.g. mid-session quit where cloud save didn't complete)
+    const cloudTs = cleaned._updated_at; // Firestore serverTimestamp
+    const localTs = parseInt(safeGetItem('lastSaveTimestamp', '0'));
+    const cloudMs = cloudTs && cloudTs.seconds ? cloudTs.seconds * 1000 : 0;
+    const localIsNewer = localTs > 0 && cloudMs > 0 && localTs > cloudMs;
+
+    // Don't overwrite in-progress session stats or if local is newer
+    if ((!started || gameOver) && !localIsNewer) {
       if (cloudData.quitStreak !== undefined) sessionCount = parseInt(cloudData.quitStreak) || 0;
       if (cloudData.moneySaved !== undefined) totalMoneySaved = parseFloat(cloudData.moneySaved) || 0;
       if (cloudData.cigarettesAvoided !== undefined) totalCigarettesAvoided = parseInt(cloudData.cigarettesAvoided) || 0;
@@ -272,7 +280,12 @@
     try {
       const doc = await db.collection('user_data').doc(currentUser.uid).get();
       const raw = doc.exists ? doc.data() : null;
-      if (raw) { delete raw.updated_at; applyCloudData(raw); }
+      if (raw) {
+        const ts = raw.updated_at; // preserve timestamp before deleting
+        delete raw.updated_at;
+        raw._updated_at = ts; // pass to applyCloudData for comparison
+        applyCloudData(raw);
+      }
     } catch (e) {
       console.warn('[sync] Cloud load failed:', e.message);
     }
@@ -282,7 +295,12 @@
     _cloudUnsubscribe = db.collection('user_data').doc(currentUser.uid)
       .onSnapshot((snap) => {
         const raw = snap.exists ? snap.data() : null;
-        if (raw) { delete raw.updated_at; applyCloudData(raw); }
+        if (raw) {
+          const ts = raw.updated_at;
+          delete raw.updated_at;
+          raw._updated_at = ts;
+          applyCloudData(raw);
+        }
       }, (e) => console.warn('[sync] Cloud listener error:', e.message));
   }
 
