@@ -1807,20 +1807,10 @@
     const now = performance.now();
     if (now - _lastStatsUpdate < 50) return; // throttle to ~20fps
     _lastStatsUpdate = now;
-    if (started && !gameOver && burnProgress > 0) {
+    if ((started && !gameOver && burnProgress > 0) || !started) {
       if (!_lastVisible) { barStats.classList.add('visible'); _lastVisible = true; }
-      const sessionCost = burnProgress * cigPrice;
-      const total = '$' + (totalMoneySaved + sessionCost).toFixed(2);
-      const m = total + ' saved';
-      if (m !== _lastMoney) { statsMoney.textContent = m; _lastMoney = m; }
-      const days = quitStartDate ? Math.floor((Date.now() - quitStartDate) / (24 * 60 * 60 * 1000)) : 0;
-      const s = String(days);
-      if (s !== _lastStreak) { statsStreak.textContent = s; _lastStreak = s; }
-      const seen = formatLastSeen(Date.now() - lastSessionDate);
-      if (seen !== _lastSeen) { statsLastseen.textContent = seen; _lastSeen = seen; }
-    } else if (!started) {
-      if (!_lastVisible) { barStats.classList.add('visible'); _lastVisible = true; }
-      const m = '$' + totalMoneySaved.toFixed(2) + ' saved';
+      const sessionCost = (started && !gameOver) ? burnProgress * cigPrice : 0;
+      const m = '$' + (totalMoneySaved + sessionCost).toFixed(2) + ' saved';
       if (m !== _lastMoney) { statsMoney.textContent = m; _lastMoney = m; }
       const days = quitStartDate ? Math.floor((Date.now() - quitStartDate) / (24 * 60 * 60 * 1000)) : 0;
       const s = String(days);
