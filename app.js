@@ -1412,6 +1412,10 @@
   }
 
   // Check for new badges after session
+  // Badge notification queue
+  const _badgeQueue = [];
+  let _badgeShowing = false;
+
   function checkBadges() {
     const earned = JSON.parse(safeGetItem('earnedBadges', '[]'));
     const newBadges = [];
@@ -1425,13 +1429,17 @@
 
     if (newBadges.length > 0) {
       safeSetItem('earnedBadges', JSON.stringify(earned));
-      // Show notification for first new badge
-      showBadgeNotification(newBadges[0]);
+      // Queue all new badges
+      newBadges.forEach(b => _badgeQueue.push(b));
+      showNextBadge();
     }
   }
 
-  // Show badge notification
-  function showBadgeNotification(badge) {
+  // Show next badge from queue
+  function showNextBadge() {
+    if (_badgeShowing || _badgeQueue.length === 0) return;
+    _badgeShowing = true;
+    const badge = _badgeQueue.shift();
     const notification = document.createElement('div');
     notification.className = 'badge-notification';
     notification.innerHTML = `
@@ -1442,9 +1450,14 @@
           <span class="badge-notification-emoji">${badge.emoji}</span>
           <span class="badge-notification-name">${badge.name}</span>
         </div>
-        <button class="badge-notification-close" onclick="this.parentElement.parentElement.remove()">Nice!</button>
+        <button class="badge-notification-close">Nice!</button>
       </div>
     `;
+    notification.querySelector('.badge-notification-close').addEventListener('click', () => {
+      notification.remove();
+      _badgeShowing = false;
+      showNextBadge(); // Show next in queue
+    });
     document.body.appendChild(notification);
   }
 
