@@ -1880,7 +1880,7 @@
     _lastStatsUpdate = now;
     if ((started && !gameOver && burnProgress > 0) || !started) {
       if (!_lastVisible) { barStats.classList.add('visible'); _lastVisible = true; }
-      const sessionCost = (started && !gameOver) ? burnProgress * cigPrice : 0;
+      const sessionCost = (started && !gameOver) ? (burnProgress / BURN_END) * cigPrice : 0;
       const m = '$' + (totalMoneySaved + sessionCost).toFixed(2) + ' saved';
       if (m !== _lastMoney) { statsMoney.textContent = m; _lastMoney = m; }
       const days = quitStartDate ? Math.floor((Date.now() - quitStartDate) / (24 * 60 * 60 * 1000)) : 0;
@@ -2918,8 +2918,8 @@
     micModal.classList.remove('visible');
     cleanupMic();
 
-    // Calculate money based on how much was smoked
-    sessionMoneySaved = burnProgress * cigPrice;
+    // Calculate money based on how much was smoked (normalized so full cigarette = full price)
+    sessionMoneySaved = (burnProgress / BURN_END) * cigPrice;
     const isFullSession = burnProgress >= BURN_END;
     if (sessionMoneySaved > 0) {
       totalMoneySaved += sessionMoneySaved;
