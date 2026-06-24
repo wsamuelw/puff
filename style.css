@@ -125,7 +125,7 @@ body.light .menu-pill-label {
 }
 
 .menu-pill:hover,
-.menu-pill:focus {
+.menu-pill:focus-visible {
   background: rgba(255,255,255,0.15);
   outline: 2px solid var(--amber);
   outline-offset: 2px;
@@ -142,7 +142,7 @@ body.light .menu-pill {
 }
 
 body.light .menu-pill:hover,
-body.light .menu-pill:focus {
+body.light .menu-pill:focus-visible {
   background: rgba(0,0,0,0.1);
 }
 
@@ -1927,7 +1927,7 @@ body.dark .slipup-btn {
 }
 
 .slipup-btn:hover,
-.slipup-btn:focus {
+.slipup-btn:focus-visible {
   opacity: 0.8;
   outline: 2px solid var(--amber);
   outline-offset: 2px;
@@ -1955,14 +1955,14 @@ body.dark .slipup-secondary {
 }
 
 .slipup-secondary:hover,
-.slipup-secondary:focus {
+.slipup-secondary:focus-visible {
   color: rgba(26,26,26,0.7);
   outline: 2px solid var(--amber);
   outline-offset: 2px;
 }
 
 body.dark .slipup-secondary:hover,
-body.dark .slipup-secondary:focus {
+body.dark .slipup-secondary:focus-visible {
   color: rgba(250,249,247,0.7);
 }
 
