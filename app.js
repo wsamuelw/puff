@@ -2995,7 +2995,6 @@
     if (document.hidden) {
       hiddenAt = Date.now();
       // If mid-session, end it and save (ensures current session stats are captured)
-      // Don't cleanup mic — keep it open for next session
       if (started && !gameOver && burnProgress > 0) {
         gameOver = true;
         sessionMoneySaved = (burnProgress / BURN_END) * cigPrice;
@@ -3011,6 +3010,7 @@
           lastLog.time = Date.now();
         }
         safeSetItem('cravingLogs', JSON.stringify(cravingLogs));
+        cleanupMic();
       }
       // Sync current stats to cloud when leaving (keepalive ensures delivery)
       if (currentUser) {
