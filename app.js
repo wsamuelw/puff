@@ -237,7 +237,11 @@
     const localTs = parseInt(safeGetItem('lastSaveTimestamp', '0'));
     const cloudMs = cloudTs && cloudTs.seconds ? cloudTs.seconds * 1000 : 0;
     const localIsNewer = localTs > 0 && cloudMs > 0 && localTs > cloudMs;
-    if ((started && !gameOver) || localIsNewer) return;
+    console.log('[sync] applyCloudStats — localTs:', localTs, 'cloudMs:', cloudMs, 'localIsNewer:', localIsNewer, 'started:', started, 'gameOver:', gameOver);
+    if ((started && !gameOver) || localIsNewer) {
+      console.log('[sync] applyCloudStats: SKIPPED (local is newer or session in progress)');
+      return;
+    }
 
     if (data.quitStreak !== undefined) sessionCount = parseInt(data.quitStreak) || 0;
     if (data.moneySaved !== undefined) totalMoneySaved = parseFloat(data.moneySaved) || 0;
