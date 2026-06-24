@@ -1722,25 +1722,24 @@
   }
 
   // Build trigger list with time context for end screen
-  function buildEndTriggerList() {
-    const logs = cravingLogs;
-
-    // Count triggers and track time patterns
+  // Shared trigger counting — returns sorted [[trigger, {count, hours?}], ...]
+  function getTriggerCounts(includeHours) {
     const triggerData = {};
-    logs.forEach(log => {
+    cravingLogs.forEach(log => {
       const trigger = log.trigger || 'unknown';
       if (!triggerData[trigger]) {
         triggerData[trigger] = { count: 0, hours: [] };
       }
       triggerData[trigger].count++;
-      if (log.time) {
-        const hour = new Date(log.time).getHours();
-        triggerData[trigger].hours.push(hour);
+      if (includeHours && log.time) {
+        triggerData[trigger].hours.push(new Date(log.time).getHours());
       }
     });
+    return Object.entries(triggerData).sort((a, b) => b[1].count - a[1].count);
+  }
 
-    // Sort by count descending
-    const sorted = Object.entries(triggerData).sort((a, b) => b[1].count - a[1].count).slice(0, 5);
+  function buildEndTriggerList() {
+    const sorted = getTriggerCounts(true).slice(0, 5);
 
     // Get time context from hour array
     function getTimeContext(hours) {
@@ -2598,30 +2597,22 @@
   // Build weekly summary card
   function buildTriggerHeatmap() {
     const triggersBars = document.getElementById('triggers-bars');
-    const logs = cravingLogs;
+    const sorted = getTriggerCounts(false);
 
-    if (!logs.length) {
+    if (!sorted.length) {
       triggersBars.innerHTML = '<div class="triggers-empty">No data yet. Complete a session to see patterns.</div>';
       return;
     }
 
-    // Count triggers
-    const triggerCounts = {};
-    logs.forEach(log => {
-      const trigger = log.trigger || 'Unknown';
-      triggerCounts[trigger] = (triggerCounts[trigger] || 0) + 1;
-    });
-
-    // Sort by count descending
-    const sorted = Object.entries(triggerCounts).sort((a, b) => b[1] - a[1]);
-    const maxCount = sorted[0][1];
+    const maxCount = sorted[0][1].count;
 
     // Bar colors
     const barColors = ['amber', 'blue', 'green', 'pink', 'gray', 'gray'];
 
     // Build bars
     triggersBars.innerHTML = '';
-    sorted.forEach(([trigger, count], i) => {
+    sorted.forEach(([trigger, data], i) => {
+      const count = data.count;
       const pct = (count / maxCount) * 100;
       const icon = TRIGGER_ICONS[trigger] || '📊';
       const label = TRIGGER_LABELS[trigger] || trigger;
