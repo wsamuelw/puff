@@ -1576,6 +1576,9 @@
   function startSessionWithTrigger(triggerId) {
     currentTriggerId = triggerId;
     logEvent('trigger_selected', { trigger: triggerId });
+    // Log trigger immediately so it registers even if user leaves mid-session
+    cravingLogs.push({ time: Date.now(), trigger: triggerId, money: 0 });
+    safeSetItem('cravingLogs', JSON.stringify(cravingLogs));
     triggerScreen.classList.remove('visible');
     gameState = 'smoking';
     startSmokingSession();
@@ -2932,8 +2935,12 @@
       quitStartDate = Date.now();
     }
 
-    // Log trigger to craving logs (even for partial sessions)
-    cravingLogs.push({ time: Date.now(), trigger: currentTriggerId, money: sessionMoneySaved });
+    // Update last craving log with actual money saved (trigger was logged at session start)
+    const lastLog = cravingLogs[cravingLogs.length - 1];
+    if (lastLog && lastLog.trigger === currentTriggerId && lastLog.money === 0) {
+      lastLog.money = sessionMoneySaved;
+      lastLog.time = Date.now();
+    }
     const pruneBefore = Date.now() - PRUNE_WINDOW_MS;
     cravingLogs = cravingLogs.filter(log => log.time > pruneBefore);
     safeSetItem('cravingLogs', JSON.stringify(cravingLogs));
