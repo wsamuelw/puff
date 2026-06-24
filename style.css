@@ -12,7 +12,7 @@
 }
 
 *:focus-visible {
-  outline: 2px solid #d4a574;
+  outline: 2px solid var(--amber);
   outline-offset: 2px;
 }
 
@@ -127,7 +127,7 @@ body.light .menu-pill-label {
 .menu-pill:hover,
 .menu-pill:focus {
   background: rgba(255,255,255,0.15);
-  outline: 2px solid #d4a574;
+  outline: 2px solid var(--amber);
   outline-offset: 2px;
 }
 
@@ -284,7 +284,7 @@ body.light .splash-feature-text {
 .splash-start {
   width: 100%;
   padding: 14px;
-  background: #d4a574;
+  background: var(--amber);
   color: #1a1a1a;
   border: none;
   border-radius: 10px;
@@ -399,7 +399,7 @@ body.light .splash-consent a {
 .tooltip-dismiss {
   width: 100%;
   padding: 12px;
-  background: #d4a574;
+  background: var(--amber);
   color: #1a1a1a;
   border: none;
   border-radius: 10px;
@@ -570,7 +570,7 @@ body.light .menu-card-text p {
 }
 
 .menu-dot.active {
-  background: #d4a574;
+  background: var(--amber);
   width: 18px;
   border-radius: 3px;
 }
@@ -580,7 +580,7 @@ body.light .menu-dot {
 }
 
 body.light .menu-dot.active {
-  background: #d4a574;
+  background: var(--amber);
 }
 
 /* User info */
@@ -762,7 +762,7 @@ body.dark .trigger-bar-track {
   transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.trigger-bar-fill.amber { background: #d4a574; }
+.trigger-bar-fill.amber { background: var(--amber); }
 .trigger-bar-fill.blue { background: rgba(116,165,212,0.7); }
 .trigger-bar-fill.green { background: rgba(165,212,116,0.7); }
 .trigger-bar-fill.pink { background: rgba(212,116,165,0.7); }
@@ -856,7 +856,7 @@ body.light .trigger-btn {
 .trigger-btn.selected {
   background: rgba(212,165,116,0.2);
   border-color: rgba(212,165,116,0.5);
-  color: #d4a574;
+  color: var(--amber);
 }
 
 body.light .trigger-btn.selected {
@@ -951,7 +951,7 @@ body.light .trigger-btn.selected {
 .milestone-stat-num {
   font-family: 'Libre Baskerville', serif;
   font-size: 22px;
-  color: #d4a574;
+  color: var(--amber);
 }
 
 .milestone-stat-label {
@@ -1068,13 +1068,13 @@ body.light .milestone-glow {
 .badge-notification-name {
   font-family: 'Libre Baskerville', serif;
   font-size: 18px;
-  color: #d4a574;
+  color: var(--amber);
 }
 
 .badge-notification-close {
   padding: 14px 32px;
   min-height: 48px;
-  background: #d4a574;
+  background: var(--amber);
   border: none;
   border-radius: 12px;
   color: #1a1a1a;
@@ -1230,7 +1230,7 @@ body.dark .badge-item-icon {
 
 .badge-item-icon.earned {
   background: rgba(212,165,116,0.15);
-  border-color: #d4a574;
+  border-color: var(--amber);
   box-shadow: 0 0 12px rgba(212,165,116,0.2);
 }
 
@@ -1242,7 +1242,7 @@ body.dark .badge-item-icon {
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  background: #d4a574;
+  background: var(--amber);
   color: #1a1a1a;
   font-size: 10px;
   font-weight: 700;
@@ -1262,7 +1262,7 @@ body.dark .badge-item-name {
 }
 
 .badge-item-name.earned {
-  color: #d4a574;
+  color: var(--amber);
 }
 
 .badges-section {
@@ -1416,7 +1416,7 @@ body.light .badge-modal-status {
 }
 
 .badge-modal-status.earned {
-  color: #d4a574;
+  color: var(--amber);
 }
 
 .badge-modal-close {
@@ -1566,7 +1566,7 @@ body.dark .end-sub {
 .end-stat-num {
   font-family: 'Libre Baskerville', serif;
   font-size: 24px;
-  color: #d4a574;
+  color: var(--amber);
 }
 
 .end-stat-lbl {
@@ -1656,7 +1656,7 @@ body.dark .end-trigger-time {
   padding: 14px 16px;
   background: rgba(212,165,116,0.08);
   border-radius: 10px;
-  border-left: 3px solid #d4a574;
+  border-left: 3px solid var(--amber);
 }
 
 body.dark .end-coping {
@@ -1667,7 +1667,7 @@ body.dark .end-coping {
   font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 1px;
-  color: #d4a574;
+  color: var(--amber);
   margin-bottom: 6px;
   font-weight: 600;
 }
@@ -1685,7 +1685,7 @@ body.dark .end-coping-text {
 .end-another {
   width: 100%;
   padding: 14px;
-  background: #d4a574;
+  background: var(--amber);
   border: none;
   border-radius: 8px;
   font-family: 'Outfit', sans-serif;
@@ -1746,7 +1746,7 @@ body.dark .end-cooldown-text {
 .end-cooldown-timer {
   font-family: 'Libre Baskerville', serif;
   font-size: 20px;
-  color: #d4a574;
+  color: var(--amber);
 }
 
 /* ─── Slip-up Handling ─── */
@@ -1968,7 +1968,7 @@ body.dark .slipup-btn {
 .slipup-btn:hover,
 .slipup-btn:focus {
   opacity: 0.8;
-  outline: 2px solid #d4a574;
+  outline: 2px solid var(--amber);
   outline-offset: 2px;
 }
 
@@ -1996,7 +1996,7 @@ body.dark .slipup-secondary {
 .slipup-secondary:hover,
 .slipup-secondary:focus {
   color: rgba(26,26,26,0.7);
-  outline: 2px solid #d4a574;
+  outline: 2px solid var(--amber);
   outline-offset: 2px;
 }
 
@@ -2192,7 +2192,7 @@ body.dark .settings-stack-arrow {
 .settings-stack-value {
   font-family: 'Libre Baskerville', serif;
   font-size: 14px;
-  color: #d4a574;
+  color: var(--amber);
 }
 
 /* Edit modal */
@@ -2260,7 +2260,7 @@ body.dark .settings-edit-input {
 }
 
 .settings-edit-input:focus {
-  border-color: #d4a574;
+  border-color: var(--amber);
   box-shadow: 0 0 0 3px rgba(212,165,116,0.2);
 }
 
@@ -2293,7 +2293,7 @@ body.dark .settings-edit-cancel {
   min-height: 48px;
   border: none;
   border-radius: 12px;
-  background: #d4a574;
+  background: var(--amber);
   color: #1a1a1a;
   font-family: 'Outfit', sans-serif;
   font-size: 14px;
@@ -2344,7 +2344,7 @@ body.dark .settings-toggle {
 }
 
 body.dark .settings-toggle.active {
-  background: #d4a574;
+  background: var(--amber);
 }
 
 .settings-toggle::after {
