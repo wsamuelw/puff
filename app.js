@@ -2027,18 +2027,15 @@
     if (loopRunning) loopFrameId = requestAnimationFrame(loop);
   }
 
+  // UI elements that should block tap/hold handlers
+  const UI_SELECTORS = '.filter-stats, .menu-pill, .splash-screen, .first-session-tooltip, #overlay, .menu-overlay, .slipup-screen, .settings-screen, .triggers-screen, .badges-screen, .end-screen, .trigger-screen, .mic-modal';
+  function isUIElement(target) { return target && target.closest && target.closest(UI_SELECTORS); }
+
   // --- Tap handler ---
   async function handleTap(e) {
     try {
-      // Bail if tapping app bar or menu pill
-      if (e && e.target && e.target.closest && (
-        e.target.closest('.filter-stats') ||
-        e.target.closest('.menu-pill') ||
-        e.target.closest('.splash-screen') ||
-        e.target.closest('.first-session-tooltip') ||
-        e.target.closest('.end-screen') ||
-        e.target.closest('.trigger-screen')
-      )) return;
+      // Bail if tapping UI elements
+      if (isUIElement(e.target)) return;
 
       // Idle state — tap to start session
       if (gameState === 'idle' && !started) {
@@ -2067,19 +2064,7 @@
   // --- Hold detection (anywhere on screen) ---
   function handleHoldStart(e) {
     // Bail if tapping UI elements
-    if (e && e.target && e.target.closest && (
-      e.target.closest('.filter-stats') ||
-      e.target.closest('.menu-pill') ||
-      e.target.closest('.splash-screen') ||
-      e.target.closest('.first-session-tooltip') ||
-      e.target.closest('#overlay') ||
-      e.target.closest('.menu-overlay') ||
-      e.target.closest('.slipup-screen') ||
-      e.target.closest('.settings-screen') ||
-      e.target.closest('.triggers-screen') ||
-      e.target.closest('.end-screen') ||
-      e.target.closest('.trigger-screen')
-    )) return;
+    if (isUIElement(e.target)) return;
 
     // Only start hold when game is running
     if (started && !gameOver && micStarted) {
@@ -2125,17 +2110,7 @@
   document.body.addEventListener('touchstart', (e) => {
     // Only prevent default on canvas when game is running (for hold mechanic)
     // Don't prevent default when game hasn't started (mic needs user gesture)
-    const isUI = e.target.closest && (
-      e.target.closest('.filter-stats') ||
-      e.target.closest('.menu-pill') ||
-      e.target.closest('.splash-screen') ||
-      e.target.closest('.first-session-tooltip') ||
-      e.target.closest('.menu-overlay') ||
-      e.target.closest('.slipup-screen') ||
-      e.target.closest('.settings-screen') ||
-      e.target.closest('.end-screen') ||
-      e.target.closest('.trigger-screen')
-    );
+    const isUI = isUIElement(e.target);
     handleHoldStart(e);
     handleTap(e);
     touchHandled = true;
