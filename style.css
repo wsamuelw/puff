@@ -611,7 +611,8 @@ body.light .menu-greeting-sub {
 
 /* ─── Onboarding Screen ─── */
 /* ─── Trigger Analytics Screen ─── */
-.triggers-screen {
+/* ─── Shared screen classes ─── */
+.full-screen {
   position: fixed;
   inset: 0;
   background: #ddd5c8;
@@ -625,17 +626,17 @@ body.light .menu-greeting-sub {
   overscroll-behavior: none;
 }
 
-body.dark .triggers-screen {
+body.dark .full-screen {
   background: #1a1a1a;
 }
 
-.triggers-screen.visible {
+.full-screen.visible {
   opacity: 1;
   transform: translateY(0);
   pointer-events: auto;
 }
 
-.triggers-back {
+.screen-back {
   position: sticky;
   top: 0;
   left: 0;
@@ -659,22 +660,35 @@ body.dark .triggers-screen {
   -webkit-tap-highlight-color: transparent;
 }
 
-body.dark .triggers-back {
+body.dark .screen-back {
   background: rgba(26,26,26,0.92);
   border-color: rgba(250,249,247,0.06);
   color: rgba(250,249,247,0.5);
 }
 
-.triggers-content {
+.screen-content {
   padding: 32px 24px 40px;
   max-width: 400px;
   margin: 0 auto;
 }
 
 @supports (padding-bottom: env(safe-area-inset-bottom)) {
-  .triggers-content {
+  .screen-content {
     padding-bottom: calc(40px + env(safe-area-inset-bottom));
   }
+}
+
+/* ─── Triggers screen ─── */
+.triggers-screen {
+}
+
+.triggers-screen.visible {
+}
+
+.triggers-back {
+}
+
+.triggers-content {
 }
 
 .triggers-title {
@@ -1107,70 +1121,17 @@ body.light .badge-notification-name {
 }
 
 /* ─── Badges Screen ─── */
+/* ─── Badges screen ─── */
 .badges-screen {
-  position: fixed;
-  inset: 0;
-  background: #ddd5c8;
-  z-index: 200;
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.4s ease, transform 0.4s ease;
-  pointer-events: none;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  overscroll-behavior: none;
-}
-
-body.dark .badges-screen {
-  background: #1a1a1a;
 }
 
 .badges-screen.visible {
-  opacity: 1;
-  transform: translateY(0);
-  pointer-events: auto;
 }
 
 .badges-back {
-  position: sticky;
-  top: 0;
-  left: 0;
-  width: 100%;
-  padding: 16px 20px;
-  padding-top: calc(16px + env(safe-area-inset-top, 0px));
-  min-height: 48px;
-  display: flex;
-  align-items: center;
-  background: rgba(250,249,247,0.92);
-  border: none;
-  border-bottom: 1px solid rgba(0,0,0,0.06);
-  color: rgba(26,26,26,0.35);
-  font-family: 'Outfit', sans-serif;
-  font-size: 12px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  cursor: pointer;
-  z-index: 10;
-  text-align: left;
-  -webkit-tap-highlight-color: transparent;
-}
-
-body.dark .badges-back {
-  background: rgba(26,26,26,0.92);
-  border-color: rgba(250,249,247,0.06);
-  color: rgba(250,249,247,0.3);
 }
 
 .badges-content {
-  padding: 32px 24px 40px;
-  max-width: 400px;
-  margin: 0 auto;
-}
-
-@supports (padding-bottom: env(safe-area-inset-bottom)) {
-  .badges-content {
-    padding-bottom: calc(40px + env(safe-area-inset-bottom));
-  }
 }
 
 .badges-title {
@@ -2006,70 +1967,17 @@ body.dark .slipup-secondary:focus {
 }
 
 /* Settings Screen */
+/* ─── Settings screen ─── */
 .settings-screen {
-  position: fixed;
-  inset: 0;
-  background: #ddd5c8;
-  z-index: 200;
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.4s ease, transform 0.4s ease;
-  pointer-events: none;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  overscroll-behavior: none;
-}
-
-body.dark .settings-screen {
-  background: #1a1a1a;
 }
 
 .settings-screen.visible {
-  opacity: 1;
-  transform: translateY(0);
-  pointer-events: auto;
 }
 
 .settings-back {
-  position: sticky;
-  top: 0;
-  left: 0;
-  width: 100%;
-  padding: 16px 20px;
-  padding-top: calc(16px + env(safe-area-inset-top, 0px));
-  min-height: 48px;
-  display: flex;
-  align-items: center;
-  background: rgba(250,249,247,0.92);
-  border: none;
-  border-bottom: 1px solid rgba(0,0,0,0.06);
-  color: rgba(26,26,26,0.35);
-  font-family: 'Outfit', sans-serif;
-  font-size: 12px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  cursor: pointer;
-  z-index: 10;
-  text-align: left;
-  -webkit-tap-highlight-color: transparent;
-}
-
-body.dark .settings-back {
-  background: rgba(26,26,26,0.92);
-  border-color: rgba(250,249,247,0.06);
-  color: rgba(250,249,247,0.5);
 }
 
 .settings-content {
-  padding: 32px 24px 40px;
-  max-width: 400px;
-  margin: 0 auto;
-}
-
-@supports (padding-bottom: env(safe-area-inset-bottom)) {
-  .settings-content {
-    padding-bottom: calc(40px + env(safe-area-inset-bottom));
-  }
 }
 
 .settings-title {

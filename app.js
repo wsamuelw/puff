@@ -2968,9 +2968,8 @@
   // --- History management for iOS swipe-back ---
   // Close all screens and overlays
   function closeAllScreens() {
-    settingsScreen.classList.remove('active', 'visible');
-    triggersScreen.classList.remove('visible');
-    badgesScreen.classList.remove('visible');
+    document.querySelectorAll('.full-screen.visible').forEach(el => el.classList.remove('visible'));
+    settingsScreen.classList.remove('active');
     menuOverlay.classList.remove('active');
     micModal.classList.remove('visible');
     endScreen.classList.remove('visible');
