@@ -2208,13 +2208,13 @@ body.light .confirm-desc {
   color: rgba(26,26,26,0.5);
 }
 
-.confirm-danger {
-  background: #e74c3c !important;
-  color: #fff !important;
+.settings-edit-save.confirm-danger {
+  background: #e74c3c;
+  color: #fff;
 }
 
-.confirm-danger:hover {
-  background: #c0392b !important;
+.settings-edit-save.confirm-danger:hover {
+  background: #c0392b;
 }
 
 /* Toggle switch */
