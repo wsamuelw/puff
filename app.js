@@ -2995,8 +2995,22 @@
     if (document.hidden) {
       hiddenAt = Date.now();
       // If mid-session, end it and save (ensures current session stats are captured)
+      // Don't cleanup mic — keep it open for next session
       if (started && !gameOver && burnProgress > 0) {
-        endSessionAndSave();
+        gameOver = true;
+        sessionMoneySaved = (burnProgress / BURN_END) * cigPrice;
+        if (sessionMoneySaved > 0) {
+          totalMoneySaved += sessionMoneySaved;
+          sessionCount++;
+        }
+        if (!quitStartDate) quitStartDate = Date.now();
+        // Update craving log with money
+        const lastLog = cravingLogs[cravingLogs.length - 1];
+        if (lastLog && lastLog.trigger === currentTriggerId && lastLog.money === 0) {
+          lastLog.money = sessionMoneySaved;
+          lastLog.time = Date.now();
+        }
+        safeSetItem('cravingLogs', JSON.stringify(cravingLogs));
       }
       // Sync current stats to cloud when leaving (keepalive ensures delivery)
       if (currentUser) {
