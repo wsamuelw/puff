@@ -219,6 +219,54 @@
   // Apply cloud data to local state (used by both initial load and real-time listener)
   let _cloudUnsubscribe = null;
 
+  // Apply session stats from cloud (skipped if local is newer or session in progress)
+  function applyCloudStats(data) {
+    const cloudTs = data._updated_at;
+    const localTs = parseInt(safeGetItem('lastSaveTimestamp', '0'));
+    const cloudMs = cloudTs && cloudTs.seconds ? cloudTs.seconds * 1000 : 0;
+    const localIsNewer = localTs > 0 && cloudMs > 0 && localTs > cloudMs;
+    if ((started && !gameOver) || localIsNewer) return;
+
+    if (data.quitStreak !== undefined) sessionCount = parseInt(data.quitStreak) || 0;
+    if (data.moneySaved !== undefined) totalMoneySaved = parseFloat(data.moneySaved) || 0;
+    if (data.cigarettesAvoided !== undefined) totalCigarettesAvoided = parseInt(data.cigarettesAvoided) || 0;
+    if (data.quitStartDate !== undefined) quitStartDate = parseInt(data.quitStartDate) || 0;
+    if (data.lastSessionDate !== undefined) lastSessionDate = parseInt(data.lastSessionDate) || 0;
+    if (data.dailyStreak !== undefined) dailyStreak = parseInt(data.dailyStreak) || 0;
+    if (data.lastStreakDate !== undefined) lastStreakDate = data.lastStreakDate || '';
+    if (data.cravingLogs) {
+      cravingLogs = data.cravingLogs;
+      safeSetItem('cravingLogs', JSON.stringify(cravingLogs));
+    }
+    safeSetItem('moneySaved', String(totalMoneySaved));
+    safeSetItem('quitStreak', String(sessionCount));
+    safeSetItem('cigarettesAvoided', String(totalCigarettesAvoided));
+    safeSetItem('quitStartDate', String(quitStartDate));
+    safeSetItem('lastSessionDate', String(lastSessionDate));
+    safeSetItem('dailyStreak', String(dailyStreak));
+    safeSetItem('lastStreakDate', lastStreakDate);
+  }
+
+  // Apply settings from cloud (always applied)
+  function applyCloudSettings(data) {
+    if (data.cigPrice !== undefined) cigPrice = Math.max(0.01, parseFloat(data.cigPrice) || 1.00);
+    if (data.darkMode !== undefined) {
+      isDark = data.darkMode === true || data.darkMode === 'true';
+      applyTheme();
+    }
+    safeSetItem('userName', data.userName || '');
+    safeSetItem('cigPrice', String(cigPrice));
+    safeSetItem('darkMode', String(isDark));
+  }
+
+  // Merge badges from cloud (union of local + cloud)
+  function applyCloudBadges(data) {
+    if (!data.earnedBadges) return;
+    const local = JSON.parse(safeGetItem('earnedBadges', '[]'));
+    const merged = [...new Set([...local, ...data.earnedBadges])];
+    safeSetItem('earnedBadges', JSON.stringify(merged));
+  }
+
   function applyCloudData(cloudData) {
     if (!cloudData) return;
     // Strip 'data.' prefix from legacy Firestore keys (e.g. "data.quitStreak" → "quitStreak")
@@ -229,44 +277,10 @@
     cloudData = cleaned;
     console.log('[sync] applyCloudData:', JSON.stringify(cloudData));
 
-    // Don't overwrite if local data is newer (e.g. mid-session quit where cloud save didn't complete)
-    const cloudTs = cleaned._updated_at; // Firestore serverTimestamp
-    const localTs = parseInt(safeGetItem('lastSaveTimestamp', '0'));
-    const cloudMs = cloudTs && cloudTs.seconds ? cloudTs.seconds * 1000 : 0;
-    const localIsNewer = localTs > 0 && cloudMs > 0 && localTs > cloudMs;
-
-    // Don't overwrite in-progress session stats or if local is newer
-    if ((!started || gameOver) && !localIsNewer) {
-      if (cloudData.quitStreak !== undefined) sessionCount = parseInt(cloudData.quitStreak) || 0;
-      if (cloudData.moneySaved !== undefined) totalMoneySaved = parseFloat(cloudData.moneySaved) || 0;
-      if (cloudData.cigarettesAvoided !== undefined) totalCigarettesAvoided = parseInt(cloudData.cigarettesAvoided) || 0;
-      if (cloudData.quitStartDate !== undefined) quitStartDate = parseInt(cloudData.quitStartDate) || 0;
-      if (cloudData.lastSessionDate !== undefined) lastSessionDate = parseInt(cloudData.lastSessionDate) || 0;
-      if (cloudData.dailyStreak !== undefined) dailyStreak = parseInt(cloudData.dailyStreak) || 0;
-      if (cloudData.lastStreakDate !== undefined) lastStreakDate = cloudData.lastStreakDate || '';
-      if (cloudData.cravingLogs) {
-        cravingLogs = cloudData.cravingLogs;
-        safeSetItem('cravingLogs', JSON.stringify(cravingLogs));
-      }
-      // Persist synced values to localStorage
-      safeSetItem('moneySaved', String(totalMoneySaved));
-      safeSetItem('quitStreak', String(sessionCount));
-      safeSetItem('cigarettesAvoided', String(totalCigarettesAvoided));
-      safeSetItem('quitStartDate', String(quitStartDate));
-      safeSetItem('lastSessionDate', String(lastSessionDate));
-      safeSetItem('dailyStreak', String(dailyStreak));
-      safeSetItem('lastStreakDate', lastStreakDate);
-    }
-
-    if (cloudData.cigPrice !== undefined) cigPrice = Math.max(0.01, parseFloat(cloudData.cigPrice) || 1.00);
-    if (cloudData.earnedBadges) {
-      const local = JSON.parse(safeGetItem('earnedBadges', '[]'));
-      const merged = [...new Set([...local, ...cloudData.earnedBadges])];
-      safeSetItem('earnedBadges', JSON.stringify(merged));
-    }
-    if (cloudData.darkMode !== undefined) {
-      isDark = cloudData.darkMode === true || cloudData.darkMode === 'true';
-      applyTheme();
+    applyCloudStats(cloudData);
+    applyCloudSettings(cloudData);
+    applyCloudBadges(cloudData);
+    updateStatsDisplay();
     }
     safeSetItem('userName', cloudData.userName || '');
     safeSetItem('cigPrice', String(cigPrice));
