@@ -1559,20 +1559,21 @@
     if (ashDropTimeout) { clearTimeout(ashDropTimeout); ashDropTimeout = null; }
     loopRunning = true;
 
-    // Check if mic needs to be restarted
-    if (!micStarted) {
-      const ok = await startMic();
-      if (ok) {
-        started = true;
-        gameStartTime = performance.now();
-        loopFrameId = requestAnimationFrame(loop);
-      }
-      // If mic denied, modal is shown — don't start loop
-    } else {
-      // Mic already started, just restart the game
+    // Start the game loop
+    function beginGameLoop() {
       started = true;
       gameStartTime = performance.now();
       loopFrameId = requestAnimationFrame(loop);
+    }
+
+    // Check if mic needs to be restarted
+    if (!micStarted) {
+      const ok = await startMic();
+      if (ok) beginGameLoop();
+      // If mic denied, modal is shown — don't start loop
+    } else {
+      // Mic already started, just restart the game
+      beginGameLoop();
     }
     sessionStarting = false;
   }
