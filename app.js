@@ -383,7 +383,6 @@
   let gameStartTime = 0;
   // Money saved tracking (loaded from settings, default $1)
   let cigPrice = Math.max(0.01, parseFloat(safeGetItem('cigPrice', '1.00')));
-  const CIG_PRICE = () => cigPrice; // getter for backward compat
   let totalMoneySaved = parseFloat(safeGetItem('moneySaved', '0'));
   let sessionMoneySaved = 0;
   let totalCigarettesAvoided = parseInt(safeGetItem('cigarettesAvoided', '0'));
@@ -1815,7 +1814,7 @@
     _lastStatsUpdate = now;
     if (started && !gameOver && burnProgress > 0) {
       if (!_lastVisible) { barStats.classList.add('visible'); _lastVisible = true; }
-      const sessionCost = burnProgress * CIG_PRICE();
+      const sessionCost = burnProgress * cigPrice;
       const total = '$' + (totalMoneySaved + sessionCost).toFixed(2);
       const m = total + ' saved';
       if (m !== _lastMoney) { statsMoney.textContent = m; _lastMoney = m; }
@@ -2891,7 +2890,7 @@
     cleanupMic();
 
     // Calculate money based on how much was smoked
-    sessionMoneySaved = burnProgress * CIG_PRICE();
+    sessionMoneySaved = burnProgress * cigPrice;
     const isFullSession = burnProgress >= BURN_END;
     if (sessionMoneySaved > 0) {
       totalMoneySaved += sessionMoneySaved;
