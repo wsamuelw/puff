@@ -1966,9 +1966,7 @@
         }
 
         if (burnProgress >= BURN_END) {
-          endSessionAndSave();
-          playEndChime();
-          showEndScreen();
+          finishSession();
         }
       }
 
@@ -2857,6 +2855,13 @@
   // Update tap handler to bail on menu button
   // (Already handled in the existing bail check)
 
+  // Finish session — called when cigarette burns to end
+  function finishSession() {
+    endSessionAndSave();
+    playEndChime();
+    showEndScreen();
+  }
+
   // Save partial progress when app goes to background or unloads
   // End session and save money (handles both full and partial)
   function endSessionAndSave() {
@@ -2954,9 +2959,7 @@
 
           // Check if cigarette finished while away
           if (burnProgress >= BURN_END) {
-            endSessionAndSave();
-            playEndChime();
-            showEndScreen();
+            finishSession();
             return;
           }
         }
