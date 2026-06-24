@@ -10,7 +10,7 @@ Built as a Progressive Web App (PWA) that runs entirely in the browser. Add it t
 
 ### Core Experience
 - **Hold + Blow mechanic** — hold anywhere on screen and blow into the mic to smoke
-- **Touch-only mode** — works without microphone (hold to burn at steady rate)
+- **Microphone required** — the app needs mic access to detect when you blow
 - **Double-tap to flick ash** — shake off built-up ash with a double tap
 - **White noise smoking sound** — ambient audio feedback while smoking
 - **Background burn** — cigarette continues burning when you switch tabs
@@ -28,13 +28,12 @@ Built as a Progressive Web App (PWA) that runs entirely in the browser. Add it t
 
 ### Motivation
 - **24 achievement badges** — earn badges for streaks, milestones, and healthy choices
-- **Milestone cards** — shareable cards for key quit milestones (1 day, 1 week, 1 month, etc.)
+- **Streak milestones** — celebrate 3 days, 1 week, 2 weeks, 1 month, 3 months, 6 months, and 1 year of consecutive daily use
 - **Health timeline** — track your body's recovery milestones
-- **Progress reminders** — nudge notifications when you haven't logged in
 
 ### Account & Sync
 - **Google sign-in** — authenticate with your Google account
-- **Cross-device sync** — data syncs across all your devices via Firebase
+- **Cross-device sync** — data syncs across all your devices via Firebase in real-time
 - **GDPR consent** — explicit opt-in for cloud sync and analytics
 - **Offline support** — full functionality without internet, syncs when reconnected
 
@@ -60,8 +59,9 @@ The cigarette renders on a Canvas 2D element with:
 
 1. Open the app in Safari or Chrome on your phone
 2. Tap "Continue with Google" to sign in
-3. Select your trigger and hold the screen to smoke
-4. Blow into the mic to burn faster (or just hold)
+3. Allow microphone access when prompted
+4. Select your trigger and hold the screen to smoke
+5. Blow into the mic to burn faster
 
 ### Run locally
 
@@ -99,9 +99,8 @@ Open `http://localhost:8000` in your browser.
 ├── style.css           # All styling
 ├── sw.js               # Service worker for offline support
 ├── manifest.json       # PWA manifest
-├── screenshots/        # App screenshots
 ├── privacy.html        # Privacy policy
-└── terms.html          # Terms of service
+└── icons/              # PWA icons (192px, 512px)
 ```
 
 ## Browser support
@@ -112,7 +111,6 @@ Open `http://localhost:8000` in your browser.
 | Mic blow detection | ✅ | ✅ | ✅ |
 | PWA install | ✅ | ✅ | ✅ |
 | Google sign-in | ✅ | ✅ | ✅ |
-| Push notifications | ❌ | ✅ | ✅ |
 
 ## License
 
