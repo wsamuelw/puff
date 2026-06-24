@@ -2130,7 +2130,6 @@
   document.body.addEventListener('touchstart', (e) => {
     // Only prevent default on canvas when game is running (for hold mechanic)
     // Don't prevent default when game hasn't started (mic needs user gesture)
-    const isUI = isUIElement(e.target);
     handleHoldStart(e);
     handleTap(e);
     touchHandled = true;
@@ -2998,8 +2997,6 @@
     triggerScreen.classList.remove('visible');
     slipupWelcome.classList.remove('active');
     slipupRelapse.classList.remove('active');
-    const filterOverlay = document.getElementById('overlay');
-    if (filterOverlay) filterOverlay.classList.remove('visible');
   }
 
   function closeActiveScreen() {
