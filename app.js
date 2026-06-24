@@ -2985,6 +2985,10 @@
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) {
       hiddenAt = Date.now();
+      // If mid-session, end it and save (ensures current session stats are captured)
+      if (started && !gameOver && burnProgress > 0) {
+        endSessionAndSave();
+      }
       // Sync current stats to cloud when leaving (keepalive ensures delivery)
       if (currentUser) {
         const logs = JSON.parse(safeGetItem('cravingLogs', '[]'));
