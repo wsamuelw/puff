@@ -1382,9 +1382,8 @@
 
   // Badge helper functions
   function getDaysSinceLastSession() {
-    const lastSession = parseInt(safeGetItem('lastSessionDate', '0'));
-    if (!lastSession) return 0;
-    return Math.floor((Date.now() - lastSession) / (24 * 60 * 60 * 1000));
+    if (!lastSessionDate) return 0;
+    return Math.floor((Date.now() - lastSessionDate) / (24 * 60 * 60 * 1000));
   }
 
   function getNonStressSessions() {
