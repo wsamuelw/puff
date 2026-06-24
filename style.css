@@ -166,7 +166,7 @@ body.light .menu-pill:focus-visible {
 
 .fs-streak {
   font-family: inherit;
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 400;
   color: rgba(255,255,255,0.5);
   letter-spacing: -0.5px;
