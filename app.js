@@ -293,11 +293,6 @@
     applyCloudSettings(cloudData);
     applyCloudBadges(cloudData);
     updateStatsDisplay();
-    }
-    safeSetItem('userName', cloudData.userName || '');
-    safeSetItem('cigPrice', String(cigPrice));
-    safeSetItem('darkMode', String(isDark));
-    updateStatsDisplay();
   }
 
   async function loadFromCloud() {
