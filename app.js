@@ -2176,6 +2176,7 @@
     const _dm = document.getElementById('settings-dark-mode');
     if (_dm) {
       _dm.classList.toggle('active', isDark);
+      _dm.setAttribute('aria-pressed', String(isDark));
     }
     // Update theme-color meta tag for browser chrome
     const meta = document.querySelector('meta[name="theme-color"]');
@@ -2755,6 +2756,7 @@
     e.stopPropagation();
     isDark = !isDark;
     applyTheme();
+    settingsDarkMode.setAttribute('aria-pressed', String(isDark));
     saveToCloud({ darkMode: isDark });
     logEvent('dark_mode_toggled', { enabled: isDark });
   });
