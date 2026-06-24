@@ -119,11 +119,6 @@ body.light .menu-pill-label {
   color: rgba(26,26,26,0.4);
 }
 
-.menu-pill {
-  opacity: 1;
-  pointer-events: auto;
-}
-
 .menu-pill:hover,
 .menu-pill:focus-visible {
   background: rgba(255,255,255,0.15);
@@ -321,10 +316,6 @@ body.light .splash-feature-text {
 .splash-google-btn:disabled {
   opacity: 0.7;
   cursor: not-allowed;
-}
-body.light .splash-google-btn {
-  background: #fff;
-  color: #1a1a1a;
 }
 .splash-consent {
   margin-top: 16px;
@@ -577,10 +568,6 @@ body.light .menu-card-text p {
 
 body.light .menu-dot {
   background: rgba(0,0,0,0.15);
-}
-
-body.light .menu-dot.active {
-  background: var(--amber);
 }
 
 /* User info */
