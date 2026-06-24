@@ -2828,6 +2828,15 @@
       'darkMode', 'consentGiven', 'tooltipShown', 'lastAppOpen',
       'dailyStreak', 'lastStreakDate', 'milestonesShown'];
     appKeys.forEach(key => localStorage.removeItem(key));
+    // Clear in-memory state
+    cravingLogs = [];
+    sessionCount = 0;
+    totalMoneySaved = 0;
+    totalCigarettesAvoided = 0;
+    quitStartDate = 0;
+    lastSessionDate = 0;
+    dailyStreak = 0;
+    lastStreakDate = '';
     location.reload();
   });
 
