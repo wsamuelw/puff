@@ -1645,12 +1645,6 @@
     if (endScreenShown) return; // Prevent duplicate calls
     endScreenShown = true;
 
-    // Save trigger to logs with money saved, prune entries older than 90 days
-    cravingLogs.push({ time: Date.now(), trigger: currentTriggerId, money: sessionMoneySaved });
-    const pruneBefore = Date.now() - PRUNE_WINDOW_MS;
-    cravingLogs = cravingLogs.filter(log => log.time > pruneBefore);
-    safeSetItem('cravingLogs', JSON.stringify(cravingLogs));
-
     // Sync craving logs to cloud
     saveToCloud({
       cravingLogs: cravingLogs,
@@ -2918,6 +2912,12 @@
     if (!quitStartDate) {
       quitStartDate = Date.now();
     }
+
+    // Log trigger to craving logs (even for partial sessions)
+    cravingLogs.push({ time: Date.now(), trigger: currentTriggerId, money: sessionMoneySaved });
+    const pruneBefore = Date.now() - PRUNE_WINDOW_MS;
+    cravingLogs = cravingLogs.filter(log => log.time > pruneBefore);
+    safeSetItem('cravingLogs', JSON.stringify(cravingLogs));
 
     // Log session event with duration
     const sessionDuration = gameStartTime ? Math.round((performance.now() - gameStartTime) / 1000) : 0;
