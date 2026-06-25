@@ -2122,6 +2122,7 @@
   function handleHoldStart(e) {
     // Bail if tapping UI elements
     if (isUIElement(e.target)) return;
+    console.log('[hold] started:', started, 'gameOver:', gameOver, 'micStarted:', micStarted);
 
     // Only start hold when game is running
     if (started && !gameOver && micStarted) {
