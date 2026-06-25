@@ -2322,14 +2322,15 @@
     }
   }
 
-  // Close slip-up screens
-  slipupContinue.addEventListener('click', (e) => {
+  // Close slip-up screens — also enables mic (user gesture for iOS Safari)
+  slipupContinue.addEventListener('click', async (e) => {
     e.stopPropagation();
     logEvent('slipup_action', { action: 'continue_streak', type: 'welcome' });
     slipupWelcome.classList.remove('active');
+    await startMic(); // User gesture — iOS Safari allows getUserMedia
     showIdleScreen();
   });
-  slipupStartFresh.addEventListener('click', (e) => {
+  slipupStartFresh.addEventListener('click', async (e) => {
     e.stopPropagation();
     logEvent('slipup_action', { action: 'start_fresh', type: 'welcome' });
     // Reset streak but keep money and cigarettes
@@ -2337,12 +2338,14 @@
     quitStartDate = Date.now();
     saveToCloud({ quitStreak: 0, quitStartDate: quitStartDate });
     slipupWelcome.classList.remove('active');
+    await startMic(); // User gesture — iOS Safari allows getUserMedia
     showIdleScreen();
   });
-  slipupStartAgain.addEventListener('click', (e) => {
+  slipupStartAgain.addEventListener('click', async (e) => {
     e.stopPropagation();
     logEvent('slipup_action', { action: 'start_again', type: 'relapse' });
     slipupRelapse.classList.remove('active');
+    await startMic(); // User gesture — iOS Safari allows getUserMedia
     showIdleScreen();
   });
   slipupReset.addEventListener('click', (e) => {
