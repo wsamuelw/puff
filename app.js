@@ -808,7 +808,12 @@
       crackleGain._popTimer();
       crackleGain._popTimer = null;
     }
-    // Only stop the mic stream, keep audio context open for reuse
+    // Stop silent loop
+    if (_silentSource) {
+      try { _silentSource.stop(); } catch (e) {}
+      _silentSource = null;
+    }
+    // Stop mic stream
     if (micStream) {
       micStream.getTracks().forEach(t => t.stop());
       micStream = null;
@@ -971,11 +976,6 @@
   // --- Blow detection (only when holding) ---
   function detectBlow() {
     if (!analyser || !holding) return 0; // mic only listens when holding
-    // Resume AudioContext if suspended (iOS Safari background)
-    if (audioCtx && audioCtx.state === 'suspended') {
-      audioCtx.resume();
-      return 0; // Skip this frame — resume is async, data will be available next frame
-    }
     analyser.getByteFrequencyData(dataArray);
     // Weight low-frequency bins (blow energy is 100-500Hz)
     const lowBins = Math.min(20, dataArray.length);
@@ -2148,10 +2148,6 @@
   function handleHoldStart(e) {
     // Bail if tapping UI elements
     if (isUIElement(e.target)) return;
-    // Resume AudioContext on user gesture (iOS Safari suspends it in background)
-    if (audioCtx && audioCtx.state === 'suspended') {
-      audioCtx.resume();
-    }
 
     // Only start hold when game is running
     if (started && !gameOver && micStarted) {
@@ -3061,49 +3057,13 @@
       loopRunning = false;
       if (loopFrameId) cancelAnimationFrame(loopFrameId);
 
-      // Cigarette keeps burning in background — catch up on return
     } else {
-
-      // Resume AudioContext if suspended (iOS backgrounding)
-      if (audioCtx && audioCtx.state === 'suspended') {
-        audioCtx.resume();
-      }
-
-      // Re-fetch from cloud on return to pick up changes from other devices
+      // Return from background — iOS Safari kills mic, so always show welcome screen
+      // User taps "Continue your streak" (user gesture) to restart mic for new session
       if (currentUser) loadFromCloud();
-
-      // Check if mic is still alive (iOS Safari kills it in background)
-      const micAlive = micStream && micStream.getTracks().some(t => t.readyState === 'live');
-
-      // If mic died or session ended, show welcome screen — user taps button (user gesture) to restart mic
-      if (gameOver || !started || !micAlive) {
-        if (started && !gameOver && !micAlive) {
-          // Mic died mid-session — end session and save
-          endSessionAndSave();
-        }
-        micStarted = false;
-        gameState = 'idle';
-        checkSlipUp(); // Show welcome screen with "Continue your streak" button
-      } else if (!gameOver && started && micAlive) {
-        // Session active and mic alive — resume
-        if (hiddenAt > 0) {
-          const elapsed = (Date.now() - hiddenAt) / 1000; // seconds
-          burnProgress = Math.min(BURN_END, burnProgress + BASE_BURN_RATE * elapsed);
-          hiddenAt = 0;
-
-          // Check if cigarette finished while away
-          if (burnProgress >= BURN_END) {
-            finishSession();
-            return;
-          }
-        }
-        loopRunning = true;
-        lastFrameTime = 0;
-        loopFrameId = requestAnimationFrame(loop);
-      } else if (gameOver && started) {
-        // Cigarette finished while hidden, show end screen
-        showEndScreen();
-      }
+      micStarted = false;
+      gameState = 'idle';
+      checkSlipUp();
     }
   });
 
