@@ -699,7 +699,9 @@
       // Create new audio context or resume existing one
       if (!audioCtx || audioCtx.state === 'closed') {
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      } else if (audioCtx.state === 'suspended') {
+      }
+      // Resume if not running (handles 'suspended' AND 'interrupted' on iOS Safari)
+      if (audioCtx.state !== 'running') {
         await audioCtx.resume();
       }
 
