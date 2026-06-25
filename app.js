@@ -3062,15 +3062,20 @@
       // Re-fetch from cloud on return to pick up changes from other devices
       if (currentUser) loadFromCloud();
 
-      // If session ended while away (mic cleaned up), show trigger screen for new session
-      // Safari iOS requires user gesture for getUserMedia — tapping trigger provides it
-      if (gameOver || !started) {
+      // Check if mic is still alive (iOS Safari kills it in background)
+      const micAlive = micStream && micStream.getTracks().some(t => t.readyState === 'live');
+
+      // If mic died or session ended, show idle screen — user taps trigger (user gesture) to restart mic
+      if (gameOver || !started || !micAlive) {
+        if (started && !gameOver && !micAlive) {
+          // Mic died mid-session — end session and save
+          endSessionAndSave();
+        }
+        micStarted = false;
         gameState = 'idle';
         showIdleScreen();
-      }
-
-      if (!gameOver && started) {
-        // Calculate elapsed time while hidden and advance burn progress
+      } else if (!gameOver && started && micAlive) {
+        // Session active and mic alive — resume
         if (hiddenAt > 0) {
           const elapsed = (Date.now() - hiddenAt) / 1000; // seconds
           burnProgress = Math.min(BURN_END, burnProgress + BASE_BURN_RATE * elapsed);
