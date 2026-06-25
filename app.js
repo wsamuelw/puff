@@ -3018,6 +3018,7 @@
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) {
       hiddenAt = Date.now();
+      slipUpShown = false; // Allow welcome screen to show again on return
       // If mid-session, end it and save (ensures current session stats are captured)
       if (started && !gameOver && burnProgress > 0) {
         gameOver = true;
