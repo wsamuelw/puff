@@ -3065,7 +3065,7 @@
       // Check if mic is still alive (iOS Safari kills it in background)
       const micAlive = micStream && micStream.getTracks().some(t => t.readyState === 'live');
 
-      // If mic died or session ended, show idle screen — user taps trigger (user gesture) to restart mic
+      // If mic died or session ended, show welcome screen — user taps button (user gesture) to restart mic
       if (gameOver || !started || !micAlive) {
         if (started && !gameOver && !micAlive) {
           // Mic died mid-session — end session and save
@@ -3073,7 +3073,7 @@
         }
         micStarted = false;
         gameState = 'idle';
-        showIdleScreen();
+        checkSlipUp(); // Show welcome screen with "Continue your streak" button
       } else if (!gameOver && started && micAlive) {
         // Session active and mic alive — resume
         if (hiddenAt > 0) {
