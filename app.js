@@ -2149,8 +2149,8 @@
     // Bail if tapping UI elements
     if (isUIElement(e.target)) return;
 
-    // Only start hold when game is running
-    if (started && !gameOver && micStarted) {
+    // Only start hold when game is running (mic not required — blow detection handles it)
+    if (started && !gameOver) {
       holding = true;
       holdStartTime = performance.now();
       puffCompleting = false;
@@ -3079,6 +3079,12 @@
       if (currentUser) loadFromCloud();
       micStarted = false;
       gameState = 'idle';
+      // Re-initialize iOS touch pipeline (known bug: touch events stop after background)
+      const _touchFix = document.createElement('input');
+      _touchFix.style.cssText = 'position:absolute;opacity:0;pointer-events:none';
+      document.body.appendChild(_touchFix);
+      _touchFix.focus();
+      document.body.removeChild(_touchFix);
       checkSlipUp();
     }
   });
