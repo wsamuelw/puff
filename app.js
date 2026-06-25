@@ -2329,11 +2329,27 @@
   }
 
   // Close slip-up screens — also enables mic (user gesture for iOS Safari)
+  // Mic prompt modal elements
+  const micPromptModal = document.getElementById('mic-prompt-modal');
+  const micPromptYes = document.getElementById('mic-prompt-yes');
+  const micPromptNo = document.getElementById('mic-prompt-no');
+
   slipupContinue.addEventListener('click', async (e) => {
     e.stopPropagation();
     logEvent('slipup_action', { action: 'continue_streak', type: 'welcome' });
     slipupWelcome.classList.remove('active');
+    // Show mic prompt — user gesture context for iOS Safari
+    micPromptModal.classList.add('visible');
+  });
+  micPromptYes.addEventListener('click', async (e) => {
+    e.stopPropagation();
+    micPromptModal.classList.remove('visible');
     await startMic(); // User gesture — iOS Safari allows getUserMedia
+    showIdleScreen();
+  });
+  micPromptNo.addEventListener('click', (e) => {
+    e.stopPropagation();
+    micPromptModal.classList.remove('visible');
     showIdleScreen();
   });
   slipupStartFresh.addEventListener('click', async (e) => {
@@ -2344,15 +2360,15 @@
     quitStartDate = Date.now();
     saveToCloud({ quitStreak: 0, quitStartDate: quitStartDate });
     slipupWelcome.classList.remove('active');
-    await startMic(); // User gesture — iOS Safari allows getUserMedia
-    showIdleScreen();
+    // Show mic prompt — user gesture context for iOS Safari
+    micPromptModal.classList.add('visible');
   });
   slipupStartAgain.addEventListener('click', async (e) => {
     e.stopPropagation();
     logEvent('slipup_action', { action: 'start_again', type: 'relapse' });
     slipupRelapse.classList.remove('active');
-    await startMic(); // User gesture — iOS Safari allows getUserMedia
-    showIdleScreen();
+    // Show mic prompt — user gesture context for iOS Safari
+    micPromptModal.classList.add('visible');
   });
   slipupReset.addEventListener('click', (e) => {
     e.stopPropagation();

@@ -1292,6 +1292,46 @@ body.light .mic-modal-desc {
   color: rgba(26,26,26,0.5);
 }
 
+.mic-prompt-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.mic-prompt-btn {
+  flex: 1;
+  padding: 14px;
+  border: none;
+  border-radius: 12px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mic-prompt-btn.primary {
+  background: var(--amber);
+  color: #1a1a1a;
+}
+
+.mic-prompt-btn.primary:hover {
+  background: #c49564;
+}
+
+.mic-prompt-btn.secondary {
+  background: rgba(255,255,255,0.06);
+  color: rgba(250,249,247,0.6);
+}
+
+body.light .mic-prompt-btn.secondary {
+  background: rgba(0,0,0,0.06);
+  color: rgba(26,26,26,0.6);
+}
+
+.mic-prompt-btn:active {
+  transform: scale(0.97);
+}
 
 /* Badge detail modal */
 .badge-modal {
