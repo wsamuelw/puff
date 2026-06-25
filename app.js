@@ -3038,24 +3038,21 @@
       // Re-fetch from cloud on return to pick up changes from other devices
       if (currentUser) loadFromCloud();
 
-      // Check if mic stream is still alive (iOS Safari kills it on background)
-      const micAlive = micStream && micStream.getTracks().some(t => t.readyState === 'live');
+      // If session ended while away (mic cleaned up), show trigger screen for new session
+      // Safari iOS requires user gesture for getUserMedia — tapping trigger provides it
+      if (gameOver || !started) {
+        gameState = 'idle';
+        showIdleScreen();
+      }
 
-      if (!micAlive && started && !gameOver) {
-        // Mic died while mid-session — end session and save
-        endSessionAndSave();
-        gameState = 'idle';
-        showIdleScreen();
-      } else if (gameOver || !started) {
-        // Session ended or idle — show trigger screen
-        gameState = 'idle';
-        showIdleScreen();
-      } else if (!gameOver && started && micAlive) {
-        // Session active and mic alive — resume
+      if (!gameOver && started) {
+        // Calculate elapsed time while hidden and advance burn progress
         if (hiddenAt > 0) {
-          const elapsed = (Date.now() - hiddenAt) / 1000;
+          const elapsed = (Date.now() - hiddenAt) / 1000; // seconds
           burnProgress = Math.min(BURN_END, burnProgress + BASE_BURN_RATE * elapsed);
           hiddenAt = 0;
+
+          // Check if cigarette finished while away
           if (burnProgress >= BURN_END) {
             finishSession();
             return;
@@ -3065,6 +3062,7 @@
         lastFrameTime = 0;
         loopFrameId = requestAnimationFrame(loop);
       } else if (gameOver && started) {
+        // Cigarette finished while hidden, show end screen
         showEndScreen();
       }
     }
