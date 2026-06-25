@@ -3042,6 +3042,8 @@
           lastLog.time = Date.now();
         }
         safeSetItem('cravingLogs', JSON.stringify(cravingLogs));
+        lastSessionDate = Date.now();
+        safeSetItem('lastSessionDate', String(lastSessionDate));
         cleanupMic();
       }
       // Sync current stats to cloud when leaving (keepalive ensures delivery)
@@ -3052,7 +3054,8 @@
           moneySaved: totalMoneySaved,
           quitStreak: sessionCount,
           cigarettesAvoided: totalCigarettesAvoided,
-          quitStartDate: quitStartDate
+          quitStartDate: quitStartDate,
+          lastSessionDate: lastSessionDate
         }, true);
       }
       // Stop the animation loop
@@ -3064,7 +3067,13 @@
       // User taps "Continue your streak" (user gesture) to restart mic for new session
       if (currentUser) loadFromCloud();
       micStarted = false;
+      started = false;
+      gameOver = false;
       gameState = 'idle';
+      loopRunning = false;
+      if (loopFrameId) { cancelAnimationFrame(loopFrameId); loopFrameId = null; }
+      // Hide trigger screen if visible
+      triggerScreen.classList.remove('visible');
       // Re-initialize iOS touch pipeline (known bug: touch events stop after background)
       const _touchFix = document.createElement('input');
       _touchFix.style.cssText = 'position:absolute;opacity:0;pointer-events:none';
