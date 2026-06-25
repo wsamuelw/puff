@@ -971,6 +971,11 @@
   // --- Blow detection (only when holding) ---
   function detectBlow() {
     if (!analyser || !holding) return 0; // mic only listens when holding
+    // Resume AudioContext if suspended (iOS Safari background)
+    if (audioCtx && audioCtx.state === 'suspended') {
+      audioCtx.resume();
+      return 0; // Skip this frame — resume is async, data will be available next frame
+    }
     analyser.getByteFrequencyData(dataArray);
     // Weight low-frequency bins (blow energy is 100-500Hz)
     const lowBins = Math.min(20, dataArray.length);
