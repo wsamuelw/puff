@@ -3038,6 +3038,13 @@
       // Re-fetch from cloud on return to pick up changes from other devices
       if (currentUser) loadFromCloud();
 
+      // If session ended while away (mic cleaned up), show trigger screen for new session
+      // Safari iOS requires user gesture for getUserMedia — tapping trigger provides it
+      if (gameOver || !started) {
+        gameState = 'idle';
+        showIdleScreen();
+      }
+
       if (!gameOver && started) {
         // Calculate elapsed time while hidden and advance burn progress
         if (hiddenAt > 0) {
