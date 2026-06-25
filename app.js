@@ -2143,6 +2143,10 @@
   function handleHoldStart(e) {
     // Bail if tapping UI elements
     if (isUIElement(e.target)) return;
+    // Resume AudioContext on user gesture (iOS Safari suspends it in background)
+    if (audioCtx && audioCtx.state === 'suspended') {
+      audioCtx.resume();
+    }
 
     // Only start hold when game is running
     if (started && !gameOver && micStarted) {
