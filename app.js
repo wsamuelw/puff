@@ -674,6 +674,23 @@
   }
 
   // --- Mic ---
+  // Silent audio loop to keep AudioContext alive on iOS Safari background
+  let _silentSource = null;
+  function startSilentLoop() {
+    if (!audioCtx || _silentSource) return;
+    try {
+      const buf = audioCtx.createBuffer(1, audioCtx.sampleRate * 2, audioCtx.sampleRate);
+      _silentSource = audioCtx.createBufferSource();
+      _silentSource.buffer = buf;
+      _silentSource.loop = true;
+      const gain = audioCtx.createGain();
+      gain.gain.value = 0;
+      _silentSource.connect(gain);
+      gain.connect(audioCtx.destination);
+      _silentSource.start(0);
+    } catch (e) {}
+  }
+
   async function startMic() {
     if (micStarted) return true;
     try {
@@ -685,6 +702,9 @@
       } else if (audioCtx.state === 'suspended') {
         await audioCtx.resume();
       }
+
+      // Start silent loop to keep AudioContext alive in background (iOS Safari)
+      startSilentLoop();
 
       const source = audioCtx.createMediaStreamSource(micStream);
       analyser = audioCtx.createAnalyser();
