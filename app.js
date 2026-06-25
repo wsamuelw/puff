@@ -1872,10 +1872,11 @@
   }
 
   // End screen button — go to trigger selection
-  endAnother.addEventListener('click', (e) => {
+  endAnother.addEventListener('click', async (e) => {
     e.stopPropagation();
     logEvent('smoke_another_tapped', { trigger: currentTriggerId, sessionMoney: sessionMoneySaved });
     endScreen.classList.remove('visible');
+    await startMic(); // User gesture — iOS Safari allows getUserMedia
     showTriggerScreen();
   });
 
