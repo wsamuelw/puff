@@ -2,7 +2,7 @@
   "name": "Puff",
   "short_name": "Puff",
   "description": "Giving your lungs a well-deserved break 🫁",
-  "start_url": "/",
+  "start_url": ".",
   "display": "standalone",
   "background_color": "#1a1a1a",
   "theme_color": "#1a1a1a",
