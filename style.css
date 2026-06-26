@@ -67,7 +67,7 @@ canvas.visible {
 /* ─── Menu pill below cigarette ─── */
 .menu-pill {
   position: fixed;
-  bottom: 20px;
+  bottom: 10px;
   left: 50%;
   transform: translateX(-50%);
   width: 48px;
@@ -134,7 +134,7 @@ body.light .menu-pill:focus-visible {
 /* ─── Filter Stats ─── */
 .filter-stats {
   position: fixed;
-  bottom: 62px;
+  bottom: 52px;
   left: 0;
   right: 0;
   text-align: center;
