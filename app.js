@@ -1624,6 +1624,7 @@
   async function startSmokingSession() {
     if (sessionStarting) return; // Prevent re-entrancy
     sessionStarting = true;
+    canvas.classList.add('visible');
 
     // Reset smoking state
     burnProgress = 0;
@@ -2949,6 +2950,7 @@
   // Finish session — called when cigarette burns to end
   function finishSession() {
     endSessionAndSave();
+    canvas.classList.remove('visible');
     playEndChime();
     showEndScreen();
   }
@@ -3074,9 +3076,11 @@
         loopFrameId = requestAnimationFrame(loop);
       } else if (gameOver && started) {
         // Session ended while hidden — show end screen
+        canvas.classList.remove('visible');
         showEndScreen();
       } else {
         // No active session — show welcome screen
+        canvas.classList.remove('visible');
         micStarted = false;
         started = false;
         gameState = 'idle';
