@@ -31,9 +31,6 @@ html, body {
   height: 100%;
   overflow: hidden;
   background: #1a1a1a;
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  user-select: none;
   font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
   -webkit-tap-highlight-color: transparent;
   transition: background 0.4s, color 0.4s;
@@ -57,29 +54,11 @@ canvas {
 .menu-content, .settings-stack-card, .slipup-screen, .menu-card,
 .slipup-btn, .slipup-stat, .slipup-quote-card, .slipup-progress-item,
 .consent-card, .onboarding-card, .trigger-btn, .end-stat,
-.triggers-back, .badges-back, .settings-back,
-.end-session-label {
+.triggers-back, .badges-back, .settings-back {
   transition: background-color 0.4s, color 0.4s, border-color 0.4s;
 }
 
 /* ─── Overlay ─── */
-#overlay {
-  position: fixed;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  z-index: 10;
-  pointer-events: auto;
-  gap: 16px;
-}
-
-#prompt {
-  opacity: 0;
-  pointer-events: none;
-}
-
 /* ─── Menu pill below cigarette ─── */
 .menu-pill {
   position: fixed;
@@ -275,18 +254,6 @@ body.light .splash-feature {
 }
 body.light .splash-feature-text {
   color: rgba(26,26,26,0.7);
-}
-.splash-start {
-  width: 100%;
-  padding: 14px;
-  background: var(--amber);
-  color: #1a1a1a;
-  border: none;
-  border-radius: 10px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  min-height: 48px;
 }
 .splash-google-btn {
   width: 100%;
@@ -666,18 +633,6 @@ body.dark .screen-back {
 }
 
 /* ─── Triggers screen ─── */
-.triggers-screen {
-}
-
-.triggers-screen.visible {
-}
-
-.triggers-back {
-}
-
-.triggers-content {
-}
-
 .triggers-title {
   font-family: 'Libre Baskerville', serif;
   font-size: 24px;
@@ -1108,19 +1063,6 @@ body.light .badge-notification-name {
 }
 
 /* ─── Badges Screen ─── */
-/* ─── Badges screen ─── */
-.badges-screen {
-}
-
-.badges-screen.visible {
-}
-
-.badges-back {
-}
-
-.badges-content {
-}
-
 .badges-title {
   font-family: 'Libre Baskerville', serif;
   font-size: 24px;
@@ -1290,47 +1232,6 @@ body.light .mic-modal-title {
 
 body.light .mic-modal-desc {
   color: rgba(26,26,26,0.5);
-}
-
-.mic-prompt-actions {
-  display: flex;
-  gap: 10px;
-}
-
-.mic-prompt-btn {
-  flex: 1;
-  padding: 14px;
-  border: none;
-  border-radius: 12px;
-  font-family: 'Outfit', sans-serif;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.mic-prompt-btn.primary {
-  background: var(--amber);
-  color: #1a1a1a;
-}
-
-.mic-prompt-btn.primary:hover {
-  background: #c49564;
-}
-
-.mic-prompt-btn.secondary {
-  background: rgba(255,255,255,0.06);
-  color: rgba(250,249,247,0.6);
-}
-
-body.light .mic-prompt-btn.secondary {
-  background: rgba(0,0,0,0.06);
-  color: rgba(26,26,26,0.6);
-}
-
-.mic-prompt-btn:active {
-  transform: scale(0.97);
 }
 
 /* Badge detail modal */
@@ -1704,39 +1605,6 @@ body.dark .end-note {
   color: rgba(245,240,235,0.15);
 }
 
-.end-cooldown {
-  display: none;
-  text-align: center;
-  margin-top: 12px;
-  padding: 12px;
-  background: rgba(0,0,0,0.03);
-  border-radius: 8px;
-}
-
-body.dark .end-cooldown {
-  background: rgba(250,249,247,0.04);
-}
-
-.end-cooldown.visible {
-  display: block;
-}
-
-.end-cooldown-text {
-  font-size: 12px;
-  color: rgba(26,26,26,0.4);
-  margin-bottom: 4px;
-}
-
-body.dark .end-cooldown-text {
-  color: rgba(245,240,235,0.4);
-}
-
-.end-cooldown-timer {
-  font-family: 'Libre Baskerville', serif;
-  font-size: 20px;
-  color: var(--amber);
-}
-
 /* ─── Slip-up Handling ─── */
 .slipup-screen {
   position: fixed;
@@ -1994,19 +1862,6 @@ body.dark .slipup-secondary:focus-visible {
 }
 
 /* Settings Screen */
-/* ─── Settings screen ─── */
-.settings-screen {
-}
-
-.settings-screen.visible {
-}
-
-.settings-back {
-}
-
-.settings-content {
-}
-
 .settings-title {
   font-family: 'Libre Baskerville', serif;
   font-size: 24px;

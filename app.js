@@ -20,8 +20,6 @@
 
   const canvas = document.getElementById('canvas');
   const ctx = canvas.getContext('2d');
-  const promptEl = document.getElementById('prompt');
-  const overlayEl = document.getElementById('overlay');
   const micModal = document.getElementById('mic-modal');
 
   // --- Safe localStorage helpers ---
@@ -373,7 +371,6 @@
 
   // Hold + Blow mechanic
   let holding = false;           // is user holding the screen?
-  let holdStartTime = 0;        // when hold started
   let puffCompleting = false;    // is a puff completing after release?
   let puffCompleteUntil = 0;     // when puff finishes
   const PUFF_COMPLETE_DURATION = 1.0; // seconds to complete puff after release
@@ -390,7 +387,6 @@
   let ashCeilingSet = false;
   let ashDropping = false;
   let ashDropStartTime = 0;
-  let ashDropFrom = 0;
   let ashDropTo = 0;
   const ASH_DROP_DURATION = 500;
   let ashPieces = [];
@@ -448,12 +444,6 @@
   // Slip-up handling
   let lastSessionDate = parseInt(safeGetItem('lastSessionDate', '0'));
   let slipUpShown = false;
-
-  // Track last app open for "last seen" display
-  let lastAppOpen = parseInt(safeGetItem('lastAppOpen', '0'));
-  if (!lastAppOpen) lastAppOpen = Date.now();
-  // Update AFTER reading — so "last seen" shows the previous visit, not this one
-  setTimeout(() => safeSetItem('lastAppOpen', String(Date.now())), 1000);
 
   // Craving logs (kept for backwards compatibility with existing users)
   let cravingLogs = [];
@@ -716,9 +706,7 @@
       dataArray = new Uint8Array(analyser.frequencyBinCount);
       micStarted = true;
       cooldownUntil = performance.now() + MIC_COOLDOWN_MS;
-      promptEl.classList.add('hidden');
       micModal.classList.remove('visible');
-      document.getElementById('overlay').style.pointerEvents = 'none';
       document.getElementById('filter-stats').classList.add('visible');
 
       // Pink noise — warm ember hiss with random micro-pops
@@ -840,7 +828,6 @@
     ashDropping = true;
     tapCooldown = true;
     ashDropStartTime = performance.now();
-    ashDropFrom = ashHeight;
     ashDropTo = 0; // ash completely gone
 
     // Haptic feedback — vibration on Android, low thump on iOS
@@ -1658,15 +1645,18 @@
     }
 
     // Check if mic needs to be restarted
-    if (!micStarted) {
-      const ok = await startMic();
-      if (ok) beginGameLoop();
-      // If mic denied, modal is shown — don't start loop
-    } else {
-      // Mic already started, just restart the game
-      beginGameLoop();
+    try {
+      if (!micStarted) {
+        const ok = await startMic();
+        if (ok) beginGameLoop();
+        // If mic denied, modal is shown — don't start loop
+      } else {
+        // Mic already started, just restart the game
+        beginGameLoop();
+      }
+    } finally {
+      sessionStarting = false;
     }
-    sessionStarting = false;
   }
 
   // Get trigger insight
@@ -1859,7 +1849,6 @@
   }
 
   // Show idle screen
-  // Idle screen removed — go directly to trigger selection
   function showIdleScreen() {
     gameState = 'idle';
     // Show first-session tooltip, then go straight to triggers
@@ -2015,6 +2004,7 @@
           if (dropT >= 1) {
             ashHeight = ashDropTo;
             ashDropping = false;
+            ashCeilingSet = false; // reset so ceiling re-establishes on next burn frame
           }
         } else if (ashCeilingSet) {
           // Ash height = distance from ceiling to ember (grows as ember moves down)
@@ -2113,7 +2103,7 @@
   }
 
   // UI elements that should block tap/hold handlers
-  const UI_SELECTORS = '.filter-stats, .menu-pill, .splash-screen, .first-session-tooltip, #overlay, .menu-overlay, .slipup-screen, .settings-screen, .triggers-screen, .badges-screen, .end-screen, .trigger-screen, .mic-modal';
+  const UI_SELECTORS = '.filter-stats, .menu-pill, .splash-screen, .first-session-tooltip, .menu-overlay, .slipup-screen, .settings-screen, .triggers-screen, .badges-screen, .end-screen, .trigger-screen, .mic-modal';
   function isUIElement(target) { return target && target.closest && target.closest(UI_SELECTORS); }
 
   // --- Tap handler ---
@@ -2133,7 +2123,7 @@
 
       // Double tap to flick ash while smoking (need visible ash)
       if (started && !gameOver && ashHeight > 2 && !ashDropping && !tapCooldown) {
-        const now = Date.now();
+        const now = performance.now();
         if (now - lastTapTime < DOUBLE_TAP_DELAY) {
           dropAsh();
           lastTapTime = 0;
@@ -2154,7 +2144,6 @@
     // Only start hold when game is running (mic not required — blow detection handles it)
     if (started && !gameOver) {
       holding = true;
-      holdStartTime = performance.now();
       puffCompleting = false;
     }
   }
@@ -2944,9 +2933,6 @@
   // Prevent menu taps from propagating
   menuOverlay.addEventListener('touchstart', (e) => e.stopPropagation(), { passive: true });
 
-  // Update tap handler to bail on menu button
-  // (Already handled in the existing bail check)
-
   // Finish session — called when cigarette burns to end
   function finishSession() {
     endSessionAndSave();
@@ -2981,7 +2967,6 @@
     const lastLog = cravingLogs[cravingLogs.length - 1];
     if (lastLog && lastLog.trigger === currentTriggerId && lastLog.money === 0) {
       lastLog.money = sessionMoneySaved;
-      lastLog.time = Date.now();
     }
     const pruneBefore = Date.now() - PRUNE_WINDOW_MS;
     cravingLogs = cravingLogs.filter(log => log.time > pruneBefore);
@@ -3067,7 +3052,7 @@
           }
         }
         // Check if mic was killed in background — restart if needed
-        if (micStarted && micStream && micStream.getTracks()[0]?.readyState === 'ended') {
+        if (micStarted && (!micStream || micStream.getTracks()[0]?.readyState === 'ended')) {
           micStarted = false;
           startMic();
         }
@@ -3097,7 +3082,7 @@
   // Close all screens and overlays
   function closeAllScreens() {
     document.querySelectorAll('.full-screen.visible').forEach(el => el.classList.remove('visible'));
-    settingsScreen.classList.remove('active');
+    settingsScreen.classList.remove('visible');
     menuOverlay.classList.remove('active');
     micModal.classList.remove('visible');
     endScreen.classList.remove('visible');
