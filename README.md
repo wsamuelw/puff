@@ -13,12 +13,13 @@ Built as a Progressive Web App (PWA) that runs entirely in the browser. Add it t
 - **Microphone required** — the app needs mic access to detect when you blow
 - **Double-tap to flick ash** — shake off built-up ash with a double tap
 - **White noise smoking sound** — ambient audio feedback while smoking
-- **Background burn** — cigarette continues burning when you switch tabs
+- **Background burn** — cigarette continues burning when you switch apps, with elapsed time catch-up on return
 
 ### Session Flow
 - **Trigger selection** — log what's driving your craving (stress, boredom, coffee, etc.)
 - **End screen stats** — see session duration, money saved, and trigger breakdown after each session
 - **Smoke another** — start a new session without returning to the home screen
+- **Seamless background/foreground** — switch apps mid-session and return to find your cigarette still burning
 
 ### Analytics & Insights
 - **Trigger analytics** — horizontal bars showing your most common craving triggers
@@ -36,6 +37,7 @@ Built as a Progressive Web App (PWA) that runs entirely in the browser. Add it t
 - **Cross-device sync** — data syncs across all your devices via Firebase in real-time
 - **GDPR consent** — explicit opt-in for cloud sync and analytics
 - **Offline support** — full functionality without internet, syncs when reconnected
+- **Keepalive sync** — stats are saved to cloud on app close for guaranteed delivery
 
 ### Customisation
 - **15 trigger options** — stress, anxiety, sadness, anger, tired, drinking, coffee, meals, social drinking, work break, toilet, after sex, boredom, morning routine, late night
@@ -52,6 +54,14 @@ The cigarette renders on a Canvas 2D element with:
 - Realistic smoke particle system
 - Ash accumulation and filter tracking
 - Consistent sizing across viewport changes
+
+### iOS Safari
+
+The app handles iOS Safari's strict microphone and background restrictions:
+- **AudioContext recovery** — automatically resumes from `interrupted` state after returning from background
+- **Mic restart** — detects killed mic streams and restarts on return
+- **Session continuity** — keeps the smoking session alive when switching apps, catching up on elapsed burn time
+- **Touch pipeline fix** — re-initialises touch events after background/foreground transitions
 
 ## Getting started
 
@@ -111,6 +121,7 @@ Open `http://localhost:8000` in your browser.
 | Mic blow detection | ✅ | ✅ | ✅ |
 | PWA install | ✅ | ✅ | ✅ |
 | Google sign-in | ✅ | ✅ | ✅ |
+| Background/foreground | ✅ | ✅ | ✅ |
 
 ## License
 
