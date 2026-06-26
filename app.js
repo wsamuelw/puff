@@ -666,6 +666,12 @@
   // --- Mic ---
   // Silent audio loop to keep AudioContext alive on iOS Safari background
   let _silentSource = null;
+  let _silentGain = null;
+  let _noiseSource = null;
+  let _noiseFilter = null;
+  let _dragSource = null;
+  let _dragBp = null;
+  let _dragPeak = null;
   function startSilentLoop() {
     if (!audioCtx || _silentSource) return;
     try {
@@ -673,10 +679,10 @@
       _silentSource = audioCtx.createBufferSource();
       _silentSource.buffer = buf;
       _silentSource.loop = true;
-      const gain = audioCtx.createGain();
-      gain.gain.value = 0;
-      _silentSource.connect(gain);
-      gain.connect(audioCtx.destination);
+      _silentGain = audioCtx.createGain();
+      _silentGain.gain.value = 0;
+      _silentSource.connect(_silentGain);
+      _silentGain.connect(audioCtx.destination);
       _silentSource.start(0);
     } catch (e) {}
   }
@@ -713,19 +719,19 @@
       try {
         const bufferSize = audioCtx.sampleRate * 2;
         const noiseBuffer = createPinkNoiseBuffer(audioCtx, bufferSize);
-        const noiseSource = audioCtx.createBufferSource();
-        noiseSource.buffer = noiseBuffer;
-        noiseSource.loop = true;
-        const noiseFilter = audioCtx.createBiquadFilter();
-        noiseFilter.type = 'bandpass';
-        noiseFilter.frequency.value = 1000;
-        noiseFilter.Q.value = 0.7;
+        _noiseSource = audioCtx.createBufferSource();
+        _noiseSource.buffer = noiseBuffer;
+        _noiseSource.loop = true;
+        _noiseFilter = audioCtx.createBiquadFilter();
+        _noiseFilter.type = 'bandpass';
+        _noiseFilter.frequency.value = 1000;
+        _noiseFilter.Q.value = 0.7;
         crackleGain = audioCtx.createGain();
         crackleGain.gain.value = 0;
-        noiseSource.connect(noiseFilter);
-        noiseFilter.connect(crackleGain);
+        _noiseSource.connect(_noiseFilter);
+        _noiseFilter.connect(crackleGain);
         crackleGain.connect(audioCtx.destination);
-        noiseSource.start();
+        _noiseSource.start();
 
         // Crackle micro-pops — scheduled randomly
         let popTimer = null;
@@ -758,25 +764,25 @@
 
         // Drag/whoosh — pink noise + bandpass for realistic airflow
         const dragBuf = createPinkNoiseBuffer(audioCtx, bufferSize);
-        const dragSource = audioCtx.createBufferSource();
-        dragSource.buffer = dragBuf;
-        dragSource.loop = true;
-        const dragBp = audioCtx.createBiquadFilter();
-        dragBp.type = 'bandpass';
-        dragBp.frequency.value = 1000;
-        dragBp.Q.value = 1.2;
-        const dragPeak = audioCtx.createBiquadFilter();
-        dragPeak.type = 'peaking';
-        dragPeak.frequency.value = 1200;
-        dragPeak.Q.value = 3.0;
-        dragPeak.gain.value = 4;
+        _dragSource = audioCtx.createBufferSource();
+        _dragSource.buffer = dragBuf;
+        _dragSource.loop = true;
+        _dragBp = audioCtx.createBiquadFilter();
+        _dragBp.type = 'bandpass';
+        _dragBp.frequency.value = 1000;
+        _dragBp.Q.value = 1.2;
+        _dragPeak = audioCtx.createBiquadFilter();
+        _dragPeak.type = 'peaking';
+        _dragPeak.frequency.value = 1200;
+        _dragPeak.Q.value = 3.0;
+        _dragPeak.gain.value = 4;
         dragGain = audioCtx.createGain();
         dragGain.gain.value = 0;
-        dragSource.connect(dragBp);
-        dragBp.connect(dragPeak);
-        dragPeak.connect(dragGain);
+        _dragSource.connect(_dragBp);
+        _dragBp.connect(_dragPeak);
+        _dragPeak.connect(dragGain);
         dragGain.connect(audioCtx.destination);
-        dragSource.start();
+        _dragSource.start();
       } catch (e) {}
       return true;
     } catch (err) {
@@ -798,11 +804,18 @@
       crackleGain._popTimer();
       crackleGain._popTimer = null;
     }
+    // Disconnect crackle nodes
+    if (_noiseSource) { try { _noiseSource.stop(); } catch (e) {} _noiseSource.disconnect(); _noiseSource = null; }
+    if (_noiseFilter) { _noiseFilter.disconnect(); _noiseFilter = null; }
+    if (crackleGain) { crackleGain.disconnect(); crackleGain = null; }
+    // Disconnect drag nodes
+    if (_dragSource) { try { _dragSource.stop(); } catch (e) {} _dragSource.disconnect(); _dragSource = null; }
+    if (_dragBp) { _dragBp.disconnect(); _dragBp = null; }
+    if (_dragPeak) { _dragPeak.disconnect(); _dragPeak = null; }
+    if (dragGain) { dragGain.disconnect(); dragGain = null; }
     // Stop silent loop
-    if (_silentSource) {
-      try { _silentSource.stop(); } catch (e) {}
-      _silentSource = null;
-    }
+    if (_silentSource) { try { _silentSource.stop(); } catch (e) {} _silentSource.disconnect(); _silentSource = null; }
+    if (_silentGain) { _silentGain.disconnect(); _silentGain = null; }
     // Stop mic stream
     if (micStream) {
       micStream.getTracks().forEach(t => t.stop());
