@@ -3027,27 +3027,7 @@
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) {
       hiddenAt = Date.now();
-      slipUpShown = false; // Allow welcome screen to show again on return
-      // If mid-session, end it and save (ensures current session stats are captured)
-      if (started && !gameOver && burnProgress > 0) {
-        gameOver = true;
-        sessionMoneySaved = (burnProgress / BURN_END) * cigPrice;
-        if (sessionMoneySaved > 0) {
-          totalMoneySaved += sessionMoneySaved;
-          sessionCount++;
-        }
-        if (!quitStartDate) quitStartDate = Date.now();
-        // Update craving log with money
-        const lastLog = cravingLogs[cravingLogs.length - 1];
-        if (lastLog && lastLog.trigger === currentTriggerId && lastLog.money === 0) {
-          lastLog.money = sessionMoneySaved;
-          lastLog.time = Date.now();
-        }
-        safeSetItem('cravingLogs', JSON.stringify(cravingLogs));
-        lastSessionDate = Date.now();
-        safeSetItem('lastSessionDate', String(lastSessionDate));
-        cleanupMic();
-      }
+      // Don't end session or cleanup mic — keep alive for return
       // Sync current stats to cloud when leaving (keepalive ensures delivery)
       if (currentUser) {
         const logs = JSON.parse(safeGetItem('cravingLogs', '[]'));
@@ -3060,29 +3040,56 @@
           lastSessionDate: lastSessionDate
         }, true);
       }
-      // Stop the animation loop
+      // Stop the animation loop only
       loopRunning = false;
       if (loopFrameId) cancelAnimationFrame(loopFrameId);
 
     } else {
-      // Return from background — iOS Safari kills mic, so always show welcome screen
-      // User taps "Continue your streak" (user gesture) to restart mic for new session
+      // Return from background
+      // Resume AudioContext if not running (handles 'suspended' AND 'interrupted' on iOS)
+      if (audioCtx && audioCtx.state !== 'running') {
+        audioCtx.resume();
+      }
+      // Re-fetch from cloud on return to pick up changes from other devices
       if (currentUser) loadFromCloud();
-      micStarted = false;
-      started = false;
-      gameOver = false;
-      gameState = 'idle';
-      loopRunning = false;
-      if (loopFrameId) { cancelAnimationFrame(loopFrameId); loopFrameId = null; }
-      // Hide trigger screen if visible
-      triggerScreen.classList.remove('visible');
-      // Re-initialize iOS touch pipeline (known bug: touch events stop after background)
-      const _touchFix = document.createElement('input');
-      _touchFix.style.cssText = 'position:absolute;opacity:0;pointer-events:none';
-      document.body.appendChild(_touchFix);
-      _touchFix.focus();
-      document.body.removeChild(_touchFix);
-      checkSlipUp();
+
+      if (!gameOver && started) {
+        // Still mid-session — catch up on elapsed burn progress
+        if (hiddenAt > 0) {
+          const elapsed = (Date.now() - hiddenAt) / 1000;
+          burnProgress = Math.min(BURN_END, burnProgress + BASE_BURN_RATE * elapsed);
+          hiddenAt = 0;
+
+          // Check if cigarette finished while away
+          if (burnProgress >= BURN_END) {
+            finishSession();
+            return;
+          }
+        }
+        // Check if mic was killed in background — restart if needed
+        if (micStarted && micStream && micStream.getTracks()[0]?.readyState === 'ended') {
+          micStarted = false;
+          startMic();
+        }
+        loopRunning = true;
+        lastFrameTime = 0;
+        loopFrameId = requestAnimationFrame(loop);
+      } else if (gameOver && started) {
+        // Session ended while hidden — show end screen
+        showEndScreen();
+      } else {
+        // No active session — show welcome screen
+        micStarted = false;
+        started = false;
+        gameState = 'idle';
+        // Re-initialize iOS touch pipeline (known bug: touch events stop after background)
+        const _touchFix = document.createElement('input');
+        _touchFix.style.cssText = 'position:absolute;opacity:0;pointer-events:none';
+        document.body.appendChild(_touchFix);
+        _touchFix.focus();
+        document.body.removeChild(_touchFix);
+        checkSlipUp();
+      }
     }
   });
 
