@@ -23,14 +23,12 @@ Built as a Progressive Web App (PWA) that runs entirely in the browser. Add it t
 
 ### Analytics & Insights
 - **Trigger analytics** — horizontal bars showing your most common craving triggers
-- **Time-of-day heatmap** — discover when your cravings hit hardest
-- **Weekly summary** — compare this week vs last week (sessions, money saved, trend)
+- **Time-of-day patterns** — see roughly when each trigger tends to hit (mornings, late night, …)
 - **Money saved counter** — track savings based on your cigarette price
 
 ### Motivation
 - **24 achievement badges** — earn badges for streaks, milestones, and healthy choices
 - **Streak milestones** — celebrate 3 days, 1 week, 2 weeks, 1 month, 3 months, 6 months, and 1 year of consecutive daily use
-- **Health timeline** — track your body's recovery milestones
 
 ### Account & Sync
 - **Google sign-in** — authenticate with your Google account

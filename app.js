@@ -54,10 +54,17 @@
     appId: "1:864452569584:web:9895a41dc9b42f877b1535"
   };
 
-  firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
-  const db = firebase.firestore();
-  db.enablePersistence({ synchronizeTabs: true }).catch(() => {});
+  // Boot guard: if the Firebase SDK failed to load (offline first launch),
+  // run local-only instead of crashing on a white screen
+  const cloudAvailable = typeof firebase !== 'undefined';
+  if (!cloudAvailable) console.warn('[puff] Firebase SDK unavailable — running in local-only mode.');
+  let auth = null, db = null;
+  if (cloudAvailable) {
+    firebase.initializeApp(firebaseConfig);
+    auth = firebase.auth();
+    db = firebase.firestore();
+  }
+  if (db) db.enablePersistence({ synchronizeTabs: true }).catch(() => {});
   const provider = new firebase.auth.GoogleAuthProvider();
   let currentUser = null;
 
@@ -84,13 +91,17 @@
   }
 
   // Set auth persistence on load (not during sign-in click)
-  auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(() => {});
+  if (auth) auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(() => {});
 
   // Google sign-in — popup (no redirect loops)
   async function signInWithGoogle() {
     logEvent('sign_in_started');
     try {
-      const result = await auth.signInWithPopup(provider);
+      // signInWithPopup is blocked in installed iOS PWAs (standalone mode)
+      const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+      const result = isStandalone
+        ? await auth.signInWithRedirect(provider)
+        : await auth.signInWithPopup(provider);
       if (result && result.user) {
         currentUser = result.user;
         logEvent('sign_in_completed', { uid: result.user.uid });
@@ -115,8 +126,9 @@
     gameOver = false;
     endScreenShown = false;
     slipUpShown = false;
-    await auth.signOut();
+    if (auth) await auth.signOut();
     currentUser = null;
+    showIdleScreen();
   }
 
   // Google logo SVG
@@ -132,8 +144,13 @@
     splashScreen.classList.add('visible');
   }
 
+  // Offline boot: Firebase's callback needs network before it fires, so enter
+  // the app directly (no-op once onAuthStateChanged takes over — slipUpShown guards).
+  // Signed-in users who are offline skip the splash and land straight in the app.
+  checkSlipUp();
+
   // Listen for auth state changes
-  auth.onAuthStateChanged((user) => {
+  if (auth) auth.onAuthStateChanged((user) => {
     currentUser = user;
 
     if (user) {
@@ -178,9 +195,9 @@
       safeSetItem(key, typeof value === 'object' ? JSON.stringify(value) : String(value));
     });
 
-    // Skip cloud save if no consent or not signed in
+    // Skip cloud save if no consent, not signed in, or cloud unavailable (offline)
     const consent = safeGetItem('consentGiven', 'false');
-    if (!currentUser || consent !== 'true') return;
+    if (!currentUser || !db || consent !== 'true') return;
 
     console.log('[sync] saveToCloud:', JSON.stringify(data), keepalive ? '(keepalive)' : '');
     try {
@@ -202,11 +219,11 @@
           else if (Array.isArray(v)) fields[k] = { arrayValue: { values: v.map(item => ({ mapValue: { fields: Object.fromEntries(Object.entries(item).map(([ik, iv]) => [ik, typeof iv === 'number' ? { integerValue: String(iv) } : { stringValue: String(iv) }])) } })) } };
           else fields[k] = { stringValue: String(v) };
         }
-        fetch(url + '?updateMask.fieldPaths=' + Object.keys(fields).join('&updateMask.fieldPaths=') + '&access_token=' + encodeURIComponent(token), {
+        fetch(url + '?updateMask.fieldPaths=' + Object.keys(fields).join('&updateMask.fieldPaths='), {
           method: 'PATCH',
           body: JSON.stringify({ fields }),
           keepalive: true,
-          headers: { 'Content-Type': 'application/json' }
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }
         }).catch(() => {});
       } else {
         await db.collection('user_data').doc(currentUser.uid).set(update, { merge: true });
@@ -223,7 +240,7 @@
 
   function logEvent(eventName, props = {}) {
     const consent = safeGetItem('consentGiven', 'false');
-    if (!currentUser || consent !== 'true') return;
+    if (!currentUser || !db || consent !== 'true') return;
     _eventQueue.push({
       uid: currentUser.uid,
       event: eventName,
@@ -236,7 +253,7 @@
   }
 
   async function flushEvents() {
-    if (_eventQueue.length === 0 || !currentUser) return;
+    if (_eventQueue.length === 0 || !currentUser || !db) return;
     const batch = _eventQueue.splice(0);
     try {
       const ref = db.collection('events');
@@ -1424,13 +1441,13 @@
   const BADGES = [
     // Streak
     { id: 'first_step', emoji: '🌱', name: 'First Step', desc: 'Complete your first session', category: 'streak', check: () => sessionCount >= 1 },
-    { id: '3_day', emoji: '🔥', name: '3-Day Streak', desc: 'Stay smoke-free for 3 days', category: 'streak', check: () => getDaysSinceLastSession() >= 3 },
-    { id: '1_week', emoji: '💪', name: 'One Week', desc: '7 days smoke-free', category: 'streak', check: () => getDaysSinceLastSession() >= 7 },
-    { id: '2_weeks', emoji: '🏆', name: 'Two Weeks', desc: '14 days smoke-free', category: 'streak', check: () => getDaysSinceLastSession() >= 14 },
-    { id: '1_month', emoji: '👑', name: 'One Month', desc: '30 days smoke-free', category: 'streak', check: () => getDaysSinceLastSession() >= 30 },
-    { id: '3_months', emoji: '💎', name: '3 Months', desc: '90 days smoke-free', category: 'streak', check: () => getDaysSinceLastSession() >= 90 },
-    { id: '6_months', emoji: '🌟', name: '6 Months', desc: '180 days smoke-free', category: 'streak', check: () => getDaysSinceLastSession() >= 180 },
-    { id: '1_year', emoji: '🧠', name: '1 Year', desc: '365 days smoke-free', category: 'streak', check: () => getDaysSinceLastSession() >= 365 },
+    { id: '3_day', emoji: '🔥', name: '3-Day Streak', desc: 'Stay smoke-free for 3 days', category: 'streak', check: () => dailyStreak >= 3 },
+    { id: '1_week', emoji: '💪', name: 'One Week', desc: '7 days smoke-free', category: 'streak', check: () => dailyStreak >= 7 },
+    { id: '2_weeks', emoji: '🏆', name: 'Two Weeks', desc: '14 days smoke-free', category: 'streak', check: () => dailyStreak >= 14 },
+    { id: '1_month', emoji: '👑', name: 'One Month', desc: '30 days smoke-free', category: 'streak', check: () => dailyStreak >= 30 },
+    { id: '3_months', emoji: '💎', name: '3 Months', desc: '90 days smoke-free', category: 'streak', check: () => dailyStreak >= 90 },
+    { id: '6_months', emoji: '🌟', name: '6 Months', desc: '180 days smoke-free', category: 'streak', check: () => dailyStreak >= 180 },
+    { id: '1_year', emoji: '🧠', name: '1 Year', desc: '365 days smoke-free', category: 'streak', check: () => dailyStreak >= 365 },
     // Savings
     { id: 'save_10', emoji: '💰', name: '$10 Saved', desc: 'Save $10 in total', category: 'savings', check: () => totalMoneySaved >= 10 },
     { id: 'save_50', emoji: '💵', name: '$50 Saved', desc: 'Save $50 in total', category: 'savings', check: () => totalMoneySaved >= 50 },
@@ -1454,11 +1471,6 @@
   ];
 
   // Badge helper functions
-  function getDaysSinceLastSession() {
-    if (!lastSessionDate) return 0;
-    return Math.floor((Date.now() - lastSessionDate) / (24 * 60 * 60 * 1000));
-  }
-
   function getNonStressSessions() {
     return cravingLogs.filter(l => l.trigger && l.trigger !== 'stress').length;
   }
@@ -1750,11 +1762,19 @@
   ];
 
   // Update daily streak — call after each session ends
+  // Local-date string "YYYY-MM-DD" — UTC-based dates break streaks for anyone
+  // east of GMT (a 9am AEST session lands on the previous UTC day)
+  function localDateStr(d) {
+    return d.getFullYear() + '-' +
+      String(d.getMonth() + 1).padStart(2, '0') + '-' +
+      String(d.getDate()).padStart(2, '0');
+  }
+
   function updateDailyStreak() {
-    const today = new Date().toISOString().split('T')[0]; // "2026-06-23"
+    const today = localDateStr(new Date());
     if (lastStreakDate === today) return; // Already counted today
 
-    const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+    const yesterday = localDateStr(new Date(Date.now() - 86400000));
     if (lastStreakDate === yesterday) {
       dailyStreak++; // Consecutive day
     } else {
@@ -2294,7 +2314,10 @@
   function checkSlipUp() {
     if (slipUpShown) return;
     if (!lastSessionDate) {
-      // First time user — no welcome back needed
+      // First time user — no welcome back needed.
+      // Mark shown so the auth-state callback's checkSlipUp() can't re-run
+      // this (it would fall through to the welcome-back branch seconds later).
+      slipUpShown = true;
       lastSessionDate = Date.now();
       saveToCloud({ lastSessionDate: lastSessionDate });
       showIdleScreen();
@@ -2849,10 +2872,20 @@
     if (currentUser) {
       try {
         await db.collection('user_data').doc(currentUser.uid).delete();
-        const eventsSnapshot = await db.collection('events').where('uid', '==', currentUser.uid).get();
-        const batch = db.batch();
-        eventsSnapshot.docs.forEach(doc => batch.delete(doc.ref));
-        await batch.commit();
+        // Firestore queries cap at ~500 docs — loop until fully drained,
+        // otherwise "Reset all data" leaves most events behind (GDPR promise)
+        const PAGE = 450;
+        for (let i = 0; i < 200; i++) { // hard stop ~90k events
+          const eventsSnapshot = await db.collection('events')
+            .where('uid', '==', currentUser.uid)
+            .limit(PAGE)
+            .get();
+          if (eventsSnapshot.empty) break;
+          const batch = db.batch();
+          eventsSnapshot.docs.forEach(doc => batch.delete(doc.ref));
+          await batch.commit();
+          if (eventsSnapshot.docs.length < PAGE) break;
+        }
       } catch (err) {
         console.warn('Failed to delete cloud data:', err.message);
       }
