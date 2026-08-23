@@ -225,6 +225,16 @@
           keepalive: true,
           headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }
         }).catch(() => {});
+      } else if (data._statDeltas) {
+        // Session counters use server-side atomic increments — two devices
+        // finishing sessions concurrently both add, instead of one overwriting
+        // the other's total (last-write-wins used to lose a session's savings).
+        // Merge-set (not update) so this also creates the doc for first-ever sessions.
+        delete update._statDeltas;
+        for (const k of data._statDeltas) {
+          update[k] = firebase.firestore.FieldValue.increment(update[k]);
+        }
+        await db.collection('user_data').doc(currentUser.uid).set(update, { merge: true });
       } else {
         await db.collection('user_data').doc(currentUser.uid).set(update, { merge: true });
       }
@@ -265,11 +275,18 @@
 
   // Apply cloud data to local state (used by both initial load and real-time listener)
   let _cloudUnsubscribe = null;
+  let _lastLocalStatsWrite = 0; // timestamp of last local stats change (guards echo regression)
 
   // Apply session stats from cloud (cloud is source of truth, skipped only during active session)
   function applyCloudStats(data) {
     if (started && !gameOver) {
       console.log('[sync] applyCloudStats: SKIPPED (session in progress)');
+      return;
+    }
+    // Right after a local session end, the cloud snapshot lags behind our
+    // increment write — adopting it would visibly regress stats for a moment
+    if (Date.now() - _lastLocalStatsWrite < 8000) {
+      console.log('[sync] applyCloudStats: SKIPPED (recent local write)');
       return;
     }
 
@@ -1710,12 +1727,9 @@
     if (endScreenShown) return; // Prevent duplicate calls
     endScreenShown = true;
 
-    // Sync craving logs to cloud
+    // Sync craving logs to cloud (session stats are delta-written in endSessionAndSave)
     saveToCloud({
       cravingLogs: cravingLogs,
-      moneySaved: totalMoneySaved,
-      quitStreak: sessionCount,
-      cigarettesAvoided: totalCigarettesAvoided,
       quitStartDate: quitStartDate,
       lastSessionDate: Date.now()
     });
@@ -1783,6 +1797,9 @@
     lastStreakDate = today;
     safeSetItem('dailyStreak', String(dailyStreak));
     safeSetItem('lastStreakDate', lastStreakDate);
+    // Plain sync is safe here: dailyStreak is deterministically derived from
+    // lastStreakDate + calendar, so concurrent devices converge on the same value.
+    // (The race that needed atomic increments is the money/session counters.)
     saveToCloud({ dailyStreak: dailyStreak, lastStreakDate: lastStreakDate });
   }
 
@@ -2945,7 +2962,7 @@
     let cumulativeCigs = 0;
     const rows = logs.map((log, i) => {
       const d = new Date(log.time);
-      const date = d.toISOString().split('T')[0];
+      const date = localDateStr(d);
       const time = d.toTimeString().slice(0, 5);
       const day = dayNames[d.getDay()];
       const hour = d.getHours();
@@ -2963,7 +2980,7 @@
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'puff-data-' + new Date().toISOString().split('T')[0] + '.csv';
+    a.download = 'puff-data-' + localDateStr(new Date()) + '.csv';
     a.click();
     URL.revokeObjectURL(url);
   });
@@ -3032,14 +3049,26 @@
     flushEvents(); // Flush immediately on session end
 
     // Save to cloud + localStorage (keepalive ensures delivery even on page close)
-    saveToCloud({
-      quitStreak: sessionCount,
-      moneySaved: totalMoneySaved,
-      cigarettesAvoided: totalCigarettesAvoided,
+    // Stats go as deltas — cloud applies them atomically, safe across devices.
+    // Deltas are what actually changed this session (0-delta fields are omitted
+    // so a partial session can't increment the full-cig counter).
+    _lastLocalStatsWrite = Date.now();
+    const statDeltas = {};
+    if (sessionMoneySaved > 0) {
+      statDeltas.moneySaved = sessionMoneySaved;
+      statDeltas.quitStreak = 1;
+      if (isFullSession) statDeltas.cigarettesAvoided = 1;
+    }
+    const cloudPayload = {
       quitStartDate: quitStartDate,
       lastSessionDate: Date.now(),
       earnedBadges: JSON.parse(safeGetItem('earnedBadges', '[]'))
-    }, true);
+    };
+    if (Object.keys(statDeltas).length) {
+      cloudPayload._statDeltas = Object.keys(statDeltas);
+      Object.assign(cloudPayload, statDeltas);
+    }
+    saveToCloud(cloudPayload, true);
 
     // Check for new badges
     checkBadges();
@@ -3066,9 +3095,6 @@
         const logs = JSON.parse(safeGetItem('cravingLogs', '[]'));
         saveToCloud({
           cravingLogs: logs,
-          moneySaved: totalMoneySaved,
-          quitStreak: sessionCount,
-          cigarettesAvoided: totalCigarettesAvoided,
           quitStartDate: quitStartDate,
           lastSessionDate: lastSessionDate
         }, true);
