@@ -1,4 +1,6 @@
-const CACHE_NAME = 'puff-v90';
+// Bump this version whenever app.js / style.css / index.html change —
+// assets are served cache-first, so same-name caches mean users never see updates
+const CACHE_NAME = 'puff-v91';
 const RUNTIME_CACHE = 'puff-runtime-v1';
 
 // Relative paths — resolve against the SW location, so this works both at
