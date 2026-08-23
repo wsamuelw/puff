@@ -12,7 +12,8 @@
     <meta property="og:image" content="https://wsamuelw.github.io/puff/icons/icon-512.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"></noscript>
     <link rel="stylesheet" href="style.css?v=77">
     <!-- PWA -->
     <link rel="manifest" href="manifest.json">
@@ -364,15 +365,15 @@
 
         <!-- Hidden inputs for actual editing -->
         <div style="display:none;">
-          <input type="text" id="settings-name" maxlength="20">
-          <input type="number" id="settings-price" step="0.10" min="0" max="5">
+          <input type="text" id="settings-name" maxlength="20" aria-label="Your name">
+          <input type="number" id="settings-price" step="0.10" min="0" max="5" aria-label="Cigarette price">
         </div>
 
         <!-- Edit modal -->
         <div id="settings-edit-modal" class="settings-edit-modal">
           <div class="settings-edit-content">
             <div class="settings-edit-title" id="settings-edit-title">Edit</div>
-            <input type="text" id="settings-edit-input" class="settings-edit-input" placeholder="">
+            <input type="text" id="settings-edit-input" class="settings-edit-input" placeholder="" aria-label="Edit value">
             <div class="settings-edit-actions">
               <button class="settings-edit-cancel" id="settings-edit-cancel">Cancel</button>
               <button class="settings-edit-save" id="settings-edit-save">Save</button>
@@ -396,10 +397,12 @@
     </div>
 
     <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-    <script src="app.js?v=139"></script>
+    <!-- Deferred: SDKs download in parallel but never block first paint;
+         execution order is preserved so firebase still exists when app.js runs -->
+    <script defer src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+    <script defer src="app.js?v=139"></script>
     <script>
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('sw.js').catch(() => {});
