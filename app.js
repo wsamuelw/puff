@@ -2773,12 +2773,56 @@
     });
   }
 
+  // --- Weekly summary (this week vs last week) ---
+  function weekStart(offsetWeeks = 0) {
+    const d = new Date();
+    d.setHours(0, 0, 0, 0);
+    d.setDate(d.getDate() - d.getDay()); // local Sunday-start week
+    d.setDate(d.getDate() - offsetWeeks * 7);
+    return d.getTime();
+  }
+
+  function buildWeeklySummary() {
+    const wrap = document.getElementById('weekly-summary');
+    if (!wrap) return;
+    const thisStart = weekStart(0);
+    const lastStart = weekStart(1);
+
+    let thisSessions = 0, thisMoney = 0, lastSessions = 0, lastMoney = 0;
+    cravingLogs.forEach(log => {
+      const t = log.time || 0;
+      const money = log.money || 0;
+      if (t >= thisStart) { thisSessions++; thisMoney += money; }
+      else if (t >= lastStart) { lastSessions++; lastMoney += money; }
+    });
+
+    document.getElementById('ws-this-sessions').textContent = thisSessions;
+    document.getElementById('ws-this-money').textContent = '$' + thisMoney.toFixed(2);
+    document.getElementById('ws-last-sessions').textContent = lastSessions;
+    document.getElementById('ws-last-money').textContent = '$' + lastMoney.toFixed(2);
+
+    let trend;
+    if (!thisSessions && !lastSessions) trend = 'No sessions logged yet';
+    else if (!lastSessions) trend = '🎉 First full week of tracking';
+    else if (thisSessions === lastSessions) trend = '— steady vs last week';
+    else if (thisSessions < lastSessions) {
+      const drop = Math.round((1 - thisSessions / lastSessions) * 100);
+      trend = `▼ ${drop}% fewer puffs than last week`;
+    } else {
+      const rise = Math.round((thisSessions / lastSessions - 1) * 100);
+      trend = `▲ ${rise}% more puffs than last week`;
+    }
+    document.getElementById('ws-trend').textContent = trend;
+    wrap.style.display = 'block';
+  }
+
   // Open triggers from menu
   const menuTriggers = document.getElementById('menu-triggers');
   menuTriggers.addEventListener('click', (e) => {
     e.stopPropagation();
     closeMenu();
     buildTriggerHeatmap();
+    buildWeeklySummary();
     history.pushState({screen:'triggers'}, '');
     triggersScreen.classList.add('visible');
   });
@@ -2802,6 +2846,111 @@
   // Click background to close triggers
   triggersScreen.addEventListener('click', (e) => {
     if (e.target === triggersScreen) triggersScreen.classList.remove('visible');
+  });
+
+  // --- Health recovery timeline ---
+  // Milestone content follows widely published smoking-recovery timelines
+  const HEALTH_MILESTONES = [
+    { h: 0.33,  label: '20 minutes',   emoji: '❤️', desc: 'Heart rate and blood pressure drop back towards normal.' },
+    { h: 12,    label: '12 hours',     emoji: '🩸', desc: 'Carbon monoxide in your blood falls to a normal level.' },
+    { h: 24,    label: '1 day',        emoji: '💪', desc: 'Your heart attack risk has already started to fall.' },
+    { h: 72,    label: '3 days',       emoji: '🫁', desc: 'Breathing eases as bronchial tubes relax. Energy climbs.' },
+    { h: 168,   label: '1 week',       emoji: '✨', desc: 'Taste and smell sharpen. Cravings start coming less often.' },
+    { h: 336,   label: '2 weeks',      emoji: '🚶', desc: 'Circulation and lung function are measurably improving.' },
+    { h: 720,   label: '1 month',      emoji: '🌊', desc: 'Cilia regrow — your lungs clean themselves better. Less coughing.' },
+    { h: 2160,  label: '3 months',     emoji: '💓', desc: 'Blood flow and heart function keep getting stronger.' },
+    { h: 4320,  label: '6 months',     emoji: '😮‍💨', desc: 'Airways recover further. Phlegm and infection risk drop.' },
+    { h: 8760,  label: '1 year',       emoji: '🏆', desc: 'Risk of coronary heart disease is about half that of a smoker.' },
+    { h: 17520, label: '2 years',      emoji: '🧠', desc: 'Stroke risk keeps falling towards that of a non-smoker.' },
+    { h: 43800, label: '5 years',      emoji: '🌟', desc: 'Mouth, throat and bladder cancer risks roughly halve.' },
+  ];
+  const HOUR = 3600000;
+
+  function formatGapShort(hours) {
+    if (hours < 24) return Math.floor(hours) + 'h';
+    const days = hours / 24;
+    if (days < 30) return Math.floor(days) + 'd';
+    if (days < 365) return Math.floor(days / 30) + 'mo';
+    return (days / 365).toFixed(days < 3650 ? 1 : 0) + 'y';
+  }
+
+  function buildHealthTimeline() {
+    const list = document.getElementById('health-timeline');
+    const fillEl = document.getElementById('health-fill');
+    const nextLabel = document.getElementById('health-next-label');
+    const progressWrap = document.getElementById('health-progress-wrap');
+
+    // No quit date yet — show everything locked with a nudge
+    if (!quitStartDate) {
+      progressWrap.style.display = 'none';
+      nextLabel.textContent = '';
+      list.innerHTML = '<div class="health-empty">Complete your first session — your recovery clock starts then.</div>';
+      HEALTH_MILESTONES.forEach(m => {
+        const row = document.createElement('div');
+        row.className = 'health-row';
+        row.innerHTML = `<span class="health-row-icon">${m.emoji}</span>
+          <div class="health-row-body"><div class="health-row-head">
+            <span class="health-row-label">${m.label}</span></div>
+            <div class="health-row-desc">${m.desc}</div></div>`;
+        list.appendChild(row);
+      });
+      return;
+    }
+
+    progressWrap.style.display = 'block';
+    const elapsedH = (Date.now() - quitStartDate) / HOUR;
+    const next = HEALTH_MILESTONES.find(m => m.h > elapsedH);
+
+    // Progress bar towards the next milestone
+    if (next) {
+      const prevH = (() => {
+        const idx = HEALTH_MILESTONES.indexOf(next);
+        return idx > 0 ? HEALTH_MILESTONES[idx - 1].h : 0;
+      })();
+      const pct = Math.min(100, ((elapsedH - prevH) / (next.h - prevH)) * 100);
+      fillEl.style.width = pct + '%';
+      nextLabel.textContent = `Next: ${next.label} · ${formatGapShort(next.h - elapsedH)} to go`;
+    } else {
+      fillEl.style.width = '100%';
+      nextLabel.textContent = 'Every milestone reached — incredible.';
+    }
+
+    list.innerHTML = '';
+    HEALTH_MILESTONES.forEach(m => {
+      const done = elapsedH >= m.h;
+      const row = document.createElement('div');
+      row.className = 'health-row' + (done ? ' done' : '');
+      row.innerHTML = `<span class="health-row-icon">${done ? m.emoji : '🔒'}</span>
+        <div class="health-row-body">
+          <div class="health-row-head"><span class="health-row-label">${m.label}</span>
+            ${done ? '<span class="health-row-check">✓</span>' : ''}</div>
+          <div class="health-row-desc">${done ? m.desc : 'Reveals at ' + m.label + ' smoke-free'}</div>
+        </div>`;
+      list.appendChild(row);
+    });
+  }
+
+  // Health screen wiring
+  const healthScreen = document.getElementById('health-screen');
+  const healthBack = document.getElementById('health-back');
+
+  healthBack.addEventListener('click', (e) => {
+    e.stopPropagation();
+    healthScreen.classList.remove('visible');
+  });
+
+  healthScreen.addEventListener('click', (e) => {
+    if (e.target === healthScreen) healthScreen.classList.remove('visible');
+  });
+
+  // Open health from menu
+  const menuHealth = document.getElementById('menu-health');
+  menuHealth.addEventListener('click', (e) => {
+    e.stopPropagation();
+    closeMenu();
+    buildHealthTimeline();
+    history.pushState({screen:'health'}, '');
+    healthScreen.classList.add('visible');
   });
 
   // Menu greeting
@@ -3174,6 +3323,10 @@
     }
     if (triggersScreen.classList.contains('visible')) {
       triggersScreen.classList.remove('visible');
+      return true;
+    }
+    if (healthScreen.classList.contains('visible')) {
+      healthScreen.classList.remove('visible');
       return true;
     }
     if (menuOverlay.classList.contains('active')) {

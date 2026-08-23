@@ -139,6 +139,22 @@
         <h2 class="triggers-title">Triggers</h2>
         <p class="triggers-sub">Your patterns</p>
 
+        <div class="weekly-summary" id="weekly-summary" style="display:none;">
+          <div class="ws-cols">
+            <div class="ws-col">
+              <div class="ws-col-title">This week</div>
+              <div class="ws-num"><span id="ws-this-sessions">0</span></div>
+              <div class="ws-money" id="ws-this-money">$0.00</div>
+            </div>
+            <div class="ws-divider"></div>
+            <div class="ws-col">
+              <div class="ws-col-title">Last week</div>
+              <div class="ws-num"><span id="ws-last-sessions">0</span></div>
+              <div class="ws-money" id="ws-last-money">$0.00</div>
+            </div>
+          </div>
+          <div class="ws-trend" id="ws-trend"></div>
+        </div>
         <div class="triggers-bars" id="triggers-bars">
           <!-- Populated by JS -->
         </div>
@@ -152,6 +168,22 @@
         <h2 class="badges-title">Badges</h2>
         <p class="badges-sub" id="badges-sub">Your collection</p>
         <div class="badges-grid" id="badges-grid">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Health Timeline Screen -->
+    <div id="health-screen" class="full-screen health-screen" role="dialog" aria-label="Health timeline">
+      <button id="health-back" class="screen-back health-back" aria-label="Back">← Back</button>
+      <div class="screen-content health-content">
+        <h2 class="triggers-title">Recovery</h2>
+        <p class="health-sub">What happens as you stay smoke-free</p>
+        <div class="health-progress-wrap" id="health-progress-wrap">
+          <div class="health-next-label" id="health-next-label"></div>
+          <div class="health-track"><div class="health-track-fill" id="health-fill"></div></div>
+        </div>
+        <div class="health-timeline" id="health-timeline">
           <!-- Populated by JS -->
         </div>
       </div>
@@ -178,6 +210,13 @@
                 <p>Your achievements</p>
               </div>
             </button>
+            <button class="menu-card" id="menu-health">
+              <div class="menu-card-icon">🫁</div>
+              <div class="menu-card-text">
+                <h3>Health</h3>
+                <p>Your recovery timeline</p>
+              </div>
+            </button>
             <button class="menu-card" id="menu-settings">
               <div class="menu-card-icon">⚙️</div>
               <div class="menu-card-text">
@@ -189,6 +228,7 @@
         </div>
         <div class="menu-dots" id="menu-dots">
           <div class="menu-dot active"></div>
+          <div class="menu-dot"></div>
           <div class="menu-dot"></div>
         </div>
       </div>

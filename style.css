@@ -1849,6 +1849,214 @@ body.dark .slipup-secondary:focus-visible {
   color: rgba(250,249,247,0.7);
 }
 
+/* ─── Weekly Summary (triggers screen) ─── */
+.weekly-summary {
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 16px;
+  padding: 18px 20px;
+  margin-bottom: 28px;
+}
+
+body.dark .weekly-summary {
+  border-color: rgba(250,249,247,0.08);
+}
+
+.ws-cols {
+  display: flex;
+  align-items: stretch;
+}
+
+.ws-col {
+  flex: 1;
+  text-align: center;
+}
+
+.ws-divider {
+  width: 1px;
+  background: rgba(0,0,0,0.08);
+}
+
+body.dark .ws-divider {
+  background: rgba(250,249,247,0.08);
+}
+
+.ws-col-title {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: rgba(26,26,26,0.35);
+  margin-bottom: 6px;
+}
+
+body.dark .ws-col-title {
+  color: rgba(250,249,247,0.35);
+}
+
+.ws-num {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 26px;
+  color: #1a1a1a;
+  line-height: 1.2;
+}
+
+body.dark .ws-num {
+  color: #faf9f7;
+}
+
+.ws-money {
+  font-size: 12px;
+  color: var(--amber);
+  margin-top: 2px;
+}
+
+.ws-trend {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(0,0,0,0.06);
+  font-size: 13px;
+  text-align: center;
+  color: rgba(26,26,26,0.55);
+}
+
+body.dark .ws-trend {
+  border-top-color: rgba(250,249,247,0.06);
+  color: rgba(250,249,247,0.55);
+}
+
+/* ─── Health Recovery Timeline ─── */
+.health-sub {
+  font-size: 13px;
+  color: rgba(26,26,26,0.35);
+  margin-bottom: 24px;
+}
+
+body.dark .health-sub {
+  color: rgba(250,249,247,0.5);
+}
+
+.health-progress-wrap {
+  margin-bottom: 28px;
+}
+
+.health-next-label {
+  font-size: 12px;
+  color: rgba(26,26,26,0.5);
+  margin-bottom: 8px;
+}
+
+body.dark .health-next-label {
+  color: rgba(250,249,247,0.5);
+}
+
+.health-track {
+  height: 8px;
+  background: rgba(0,0,0,0.06);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+body.dark .health-track {
+  background: rgba(250,249,247,0.06);
+}
+
+.health-track-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--amber);
+  border-radius: 4px;
+  transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.health-timeline {
+  display: flex;
+  flex-direction: column;
+}
+
+.health-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 14px 4px;
+  opacity: 0.45;
+}
+
+.health-row + .health-row {
+  border-top: 1px solid rgba(0,0,0,0.05);
+}
+
+body.dark .health-row + .health-row {
+  border-top-color: rgba(250,249,247,0.05);
+}
+
+.health-row.done {
+  opacity: 1;
+}
+
+.health-row-icon {
+  font-size: 20px;
+  width: 28px;
+  text-align: center;
+  flex-shrink: 0;
+  filter: grayscale(1);
+}
+
+.health-row.done .health-row-icon {
+  filter: none;
+}
+
+.health-row-body {
+  flex: 1;
+}
+
+.health-row-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.health-row-label {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 15px;
+  color: #1a1a1a;
+}
+
+body.dark .health-row-label {
+  color: #faf9f7;
+}
+
+.health-row-check {
+  font-size: 11px;
+  color: #fff;
+  background: var(--amber);
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.health-row-desc {
+  font-size: 13px;
+  line-height: 1.5;
+  color: rgba(26,26,26,0.55);
+  margin-top: 3px;
+}
+
+body.dark .health-row-desc {
+  color: rgba(250,249,247,0.55);
+}
+
+.health-empty {
+  font-size: 13px;
+  color: rgba(26,26,26,0.35);
+  padding: 20px 0;
+}
+
+body.dark .health-empty {
+  color: rgba(250,249,247,0.5);
+}
+
 /* Settings Screen */
 .settings-title {
   font-family: 'Libre Baskerville', serif;
