@@ -83,6 +83,14 @@ python3 -m http.server 8000
 
 Open `http://localhost:8000` in your browser.
 
+### Smoke test
+
+```bash
+bash smoke.sh
+```
+
+Boots the app in headless Chrome and asserts the UI fully builds (trigger grid, menu cards, screens). Run before every push — it catches whole-script crashes that `node --check` passes silently. Exit 0 = safe to push.
+
 ### Deploy to GitHub Pages
 
 1. Push this folder to a GitHub repo
