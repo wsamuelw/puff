@@ -117,8 +117,13 @@ Boots the app in headless Chrome and asserts the UI fully builds (trigger grid, 
 ├── sw.js               # Service worker for offline support
 ├── manifest.json       # PWA manifest
 ├── privacy.html        # Privacy policy
+├── smoke.sh            # Headless boot test — run before pushing
 └── icons/              # PWA icons (192px, 512px)
 ```
+
+## Development
+
+CI runs on every push: JS syntax checks, manifest validation, and the headless smoke test (boots the app and asserts the UI builds). Keep `bash smoke.sh` green before merging changes.
 
 ## Browser support
 
