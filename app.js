@@ -262,14 +262,23 @@
     _eventFlushTimer = setTimeout(flushEvents, 2000);
   }
 
+  let _flushingEvents = false;
   async function flushEvents() {
-    if (_eventQueue.length === 0 || !currentUser || !db) return;
-    const batch = _eventQueue.splice(0);
+    if (_eventQueue.length === 0 || !currentUser || !db || _flushingEvents) return;
+    _flushingEvents = true;
     try {
+      const batch = _eventQueue.splice(0);
       const ref = db.collection('events');
-      await Promise.all(batch.map(e => ref.add(e)));
-    } catch (e) {
-      // Silently fail — don't interrupt user experience
+      // allSettled: only failed writes return to the queue for the next
+      // flush — succeeded ones stay written, nothing is lost wholesale
+      const results = await Promise.allSettled(batch.map(e => ref.add(e)));
+      const failed = batch.filter((_, i) => results[i].status === 'rejected');
+      if (failed.length) {
+        _eventQueue.unshift(...failed);
+        console.warn('[events]', failed.length, 'writes failed — kept for retry');
+      }
+    } finally {
+      _flushingEvents = false;
     }
   }
 
@@ -277,8 +286,51 @@
   let _cloudUnsubscribe = null;
   let _lastLocalStatsWrite = 0; // timestamp of last local stats change (guards echo regression)
 
+  // --- Craving-log merge (multi-device safe) ---
+  // Logs sync as one array; a blind overwrite clobbers sessions logged on
+  // other devices — silently corrupting weekly summary, time-of-day patterns
+  // and the time-based badges. Union-merge on a stable per-entry key instead;
+  // duplicates resolve to the richer entry (filled-in money beats 0).
+  // Writes merge against the last known cloud copy so cloud-only entries
+  // this device has seen are never dropped.
+  let _cloudLogsCache = [];
+
+  function mergeCravingLogs(localArr, cloudArr) {
+    const byKey = new Map();
+    const put = (l) => {
+      if (!l || typeof l.time !== 'number') return;
+      const k = l.time + '|' + (l.trigger || 'unknown');
+      const cur = byKey.get(k);
+      if (!cur || (l.money || 0) > (cur.money || 0)) byKey.set(k, l);
+    };
+    (Array.isArray(cloudArr) ? cloudArr : []).forEach(put);
+    (Array.isArray(localArr) ? localArr : []).forEach(put);
+    const cutoff = Date.now() - PRUNE_WINDOW_MS;
+    return [...byKey.values()].filter(l => l.time > cutoff).sort((a, b) => a.time - b.time);
+  }
+
+  function logsForCloud() {
+    return mergeCravingLogs(cravingLogs, _cloudLogsCache);
+  }
+
   // Apply session stats from cloud (cloud is source of truth, skipped only during active session)
   function applyCloudStats(data) {
+    // Craving logs ALWAYS union-merge, even mid-session or right after a local
+    // write — a union can only grow history, so unlike counters there is no
+    // regression risk in adopting it.
+    if (data.cravingLogs) {
+      _cloudLogsCache = data.cravingLogs;
+      const merged = mergeCravingLogs(cravingLogs, data.cravingLogs);
+      if (merged.length > cravingLogs.length) {
+        cravingLogs = merged;
+        safeSetItem('cravingLogs', JSON.stringify(cravingLogs));
+      }
+      // We hold entries the cloud lacks (e.g. logged offline) — push them up
+      if (merged.length > data.cravingLogs.length) {
+        saveToCloud({ cravingLogs: merged });
+      }
+    }
+
     if (started && !gameOver) {
       console.log('[sync] applyCloudStats: SKIPPED (session in progress)');
       return;
@@ -297,10 +349,6 @@
     if (data.lastSessionDate !== undefined) lastSessionDate = parseInt(data.lastSessionDate) || 0;
     if (data.dailyStreak !== undefined) dailyStreak = parseInt(data.dailyStreak) || 0;
     if (data.lastStreakDate !== undefined) lastStreakDate = data.lastStreakDate || '';
-    if (data.cravingLogs) {
-      cravingLogs = data.cravingLogs;
-      safeSetItem('cravingLogs', JSON.stringify(cravingLogs));
-    }
     safeSetItem('moneySaved', String(totalMoneySaved));
     safeSetItem('quitStreak', String(sessionCount));
     safeSetItem('cigarettesAvoided', String(totalCigarettesAvoided));
@@ -1727,9 +1775,10 @@
     if (endScreenShown) return; // Prevent duplicate calls
     endScreenShown = true;
 
-    // Sync craving logs to cloud (session stats are delta-written in endSessionAndSave)
+    // Sync craving logs to cloud (session stats are delta-written in endSessionAndSave).
+    // Merge before write so entries synced from another device aren't clobbered.
     saveToCloud({
-      cravingLogs: cravingLogs,
+      cravingLogs: logsForCloud(),
       quitStartDate: quitStartDate,
       lastSessionDate: Date.now()
     });
@@ -3241,9 +3290,8 @@
       // Don't end session or cleanup mic — keep alive for return
       // Sync current stats to cloud when leaving (keepalive ensures delivery)
       if (currentUser) {
-        const logs = JSON.parse(safeGetItem('cravingLogs', '[]'));
         saveToCloud({
-          cravingLogs: logs,
+          cravingLogs: logsForCloud(),
           quitStartDate: quitStartDate,
           lastSessionDate: lastSessionDate
         }, true);
