@@ -147,10 +147,9 @@
     splashScreen.classList.add('visible');
   }
 
-  // Offline boot: Firebase's callback needs network before it fires, so enter
-  // the app directly (no-op once onAuthStateChanged takes over — slipUpShown guards).
-  // Signed-in users who are offline skip the splash and land straight in the app.
-  checkSlipUp();
+  // NOTE: no boot-time checkSlipUp() here — it references screen elements
+  // declared further down (temporal dead zone = silent total crash).
+  // The offline-entry fallback lives at the very end of the script instead.
 
   // Listen for auth state changes
   if (auth) auth.onAuthStateChanged((user) => {
@@ -3444,6 +3443,12 @@
   });
 
   // Push state when opening screens (via menu items)
+
+  // Offline boot fallback: Firebase's auth listener needs the network before
+  // it can fire — with no connection, enter the app directly. Online users
+  // enter via onAuthStateChanged above (slipUpShown guards double-running).
+  // Runs here at the tail of the IIFE so every element reference exists.
+  if (!navigator.onLine) checkSlipUp();
 
   loop();
 })();
