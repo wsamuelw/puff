@@ -126,6 +126,9 @@
     gameOver = false;
     endScreenShown = false;
     slipUpShown = false;
+    // Unflushed deltas belong to this account's session — dropping them beats
+    // flushing them into whichever account signs in next on this device
+    safeSetItem('pendingDeltas', '[]');
     if (auth) await auth.signOut();
     currentUser = null;
     showIdleScreen();
@@ -225,16 +228,6 @@
           keepalive: true,
           headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }
         }).catch(() => {});
-      } else if (data._statDeltas) {
-        // Session counters use server-side atomic increments — two devices
-        // finishing sessions concurrently both add, instead of one overwriting
-        // the other's total (last-write-wins used to lose a session's savings).
-        // Merge-set (not update) so this also creates the doc for first-ever sessions.
-        delete update._statDeltas;
-        for (const k of data._statDeltas) {
-          update[k] = firebase.firestore.FieldValue.increment(update[k]);
-        }
-        await db.collection('user_data').doc(currentUser.uid).set(update, { merge: true });
       } else {
         await db.collection('user_data').doc(currentUser.uid).set(update, { merge: true });
       }
@@ -313,6 +306,46 @@
     return mergeCravingLogs(cravingLogs, _cloudLogsCache);
   }
 
+  // --- Pending stat deltas (offline-safe earnings) ---
+  // Session stats queue locally and flush as atomic increments. Fixes two
+  // failure modes: offline sessions (increment never sent) and page-close
+  // syncs (REST keepalive can't express increment — it was overwriting
+  // cloud totals with the raw delta). At-least-once semantics: an ambiguous
+  // network timeout could re-apply a flush, but double-counting beats
+  // silently losing savings.
+  let _flushingDeltas = false;
+
+  function getPendingDeltas() {
+    try { return JSON.parse(safeGetItem('pendingDeltas', '[]')) || []; }
+    catch (e) { return []; }
+  }
+
+  function queueStatDelta(d) {
+    const q = getPendingDeltas();
+    q.push(d);
+    safeSetItem('pendingDeltas', JSON.stringify(q));
+  }
+
+  async function flushPendingDeltas() {
+    if (_flushingDeltas || !currentUser || !db) return;
+    const q = getPendingDeltas();
+    if (!q.length || safeGetItem('consentGiven', 'false') !== 'true') return;
+    _flushingDeltas = true;
+    try {
+      const sums = {};
+      q.forEach(d => { for (const k in d) sums[k] = (sums[k] || 0) + d[k]; });
+      const update = { updated_at: firebase.firestore.FieldValue.serverTimestamp() };
+      for (const k in sums) update[k] = firebase.firestore.FieldValue.increment(sums[k]);
+      await db.collection('user_data').doc(currentUser.uid).set(update, { merge: true });
+      safeSetItem('pendingDeltas', '[]');
+      console.log('[sync] flushed', q.length, 'pending stat delta(s)');
+    } catch (e) {
+      console.warn('[sync] delta flush failed — will retry on reconnect/session end:', e.message);
+    } finally {
+      _flushingDeltas = false;
+    }
+  }
+
   // Apply session stats from cloud (cloud is source of truth, skipped only during active session)
   function applyCloudStats(data) {
     // Craving logs ALWAYS union-merge, even mid-session or right after a local
@@ -336,17 +369,32 @@
       return;
     }
     // Right after a local session end, the cloud snapshot lags behind our
-    // increment write — adopting it would visibly regress stats for a moment
+    // increment writes — adopting it would visibly regress stats for a moment
     if (Date.now() - _lastLocalStatsWrite < 8000) {
       console.log('[sync] applyCloudStats: SKIPPED (recent local write)');
       return;
     }
 
-    if (data.quitStreak !== undefined) sessionCount = parseInt(data.quitStreak) || 0;
-    if (data.moneySaved !== undefined) totalMoneySaved = parseFloat(data.moneySaved) || 0;
-    if (data.cigarettesAvoided !== undefined) totalCigarettesAvoided = parseInt(data.cigarettesAvoided) || 0;
-    if (data.quitStartDate !== undefined) quitStartDate = parseInt(data.quitStartDate) || 0;
-    if (data.lastSessionDate !== undefined) lastSessionDate = parseInt(data.lastSessionDate) || 0;
+    // Counters stay put while local increments are still unflushed — adopting
+    // a pre-flush snapshot would roll back earnings from offline sessions
+    const pendingCount = getPendingDeltas().length;
+    if (pendingCount > 0) {
+      console.log('[sync] counters held —', pendingCount, 'local delta(s) awaiting flush');
+    } else {
+      if (data.quitStreak !== undefined) sessionCount = parseInt(data.quitStreak) || 0;
+      if (data.moneySaved !== undefined) totalMoneySaved = parseFloat(data.moneySaved) || 0;
+      if (data.cigarettesAvoided !== undefined) totalCigarettesAvoided = parseInt(data.cigarettesAvoided) || 0;
+    }
+    // Dates converge by meaning instead of last-write-wins:
+    // latest activity wins, earliest quit start wins (multi-device safe)
+    if (data.quitStartDate !== undefined) {
+      const c = parseInt(data.quitStartDate) || 0;
+      if (c && (!quitStartDate || c < quitStartDate)) quitStartDate = c;
+    }
+    if (data.lastSessionDate !== undefined) {
+      const c = parseInt(data.lastSessionDate) || 0;
+      if (c > lastSessionDate) lastSessionDate = c;
+    }
     if (data.dailyStreak !== undefined) dailyStreak = parseInt(data.dailyStreak) || 0;
     if (data.lastStreakDate !== undefined) lastStreakDate = data.lastStreakDate || '';
     safeSetItem('moneySaved', String(totalMoneySaved));
@@ -3102,7 +3150,14 @@
           if (eventsSnapshot.docs.length < PAGE) break;
         }
       } catch (err) {
+        // Wiping local while the cloud copy survives would resurrect
+        // everything on next sync — surface the failure and abort
         console.warn('Failed to delete cloud data:', err.message);
+        const desc = document.getElementById('confirm-desc');
+        if (desc) desc.textContent = "Couldn't reach the cloud to erase your data. Check your connection and try again.";
+        isResetting = false;
+        confirmModal.classList.add('active');
+        return;
       }
     }
 
@@ -3110,7 +3165,7 @@
     const appKeys = ['moneySaved', 'cigarettesAvoided', 'quitStreak', 'quitStartDate',
       'cravingLogs', 'earnedBadges', 'lastSessionDate', 'userName', 'cigPrice',
       'darkMode', 'consentGiven', 'tooltipShown', 'lastAppOpen',
-      'dailyStreak', 'lastStreakDate', 'milestonesShown'];
+      'dailyStreak', 'lastStreakDate', 'milestonesShown', 'pendingDeltas'];
     appKeys.forEach(key => localStorage.removeItem(key));
     // Clear in-memory state
     cravingLogs = [];
@@ -3246,27 +3301,24 @@
     });
     flushEvents(); // Flush immediately on session end
 
-    // Save to cloud + localStorage (keepalive ensures delivery even on page close)
-    // Stats go as deltas — cloud applies them atomically, safe across devices.
-    // Deltas are what actually changed this session (0-delta fields are omitted
-    // so a partial session can't increment the full-cig counter).
+    // Stats: queue this session's deltas and flush via the SDK write path
+    // (atomic increment). They deliberately never ride the keepalive beacon —
+    // its hand-built REST body can't express increment and would overwrite
+    // cloud totals with the raw delta value.
     _lastLocalStatsWrite = Date.now();
-    const statDeltas = {};
     if (sessionMoneySaved > 0) {
-      statDeltas.moneySaved = sessionMoneySaved;
-      statDeltas.quitStreak = 1;
-      if (isFullSession) statDeltas.cigarettesAvoided = 1;
+      const delta = { moneySaved: sessionMoneySaved, quitStreak: 1 };
+      if (isFullSession) delta.cigarettesAvoided = 1;
+      queueStatDelta(delta);
     }
-    const cloudPayload = {
+    flushPendingDeltas();
+
+    // Dates/badges are plain absolutes — safe on the keepalive path
+    saveToCloud({
       quitStartDate: quitStartDate,
       lastSessionDate: Date.now(),
       earnedBadges: JSON.parse(safeGetItem('earnedBadges', '[]'))
-    };
-    if (Object.keys(statDeltas).length) {
-      cloudPayload._statDeltas = Object.keys(statDeltas);
-      Object.assign(cloudPayload, statDeltas);
-    }
-    saveToCloud(cloudPayload, true);
+    }, true);
 
     // Check for new badges
     checkBadges();
@@ -3306,8 +3358,11 @@
       if (audioCtx && audioCtx.state !== 'running') {
         audioCtx.resume();
       }
-      // Re-fetch from cloud on return to pick up changes from other devices
-      if (currentUser) loadFromCloud();
+      // Push queued offline deltas first, then re-fetch from cloud
+      if (currentUser) {
+        flushPendingDeltas();
+        loadFromCloud();
+      }
 
       if (!gameOver && started) {
         // Still mid-session — catch up on elapsed burn progress
