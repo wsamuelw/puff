@@ -1,5 +1,7 @@
 # Puff
 
+[![CI](https://github.com/wsamuelw/puff/actions/workflows/ci.yml/badge.svg)](https://github.com/wsamuelw/puff/actions/workflows/ci.yml)
+
 A virtual cigarette to help you quit smoking. Hold the screen and blow into your mic to simulate smoking — watch the ember glow, ash build up, and smoke rise.
 
 Built as a Progressive Web App (PWA) that runs entirely in the browser. Add it to your home screen for the full experience.
